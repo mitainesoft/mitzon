@@ -2,7 +2,8 @@ import random
 import string
 
 import cherrypy
-
+# import pydevd
+# pydevd.settrace('192.168.1.83', port=8000, stdoutToServer=True, stderrToServer=True)
 
 @cherrypy.expose
 class DeviceControllerWebService():
@@ -14,7 +15,7 @@ class DeviceControllerWebService():
     def _cp_dispatch(self, vpath):
         if len(vpath) == 1:
             cherrypy.request.params['myservice'] = vpath.pop() # ex: garage_door
-            print ("myservice:", cherrypy.request.params['myservice'])
+            print ("myservice:", cherrypy.request.params['myservice']) 
             return self        
             
         if len(vpath) == 3:
@@ -55,6 +56,9 @@ if __name__ == '__main__':
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
     }
+    cherrypy.config.update ({'server.socket_host': '0.0.0.0',
+                            'server.socket_port': 8080, 
+                            })  
     cherrypy.quickstart(DeviceControllerWebService(), '/', conf)
     
     
