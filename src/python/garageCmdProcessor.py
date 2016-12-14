@@ -2,50 +2,63 @@ import random
 import string
 
 import cherrypy
-# import pydevd
-# pydevd.settrace('192.168.1.83', port=8000, stdoutToServer=True, stderrToServer=True)
 
 @cherrypy.expose
 class DeviceControllerWebService():
-    
+    mything="THING1"
+    myservice="SERV1"
+    myid="ID1"   
     def __init__(self):
-        self.device = Device()
+        self.mydevice = Device()
+        print ("init DeviceControllerWebService stuff")
+    @cherrypy.tools.accept(media='text/plain')    
 
-	#s.post('http://127.0.0.1:8080/garage/open/g0')
+	# s.post('http://127.0.0.1:8080/garage/open/g0')
     def _cp_dispatch(self, vpath):
+        print ("JLC vpath=",vpath, "len=", len(vpath))
         if len(vpath) == 1:
-            cherrypy.request.params['myservice'] = vpath.pop() # ex: garage_door
-            print ("myservice:", cherrypy.request.params['myservice']) 
+            cherrypy.request.params['mything'] = vpath.pop() # ex: garage_door
             return self        
             
         if len(vpath) == 3:
+            cherrypy.request.params['mything'] = vpath.pop(0) # /myid/
             cherrypy.request.params['myservice'] = vpath.pop(0)  # ex: open close
-            cherrypy.request.params['mydevice'] = vpath.pop(0) # /myid/
             cherrypy.request.params['myid'] = vpath.pop(0) # which one 0, 1, 2...
-            return self.mydevice
+            return self
             
         return vpath
         
-    @cherrypy.tools.accept(media='text/plain')    
     def GET(self):
-        return cherrypy.session['mystring']
+        print("JLC GET: no se!")
+        return cherrypy.session['mything']
 
-    def POST(self, length=8):
-        some_string = ''.join(random.sample(string.digits, int(length)))
-        cherrypy.session['mystring'] = some_string
+    @cherrypy.popargs('myservice')
+    @cherrypy.popargs('myid')
+    def POST(self, mything, myservice=None,myid=None):
+        some_string = "ALLLLLLLLLLLLOOOO:"
+        cherrypy.session['myservice'] = some_string
+        print ("JLC POST: " , some_string,mything,myservice,myid)
         return some_string
 
-    def PUT(self, another_string):
-        cherrypy.session['mystring'] = another_string
+    # def POST(self, mything):
+        # some_string = "ALLLLLLLLLLLLOOOO:"
+        # cherrypy.session['myservice'] = some_string
+        # print ("JLC POST: " , some_string)
+        # return some_string        
+        
+
+    def PUT(self):
+        cherrypy.session['myservice'] = self.myservice
+        print ("JLC PUT: " , self.myservice,self.mything,self.myid )
 
     def DELETE(self):
-        cherrypy.session.pop('mystring', None)
+        cherrypy.session.pop('myservice', None)
     
 
 class Device():
     @cherrypy.expose
-    def index(self, mytask, myid):
-        return 'About (%s) %s by %s...' % (myservice,mytask, myid)        
+    def index(self):
+        return 'About (%s) %s by %s...' % (mything, myid, myservice )        
 
 if __name__ == '__main__':
     conf = {
