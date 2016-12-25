@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 #LED on pin 10 with 330 ohm resistor
 from nanpy import (ArduinoApi, SerialManager)
+from time import sleep
 
 connection = SerialManager()
 a = ArduinoApi(connection=connection)
 
-from time import sleep
-
 mypin=7
 
 a.pinMode(mypin, a.OUTPUT)
-print("Starting")
+print("Rapberry Arduino connection Starting")
 
 while 1:
     a.digitalWrite(mypin, a.HIGH)

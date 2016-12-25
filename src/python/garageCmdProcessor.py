@@ -1,7 +1,8 @@
 import random
 import string
-
 import cherrypy
+from nanpy import (ArduinoApi, SerialManager)
+from time import sleep
 
 @cherrypy.expose
 class DeviceControllerWebService():
@@ -35,16 +36,25 @@ class DeviceControllerWebService():
     @cherrypy.popargs('myservice')
     @cherrypy.popargs('myid')
     def POST(self, mything, myservice=None,myid=None):
-        some_string = "ALLLLLLLLLLLLOOOO:"
+        some_string = "JAJAJAJ:"
         cherrypy.session['myservice'] = some_string
         print ("JLC POST: " , some_string,mything,myservice,myid)
+
+        mypin = 6
+        connection = SerialManager()
+        usbConnectHandler = ArduinoApi(connection=connection)
+        print ("Arduino Pin=",mypin)
+        for n in range(0,2):
+            usbConnectHandler.digitalWrite(mypin, usbConnectHandler.HIGH)
+            print("ON")
+            sleep(2)
+            usbConnectHandler.digitalWrite(mypin, usbConnectHandler.LOW)
+            print("OFF")
+            sleep(2)
+            n+=1
         return some_string
 
-    # def POST(self, mything):
-        # some_string = "ALLLLLLLLLLLLOOOO:"
-        # cherrypy.session['myservice'] = some_string
-        # print ("JLC POST: " , some_string)
-        # return some_string        
+
         
 
     def PUT(self):
@@ -71,7 +81,9 @@ if __name__ == '__main__':
     }
     cherrypy.config.update ({'server.socket_host': '0.0.0.0',
                             'server.socket_port': 8080, 
-                            })  
+                            })
+
+    print("Rapberry Arduino connection Started...")
     cherrypy.quickstart(DeviceControllerWebService(), '/', conf)
     
     
