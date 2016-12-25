@@ -7,12 +7,15 @@ a = ArduinoApi(connection=connection)
 
 from time import sleep
 
-a.pinMode(10, a.OUTPUT)
-print"Starting"
+mypin=7
+
+a.pinMode(mypin, a.OUTPUT)
+print("Starting")
+
 while 1:
-a.digitalWrite(10, a.HIGH)
-print"ON"
-sleep(0.5)
-a.digitalWrite(10, a.LOW)
-sleep(0.5)
-print"OFF"
+    a.digitalWrite(mypin, a.HIGH)
+    print ("ON")
+    sleep(2)
+    a.digitalWrite(mypin, a.LOW)
+    print ("OFF")
+    sleep(2)
