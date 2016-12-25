@@ -1,0 +1,12 @@
+r=s.post('http://192.168.56.101:8080/allo/allo2/allo3/')
+r.status_code, r.text
+
+r=s.post('http://127.0.0.1:8080/')
+
+
+ lmcjecy@dev:
+ cd /git/mitaine/garage/src/python
+
+ 
+ curl -X POST -d whatevertext http://192.168.56.101:8080/allo/allo2/allo3/
+ 
