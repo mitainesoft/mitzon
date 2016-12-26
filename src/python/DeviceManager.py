@@ -10,7 +10,12 @@ usbConnectHandler.pinMode(mypin, usbConnectHandler.OUTPUT)
 
 class DeviceManager():
     def __init__(self):
-        print("init deviceManager")
+        connection = SerialManager()
+
+        
+        usbConnectHandler = ArduinoApi(connection=connection)
+        usbConnectHandler.pinMode(mypin, usbConnectHandler.OUTPUT)
+        print("init deviceManager...")
 
     def testConnection(self):
         print("Arduino Pin=", mypin)
@@ -22,3 +27,4 @@ class DeviceManager():
             print("OFF")
             sleep(2)
             n += 1
+

@@ -9,6 +9,8 @@ class DeviceControllerWebService():
     myid="ID1"   
     def __init__(self):
         self.mydevice = Device()
+        self.connecthandler = DeviceManager()
+
         print ("init DeviceControllerWebService stuff")
     @cherrypy.tools.accept(media='text/plain')    
 
@@ -39,10 +41,10 @@ class DeviceControllerWebService():
         cherrypy.session['myid'] = myid
         print ("Garage Request Received POST: " , mything,myservice,myid)
 
+        self.connecthandler.testConnection()
 
 
-
-        return some_string
+        return mything
 
     def PUT(self):
         cherrypy.session['myservice'] = self.myservice
@@ -73,6 +75,5 @@ if __name__ == '__main__':
     print("Rapberry Arduino connection Started...")
     cherrypy.quickstart(DeviceControllerWebService(), '/', conf)
 
-    connecthandler=DeviceManager()
-    
+
     
