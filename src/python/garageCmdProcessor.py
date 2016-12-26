@@ -1,8 +1,6 @@
-import random
-import string
 import cherrypy
-from nanpy import (ArduinoApi, SerialManager)
-from time import sleep
+from src.python.DeviceManager import DeviceManager
+
 
 @cherrypy.expose
 class DeviceControllerWebService():
@@ -36,26 +34,15 @@ class DeviceControllerWebService():
     @cherrypy.popargs('myservice')
     @cherrypy.popargs('myid')
     def POST(self, mything, myservice=None,myid=None):
-        some_string = "JAJAJAJ:"
-        cherrypy.session['myservice'] = some_string
-        print ("JLC POST: " , some_string,mything,myservice,myid)
+        cherrypy.session['mything'] = mything
+        cherrypy.session['myservice'] = myservice
+        cherrypy.session['myid'] = myid
+        print ("Garage Request Received POST: " , mything,myservice,myid)
 
-        mypin = 6
-        connection = SerialManager()
-        usbConnectHandler = ArduinoApi(connection=connection)
-        print ("Arduino Pin=",mypin)
-        for n in range(0,2):
-            usbConnectHandler.digitalWrite(mypin, usbConnectHandler.HIGH)
-            print("ON")
-            sleep(2)
-            usbConnectHandler.digitalWrite(mypin, usbConnectHandler.LOW)
-            print("OFF")
-            sleep(2)
-            n+=1
+
+
+
         return some_string
-
-
-        
 
     def PUT(self):
         cherrypy.session['myservice'] = self.myservice
@@ -68,7 +55,7 @@ class DeviceControllerWebService():
 class Device():
     @cherrypy.expose
     def index(self):
-        return 'About (%s) %s by %s...' % (mything, myid, myservice )        
+        return 'About (%s) %s by %s...' % (mything, myid, myservice )
 
 if __name__ == '__main__':
     conf = {
@@ -85,5 +72,7 @@ if __name__ == '__main__':
 
     print("Rapberry Arduino connection Started...")
     cherrypy.quickstart(DeviceControllerWebService(), '/', conf)
+
+    connecthandler=DeviceManager()
     
     
