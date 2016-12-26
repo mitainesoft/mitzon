@@ -1,4 +1,6 @@
 import logging
+from GarageBackend.GarageDoor import GarageDoor
+
 from time import sleep
 
 from nanpy import ArduinoApi, SerialManager
@@ -32,6 +34,23 @@ class DeviceManager():
 
     def getConnection(self):
         return self.usbConnectHandler
+
+    def processDeviceCommand(self,deviceList):
+        log.info(deviceList)
+        devlistidx=0
+        for key in deviceList:
+            obj=deviceList[key]
+            if isinstance(obj, GarageDoor):
+                logstr = "Garage Obj %d  %s   Garage Name: %s" % (obj.g_id, key, obj.g_name)
+                log.info(logstr)
+            else:
+                log.info("typedef not found!")
+
+            devlistidx = devlistidx + 1
+
+        return 0
+
+
 
 
 

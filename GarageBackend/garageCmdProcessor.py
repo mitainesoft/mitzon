@@ -4,6 +4,7 @@ import sys
 import cherrypy
 from GarageBackend.Constants import *
 from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.GarageDoor import GarageDoor
 
 from GarageBackend.DeviceManager import DeviceManager
 
@@ -14,17 +15,25 @@ log = logging.getLogger('garageCmdProcessor')
 class DeviceControllerWebService():
     mything="THING1"
     myservice="SERV1"
-    myid="ID1"   
+    myid="ID1"
+    deviceList = {}
+
     def __init__(self):
 
         #Read Building Config
         self.mydevice = Device()
         self.connecthandler = DeviceManager()
-        pin=0
-        while (pin <  NBR_GARAGE ):
-            logging.info('Initialize board pin %d' % GARAGE_BOARDPIN[pin])
-            self.connecthandler.initBoardPinMode(GARAGE_BOARDPIN[pin])
-            pin = pin + 1
+        garage_id=0
+        while (garage_id <  NBR_GARAGE ):
+            logging.info('Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, GARAGE_BOARDPIN[garage_id]))
+            self.connecthandler.initBoardPinMode(GARAGE_BOARDPIN[garage_id])
+            obj = GarageDoor()
+            obj.g_id = garage_id
+            obj.g_name = GARAGE_NAME[garage_id]
+            obj.g_board_pin = GARAGE_BOARDPIN[garage_id]
+            obj_key = "garage_%d" % garage_id
+            self.deviceList[obj_key] = obj
+            garage_id = garage_id + 1
         log.info ("init DeviceControllerWebService stuff")
     @cherrypy.tools.accept(media='text/plain')    
 
@@ -57,9 +66,8 @@ class DeviceControllerWebService():
         cherrypy.session['myid'] = myid
         logbuf="Garage Request Received POST: %s %s %s " % (mything,myservice,myid)
         log.info ( logbuf )
-
-        self.connecthandler.testConnection()
-
+        # self.connecthandler.testConnection()
+        self.connecthandler.processDeviceCommand(self.deviceList)
 
         return mything
 
@@ -91,17 +99,15 @@ if __name__ == '__main__':
                              'tools.staticdir.on': True,
                              'tools.response_headers.on': False,
                              'tools.request_headers.on': False,
-                             'tools.staticdir.dir': ".",
-                             'log.access_file': "garage_cherrypy_access.log",
-                             'log.error_file': "garage_cherrypy_error.log",
+                             'tools.staticdir.dir': "log",
+                             'log.access_file': "log/garage_cherrypy_access.log",
+                             'log.error_file': "log/garage_cherrypy_error.log",
                              'log.screen': False,
                              'tools.sessions.on': True,
                             })
 
-
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     log.setLevel(logging.INFO)
-
     log.info("Rapberry Arduino connection Started...")
 
     cherrypy.quickstart(DeviceControllerWebService(), '/', conf)
