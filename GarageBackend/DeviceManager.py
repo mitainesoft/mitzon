@@ -1,6 +1,5 @@
 import logging
 from time import sleep
-from src.python.Constants import *
 
 from nanpy import ArduinoApi, SerialManager
 

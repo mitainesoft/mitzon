@@ -1,4 +1,3 @@
-from src.python.Constants import *
 import logging
 
 log = logging.getLogger(__name__)
