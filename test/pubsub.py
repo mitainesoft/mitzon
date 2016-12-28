@@ -14,13 +14,17 @@ class Pub1(cmd.Cmd):
         self.dispatch = dispatch
 
     def do_f1(self, arg):
-        self.dispatch.put(('f1', 'pub1'))
+        self.dispatch.put(('f1', 'pub1 A'))
 
     def do_f2(self, arg):
-        self.dispatch.put(('f2', 'pub1'))
+        self.dispatch.put(('f2', 'pub1 B'))
+        print ("do_f2 called....")
 
     def do_f3(self, arg):
-        self.dispatch.put(('f3', 'pub1'))
+        self.dispatch.put(('f3', 'pub1 C'))
+
+    def do_allo(self, arg):
+        print ("\nAllo!\n")
 
     def do_exit(self, arg):
         return True
@@ -71,8 +75,8 @@ if __name__ == '__main__':
     sub1 = Sub1()
     sub2 = Sub2()
 
-    thread_command_queue = Thread(target=command_queue_fn, args=(command_queue,))
-    thread_dispatcher = Thread(target=dispatcher_fn, args=(dispatch_queue, command_queue, [sub1, sub2]))
+    thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,))
+    thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue', args=(dispatch_queue, command_queue, [sub1, sub2]))
 
     thread_command_queue.start()
     thread_dispatcher.start()
