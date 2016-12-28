@@ -13,18 +13,14 @@ log = logging.getLogger('garageCmdProcessor')
 
 @cherrypy.expose
 class DeviceControllerWebService():
-    mything="THING1"
-    myservice="SERV1"
-    myid="ID1"
-    deviceList = {}
 
     def __init__(self):
-
+        self.deviceList = {}
         #Read Building Config
-        self.mydevice = Device()
+        # self.mydevice = Device()
         self.connecthandler = DeviceManager()
-        garage_id=0
-        while (garage_id <  NBR_GARAGE ):
+
+        for garage_id in range(NBR_GARAGE):
             logging.info('Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, GARAGE_BOARDPIN[garage_id]))
             self.connecthandler.initBoardPinMode(GARAGE_BOARDPIN[garage_id])
             obj = GarageDoor()
@@ -80,10 +76,10 @@ class DeviceControllerWebService():
         cherrypy.session.pop('myservice', None)
     
 
-class Device():
-    @cherrypy.expose
-    def index(self):
-        return 'About (%s) %s by %s...' % (mything, myid, myservice )
+# class Device():
+#     @cherrypy.expose
+#     def index(self):
+#         return 'About (%s) %s by %s...' % (mything, myid, myservice )
 
 if __name__ == '__main__':
     conf = {
