@@ -40,7 +40,8 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
         args = next[1:]
         for sub in subscribers:
             try:
-                command.put((getattr(sub, '%s' % name), *args))
+                # command.put((getattr(sub, '%s' % name), *args))  Incompatible Python rev < 3.5
+                command.put(([getattr(sub, str(name))] + list(args)))
             except AttributeError:
                 pass
         next = dispatch.get()
