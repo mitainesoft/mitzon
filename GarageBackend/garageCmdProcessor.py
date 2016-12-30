@@ -22,6 +22,7 @@ class DeviceControllerWebService():
         # self.mydevice = Device()
         self.connecthandler = DeviceManager()
 
+        # replace by config
         for garage_id in range(NBR_GARAGE):
             logging.info('Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, GARAGE_BOARDPIN[garage_id]))
             self.connecthandler.initBoardPinMode(GARAGE_BOARDPIN[garage_id])
@@ -65,9 +66,11 @@ class DeviceControllerWebService():
         logbuf="GarageBackend Request Received POST: %s %s %s " % (mything,myservice,myid)
         log.info ( logbuf )
 
+        ## Test Arduino Device
         self.dispatch.put(('testConnection', self.deviceList))
-        self.dispatch.put(('processDeviceCommand', self.deviceList))
 
+        ## Send all html POST commands to device through device manager
+        self.dispatch.put(('processDeviceCommand', mything,myservice,myid, self.deviceList))
         return mything
 
     def PUT(self):

@@ -35,13 +35,15 @@ class DeviceManager():
     def getConnection(self):
         return self.usbConnectHandler
 
-    def processDeviceCommand(self,deviceList):
+    def processDeviceCommand(self,mything,myservice,myid, deviceList):
         log.info(deviceList)
+        logbuf="Cmd Received: %s/%s/%s " % (mything,myservice,myid)
+        log.info ( logbuf )
         devlistidx=0
         for key in deviceList:
             obj=deviceList[key]
             if isinstance(obj, GarageDoor):
-                logstr = "Garage Obj %d  %s   Garage Name: %s" % (obj.g_id, key, obj.g_name)
+                logstr = "Garage Obj %d  %s Garage Configured -  Name: %s" % (obj.g_id, key, obj.g_name)
                 log.info(logstr)
             else:
                 log.info("typedef not found!")
