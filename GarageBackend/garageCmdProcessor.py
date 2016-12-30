@@ -1,12 +1,13 @@
 import logging
 import sys
-
 import cherrypy
 from GarageBackend.Constants import *
 from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.GarageDoor import GarageDoor
-
+from GarageBackend.Siren import Siren
 from GarageBackend.DeviceManager import DeviceManager
+from queue import Queue
+from threading import Thread
 
 #log = logging.getLogger(__name__)
 log = logging.getLogger('garageCmdProcessor')
@@ -14,8 +15,9 @@ log = logging.getLogger('garageCmdProcessor')
 @cherrypy.expose
 class DeviceControllerWebService():
 
-    def __init__(self):
+    def __init__(self, dispatch: Queue):
         self.deviceList = {}
+        self.dispatch = dispatch
         #Read Building Config
         # self.mydevice = Device()
         self.connecthandler = DeviceManager()
@@ -60,21 +62,47 @@ class DeviceControllerWebService():
         cherrypy.session['mything'] = mything
         cherrypy.session['myservice'] = myservice
         cherrypy.session['myid'] = myid
-        logbuf="Garage Request Received POST: %s %s %s " % (mything,myservice,myid)
+        logbuf="GarageBackend Request Received POST: %s %s %s " % (mything,myservice,myid)
         log.info ( logbuf )
-        # self.connecthandler.testConnection()
-        self.connecthandler.processDeviceCommand(self.deviceList)
+
+        self.dispatch.put(('testConnection', self.deviceList))
+        self.dispatch.put(('processDeviceCommand', self.deviceList))
 
         return mything
 
     def PUT(self):
         cherrypy.session['myservice'] = self.myservice
-        logbuf="Garage Request Received PUT: %s %s %s " % (mything,myservice,myid)
+        logbuf="Garage Request Received PUT:"
         log.info ( logbuf )
 
     def DELETE(self):
         cherrypy.session.pop('myservice', None)
-    
+
+
+''' Outside Class'''
+def command_queue_fn(q: Queue):
+    next = q.get()
+    while next is not None:
+        # log.info(next[0] +'/' + next[1:])
+        next[0](*(next[1:]))
+        next = q.get()
+
+def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
+    next = dispatch.get()
+    while next is not None:
+        name = next[0]
+        args = next[1:]
+        # log.info('dispatcher_fn name=' + getattr(sub, str(name)) + '  args=' + list(args) )
+        for sub in subscribers:
+            try:
+                # log.info('dispatcher_fn name= ' + name + 'args=' + args[0] )
+                command.put(([getattr(sub, str(name))] + list(args)))
+            except AttributeError:
+                log.debug(AttributeError)
+                pass
+        next = dispatch.get()
+
+
 
 # class Device():
 #     @cherrypy.expose
@@ -106,9 +134,31 @@ if __name__ == '__main__':
     log.setLevel(logging.INFO)
     log.info("Rapberry Arduino connection Started...")
 
-    cherrypy.quickstart(DeviceControllerWebService(), '/', conf)
+    '''Subscriber - Dispatcher '''
+    command_queue = Queue()
+    dispatch_queue = Queue()
+    #pub1 = Pub1(dispatch_queue)
+    sub1 = DeviceManager()
+    sub2 = GarageDoor()
+
+    thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,))
+    thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue', args=(dispatch_queue, command_queue, [sub1, sub2]))
+
+    thread_command_queue.start()
+    thread_dispatcher.start()
+
+    # pub1.cmdloop()
+
+
+
+    cherrypy.quickstart(DeviceControllerWebService(dispatch_queue), '/', conf)
     #System out here ! code not run.
 
+    dispatch_queue.put(None)
+    command_queue.put(None)
+
+    thread_command_queue.join(3)
+    thread_dispatcher.join(3)
 
 
     

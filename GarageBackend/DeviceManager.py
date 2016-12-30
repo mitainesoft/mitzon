@@ -14,7 +14,7 @@ class DeviceManager():
         self.usbConnectHandler = ArduinoApi(connection=connection)
         log.info("init deviceManager")
 
-    def testConnection(self):
+    def testConnection(self,deviceList):
         self.initBoardPinMode(self.mypin)
         logbuf="Arduino Pin=%d" % self.mypin
         log.info(logbuf)

@@ -46,6 +46,7 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
             try:
                 # command.put((getattr(sub, '%s' % name), *args))  Incompatible Python rev < 3.5
                 command.put(([getattr(sub, str(name))] + list(args)))
+                print (str(name))
             except AttributeError:
                 pass
         next = dispatch.get()
