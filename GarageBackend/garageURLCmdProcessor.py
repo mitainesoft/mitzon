@@ -1,7 +1,7 @@
 import logging
 import sys
 import cherrypy
-from GarageBackend.sensorProperties import sensorProperties
+from GarageBackend.Sensor import Sensor
 from GarageBackend.Constants import *
 from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.GarageDoor import GarageDoor
@@ -56,10 +56,10 @@ class garageURLCmdProcessor():
         log.info ( logbuf )
 
         ## Test Arduino Device
-        self.dispatch.put(('testConnection', self.deviceList))
+        #self.dispatch.put(('testConnection',"msg Hard coded pin"))
 
         ## Send all html POST commands to device through device manager
-        self.dispatch.put(('processDeviceCommand', mything,myservice,myid, self.deviceList))
+        self.dispatch.put(('processDeviceCommand', mything,myservice,myid))
         return mything
 
     def PUT(self):
