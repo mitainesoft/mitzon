@@ -14,7 +14,7 @@ from threading import Thread
 log = logging.getLogger('garageCmdProcessor')
 
 @cherrypy.expose
-class DeviceControllerWebService():
+class garageURLCmdProcessor():
 
     def __init__(self, dispatch: Queue):
         self.deviceList = {}
@@ -56,7 +56,7 @@ class DeviceControllerWebService():
         log.info ( logbuf )
 
         ## Test Arduino Device
-        #self.dispatch.put(('testConnection', self.deviceList))
+        self.dispatch.put(('testConnection', self.deviceList))
 
         ## Send all html POST commands to device through device manager
         self.dispatch.put(('processDeviceCommand', mything,myservice,myid, self.deviceList))
@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
 
 
-    cherrypy.quickstart(DeviceControllerWebService(dispatch_queue), '/', conf)
+    cherrypy.quickstart(garageURLCmdProcessor(dispatch_queue), '/', conf)
     #System out here ! code not run.
 
     dispatch_queue.put(None)
