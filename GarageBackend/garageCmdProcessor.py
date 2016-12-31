@@ -1,6 +1,7 @@
 import logging
 import sys
 import cherrypy
+from GarageBackend.sensorProperties import sensorProperties
 from GarageBackend.Constants import *
 from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.GarageDoor import GarageDoor
@@ -19,20 +20,8 @@ class DeviceControllerWebService():
         self.deviceList = {}
         self.dispatch = dispatch
         #Read Building Config
-        # self.mydevice = Device()
-        self.connecthandler = DeviceManager()
-
-        # replace by config
-        for garage_id in range(NBR_GARAGE):
-            logging.info('Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, GARAGE_BOARDPIN[garage_id]))
-            self.connecthandler.initBoardPinMode(GARAGE_BOARDPIN[garage_id])
-            obj = GarageDoor()
-            obj.g_id = garage_id
-            obj.g_name = GARAGE_NAME[garage_id]
-            obj.g_board_pin = GARAGE_BOARDPIN[garage_id]
-            obj_key = "garage_%d" % garage_id
-            self.deviceList[obj_key] = obj
-            garage_id = garage_id + 1
+        '''Create new device hanlder and connect to USB port for arduino'''
+        self.dev_manager_handler = DeviceManager(self.deviceList)
         log.info ("init DeviceControllerWebService stuff")
     @cherrypy.tools.accept(media='text/plain')    
 
@@ -67,7 +56,7 @@ class DeviceControllerWebService():
         log.info ( logbuf )
 
         ## Test Arduino Device
-        self.dispatch.put(('testConnection', self.deviceList))
+        #self.dispatch.put(('testConnection', self.deviceList))
 
         ## Send all html POST commands to device through device manager
         self.dispatch.put(('processDeviceCommand', mything,myservice,myid, self.deviceList))
@@ -141,8 +130,8 @@ if __name__ == '__main__':
     command_queue = Queue()
     dispatch_queue = Queue()
     #pub1 = Pub1(dispatch_queue)
-    sub1 = DeviceManager()
-    sub2 = GarageDoor()
+    sub1 = DeviceManager({})
+    sub2 = Siren()
 
     thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,))
     thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue', args=(dispatch_queue, command_queue, [sub1, sub2]))
