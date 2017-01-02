@@ -12,6 +12,7 @@ class DeviceManager():
         self.deviceList=deviceList
         self.mypin=GARAGE_BOARD_PIN[0] #Hard coded!  remove !
 
+        log.info("Rapberry Arduino connection Started...")
         # https://pypi.python.org/pypi/nanpy
         # https://github.com/nanpy/nanpy-firmware
         connection = SerialManager()
@@ -58,21 +59,21 @@ class DeviceManager():
         #log.info(str(self.deviceList))
         logbuf="Cmd Received: %s/%s/%s " % (mything,myservice,myid)
         log.info ( logbuf )
-        if (log.isEnabledFor(logging.INFO)): self._listDevices(self.deviceList)
-
+        if (log.isEnabledFor(logging.DEBUG)):
+            self._listDevices(self.deviceList)
 
         obj_key = "%s_%s" % (mything,myid)
         if ( obj_key in self.deviceList):
+            thisdevice = self.deviceList[obj_key]
             try:
-                thisdevice = self.deviceList[obj_key]
                 thingToCall = getattr(thisdevice, myservice)
-                result = thingToCall()
             except AttributeError:
-                log.info("Method %s doesn't exist !, nothing will happen for %s/%s/%s..." % (myservice,mything,myservice,myid))
-                pass
+                log.exception("Method %s doesn't exist ! nothing will happen for %s/%s/%s..." % (myservice,mything,myservice,myid))
+                return 1
+            thingToCall()
             pass
         else:
-            log.critical("Invalid command %s/%s/%s"  % (mything,myservice,myid))
+            log.error("Invalid command %s/%s/%s"  % (mything,myservice,myid))
 
         return 0
 

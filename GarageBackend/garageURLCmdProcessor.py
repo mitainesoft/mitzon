@@ -29,7 +29,7 @@ class garageURLCmdProcessor():
     def _cp_dispatch(self, vpath):
         #print ("JLC vpath=", vpath , "len=" , len(vpath))
         debugstr= ("JLC vpath=%s len=%d" % (vpath,len(vpath)) )
-        log.info(debugstr)
+        log.debug(debugstr)
         if len(vpath) == 1:
             cherrypy.request.params['mything'] = vpath.pop() # ex: garage_door
             return self        
@@ -90,7 +90,7 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
                 # log.info('dispatcher_fn name= ' + name + 'args=' + args[0] )
                 command.put(([getattr(sub, str(name))] + list(args)))
             except AttributeError:
-                log.debug(AttributeError)
+                log.error("dispatcher_fn %s %s" % (name, args[0]))
                 pass
         next = dispatch.get()
 
@@ -123,8 +123,7 @@ if __name__ == '__main__':
                             })
 
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    log.setLevel(logging.INFO)
-    log.info("Rapberry Arduino connection Started...")
+    log.setLevel(logging.DEBUG)
 
     '''Subscriber - Dispatcher '''
     command_queue = Queue()

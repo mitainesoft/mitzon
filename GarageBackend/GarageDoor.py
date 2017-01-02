@@ -29,16 +29,18 @@ class GarageDoor():
         return isgarageopen
 
     def status(self):
-        log.info("GarageDoor status called !")
+        log.debug("GarageDoor status called !")
         for sensor in self.g_sensor_props:
             read_status = self.usbConnectHandler.digitalRead(self.g_sensor_props[sensor].board_pin_id)
+            self.g_sensor_props[sensor].status=S_SENSOR_STATUS_LIST[read_status] #0 Closed 1 open
             log.info("Sensor %s Status = %d" % (sensor,read_status) )
         pass
 
     def addSensor(self, key,sensor_props):
         self.g_sensor_props[key]=sensor_props
         self.initBoardPinModeInput(self.g_sensor_props[key].board_pin_id)
-        log.info(str(sensor_props))
+        # log.info("Added Sensor %s to %s" % (key, self.g_name))
+        log.debug(str(sensor_props))
         pass
 
     def initBoardPinModeOutput(self, pin):
