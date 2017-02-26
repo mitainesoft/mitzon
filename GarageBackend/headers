@@ -1,0 +1,8 @@
+HTTP/1.1 400 Bad Request
+Allow: DELETE, GET, HEAD, POST, PUT
+Date: Sun, 25 Dec 2016 21:22:39 GMT
+Content-Length: 1889
+Content-Type: text/html;charset=utf-8
+Server: CherryPy/8.1.2
+Set-Cookie: session_id=660b33ce9338a1031b9a657b019e1a759f141a77; expires=Sun, 25 Dec 2016 22:22:39 GMT; Path=/
+
