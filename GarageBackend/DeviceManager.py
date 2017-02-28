@@ -11,14 +11,18 @@ class DeviceManager():
     def __init__(self,deviceList):
         self.deviceList=deviceList
         self.mypin=GARAGE_BOARD_PIN[0] #Hard coded!  remove !
+        self.usbConnectHandler = None
 
         log.info("Rapberry Arduino connection Started...")
         # https://pypi.python.org/pypi/nanpy
         # https://github.com/nanpy/nanpy-firmware
-        connection = SerialManager()
-
-        self.usbConnectHandler = ArduinoApi(connection=connection)
-        log.info("init deviceManager")
+        try:
+            connection = SerialManager()
+            self.usbConnectHandler = ArduinoApi(connection=connection)
+            log.info("init deviceManager")
+        except Exception:
+            log.info("USB Device Not found !")
+            return
 
         # replace by config
         for garage_id in range(NBR_GARAGE):
