@@ -45,7 +45,8 @@ class DeviceManager():
         self.initBoardPinMode(self.mypin)
         logbuf="Arduino Init Pin=%d" % self.mypin
         log.info(logbuf)
-        for n in range(0, 1):
+        for n in range(0, NBR_GARAGE-1):
+            self.mypin=GARAGE_BOARD_PIN[n];
             self.usbConnectHandler.digitalWrite(self.mypin, self.usbConnectHandler.HIGH)
             log.info("ON")
             sleep(2)

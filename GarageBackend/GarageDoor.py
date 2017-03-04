@@ -36,6 +36,19 @@ class GarageDoor():
             log.info("Sensor %s Status = %d" % (sensor,read_status) )
         pass
 
+    def testRelay(self):
+        self.initBoardPinModeOutput(self.g_board_pin_relay)
+        logbuf="Arduino Init Pin=%d" % self.g_board_pin_relay
+        log.info(logbuf)
+        for n in range(0, 1):
+            self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.HIGH)
+            log.info("ON")
+            sleep(3)
+            self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.LOW)
+            log.info("OFF")
+            sleep(2)
+            n += 1
+
     def addSensor(self, key,sensor_props):
         self.g_sensor_props[key]=sensor_props
         self.initBoardPinModeInput(self.g_sensor_props[key].board_pin_id)
