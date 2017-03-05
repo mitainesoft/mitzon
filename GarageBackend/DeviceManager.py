@@ -2,6 +2,8 @@ import logging
 from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.Sensor import Sensor
+from GarageBackend.CommandQResponse import *
+
 from time import sleep
 from nanpy import ArduinoApi, SerialManager
 
@@ -73,14 +75,18 @@ class DeviceManager():
             try:
                 thingToCall = getattr(thisdevice, myservice)
             except AttributeError:
-                log.exception("Method %s doesn't exist ! nothing will happen for %s/%s/%s..." % (myservice,mything,myservice,myid))
-                return 1
-            thingToCall()
+                ex_text="Method %s doesn't exist ! nothing will happen for %s/%s/%s..." % (myservice,mything,myservice,myid)
+                log.exception(ex_text)
+                resp = CommmandQResponse(self,0,ex_text)
+                return resp
+            resp=thingToCall()
             pass
         else:
-            log.error("Invalid command %s/%s/%s"  % (mything,myservice,myid))
+            ex_text="Invalid command %s/%s/%s"  % (mything,myservice,myid)
+            resp = CommmandQResponse(self, 0, ex_text)
+            log.error(ex_text)
 
-        return 0
+        return resp
 
 
     def _listDevices(self, deviceList):

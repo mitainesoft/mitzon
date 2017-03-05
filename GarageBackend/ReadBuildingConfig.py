@@ -6,7 +6,7 @@ from GarageBackend.Constants import *
 
 log = logging.getLogger(__name__)
 
-NBR_GARAGE=4
+NBR_GARAGE=2
 GARAGE_BOARD_PIN = [7, 6, 5, 4]
 
 ''' 2 sensor on top config '''
