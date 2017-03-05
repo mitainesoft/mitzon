@@ -4,16 +4,20 @@ from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.Sensor import Sensor
 from GarageBackend.CommandQResponse import *
 
+
 from time import sleep
 from nanpy import ArduinoApi, SerialManager
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('DeviceManager')
+
+
 
 class DeviceManager():
     def __init__(self,deviceList):
         self.deviceList=deviceList
         self.mypin=GARAGE_BOARD_PIN[0] #Hard coded!  remove !
         self.usbConnectHandler = None
+
 
         log.info("Rapberry Arduino connection Started...")
         # https://pypi.python.org/pypi/nanpy

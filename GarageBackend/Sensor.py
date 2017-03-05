@@ -1,6 +1,9 @@
 from GarageBackend.Constants import *
 from GarageBackend.ReadBuildingConfig import *
 
+log = logging.getLogger('Sensor')
+
+
 class Sensor():
     def __init__(self,id,board_pin_id):
         self.id=id

@@ -6,7 +6,7 @@ from GarageBackend.Constants import *
 from GarageBackend.CommandQResponse import *
 from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.GarageDoor import GarageDoor
-from GarageBackend.Siren import Siren
+from GarageBackend.AlertManager import *
 from GarageBackend.DeviceManager import DeviceManager
 from queue import *
 from threading import Thread
@@ -17,15 +17,17 @@ from cherrypy.lib import httputil, file_generator
 log = logging.getLogger('garageCmdProcessor')
 
 
+
 @cherrypy.expose
 class garageURLCmdProcessor():
     def __init__(self, dispatch: Queue):
+        log.info("init garageURLCmdProcessor...")
         self.deviceList = {}
         self.dispatch = dispatch
         # Read Building Config
         '''Create new device hanlder and connect to USB port for arduino'''
         self.dev_manager_handler = DeviceManager(self.deviceList)
-        log.info("init DeviceControllerWebService stuff")
+        self.alert_manager_handler = AlertManager()
 
     @cherrypy.tools.accept(media='text/plain')
     # s.post('http://127.0.0.1:8080/garage/open/g0')
@@ -73,8 +75,6 @@ class garageURLCmdProcessor():
         return resp.getRspPropsToString()
 
 
-
-
     def PUT(self):
         cherrypy.session['myservice'] = self.myservice
         logbuf = "Garage Request Received PUT:"
@@ -119,25 +119,33 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
 #         return 'About (%s) %s by %s...' % (mything, myid, myservice )
 
 if __name__ == '__main__':
-    # logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                        handlers=[logging.FileHandler("log/garage.log"),
+                                  logging.StreamHandler()])
     # create file handler which logs even debug messages
-    log.setLevel(logging.DEBUG)
-    fh = logging.FileHandler('garage.log')
-    fh.setLevel(logging.DEBUG)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    log.addHandler(fh)
-    log.addHandler(ch)
 
+    # log = logging.getLogger('garageCmdProcessor')
 
-    cherrypy.log.error_log.addHandler(ch)
-    cherrypy.log.access_log.addHandler(fh)
+    # handler=logging.StreamHandler()
+    # log.addHandler(handler)
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # handler.setFormatter(formatter)
+
+    # fh = logging.FileHandler('log/garage.log')
+    # fh.setLevel(logging.DEBUG)
+    # # create console handler with a higher log level
+    # ch = logging.StreamHandler()
+    # ch.setLevel(logging.DEBUG)
+    # # create formatter and add it to the handlers
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # fh.setFormatter(formatter)
+    # ch.setFormatter(formatter)
+    # # add the handlers to the logger
+    # log.addHandler(fh)
+    # log.addHandler(ch)
+    # # cherrypy.log.error_log.addHandler(ch)
+    # # cherrypy.log.access_log.addHandler(fh)
 
 
     conf = {
@@ -158,9 +166,11 @@ if __name__ == '__main__':
                             'log.error_file': "log/garage_cherrypy_error.log",
                             'log.screen': False,
                             'tools.sessions.on': True,
+                            'engine.autoreload_on': False,
                             })
 
 
+    log.setLevel(logging.DEBUG)
 
     log.info("Starting garage...")
 
@@ -171,11 +181,11 @@ if __name__ == '__main__':
     dispatch_queue = Queue()
     # pub1 = Pub1(dispatch_queue)
     sub1 = DeviceManager({})
-    #sub2 = Siren()
+    sub2 = AlertManager()
 
     thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,response_queue,))
     thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue',
-                               args=(dispatch_queue, command_queue, [sub1]))
+                               args=(dispatch_queue, command_queue, [sub1, sub2]))
 
     thread_command_queue.start()
     thread_dispatcher.start()
@@ -187,8 +197,13 @@ if __name__ == '__main__':
     cherrypy.quickstart(garageURLCmdProcessor(dispatch_queue), '/', conf)
     # System out here ! code not run.
 
+    cherrypy.engine.exit()
+
     dispatch_queue.put(None)
     command_queue.put(None)
 
     thread_command_queue.join(3)
     thread_dispatcher.join(3)
+
+    exit(0)
+

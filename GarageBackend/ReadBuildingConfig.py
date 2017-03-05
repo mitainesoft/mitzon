@@ -4,7 +4,7 @@ from GarageBackend.Constants import *
 
 
 
-log = logging.getLogger(__name__)
+#log = logging.getLogger('')
 
 NBR_GARAGE=2
 GARAGE_BOARD_PIN = [7, 6, 5, 4]

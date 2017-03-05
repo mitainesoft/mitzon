@@ -8,7 +8,7 @@ from time import sleep
 import time
 import datetime
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('GarageDoor')
 
 class GarageDoor():
 
@@ -41,7 +41,7 @@ class GarageDoor():
         resp = CommmandQResponse(0, sensor_status_text )
         return (resp)
 
-    def testRelay(self):
+    def test(self):
         self.initBoardPinModeOutput(self.g_board_pin_relay)
         logbuf="Arduino Init Pin=%d" % self.g_board_pin_relay
         log.info(logbuf)
