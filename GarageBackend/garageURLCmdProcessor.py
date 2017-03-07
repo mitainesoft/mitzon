@@ -11,18 +11,18 @@ from GarageBackend.DeviceManager import DeviceManager
 from GarageBackend.GarageManager import GarageManager
 from queue import *
 from threading import Thread
+from GarageBackend.SingletonMeta import SingletonMeta
 import types
 from cherrypy.lib import httputil, file_generator
 
-
-#log = logging.getLogger(__name__)
 log = logging.getLogger('garageCmdProcessor')
+
 garage_manager_handler = GarageManager()
 
-
 @cherrypy.expose
-class garageURLCmdProcessor():
+class garageURLCmdProcessor(metaclass=SingletonMeta):
     def __init__(self, dispatch: Queue):
+
         log.info("init garageURLCmdProcessor...")
         self.deviceList = {}
         self.dispatch = dispatch
@@ -50,6 +50,7 @@ class garageURLCmdProcessor():
 
         return vpath
 
+
     def GET(self):
         log.info("Garage Request Received GET")
         return cherrypy.session['mything']
@@ -69,19 +70,25 @@ class garageURLCmdProcessor():
         ## Send all html POST commands to device through device manager
         self.dispatch.put(('processDeviceCommand', mything, myservice, myid))
 
-        try:
-            resp=response_queue.get(True,RESP_TIMEOUT)
-        except Empty:
-            return ("RESP_TIMEOUT %s/%s/%s" %(mything, myservice, myid))
+        resp_str=""
 
+        for sub_nbr in range(0,2): #Subscribers are DeviceManager and Alert Manager
+            try:
+                resp=response_queue.get(True, RESP_TIMEOUT)
+                resp_str = resp_str +  resp.getRspPropsToString()
+            except Empty:
+                resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))
 
-        return resp.getRspPropsToString()
+        DeviceManager.listDevices(self,self.deviceList)
+        return resp_str
 
 
     def PUT(self):
         cherrypy.session['myservice'] = self.myservice
         logbuf = "Garage Request Received PUT:"
         log.info(logbuf)
+        DeviceManager.listDevices(self.deviceList)
+
 
     def DELETE(self):
         cherrypy.session.pop('myservice', None)
@@ -96,12 +103,10 @@ def command_queue_fn(q: Queue, r: Queue):
     while next is not None:
         # log.info(next[0] +'/' + next[1:])
         resp=next[0](*(next[1:]))
-
         log.debug("isinstance next = %s", next[0].__self__.__class__.__name__)
-
-        if hasattr(next[0], '__self__') and isinstance(next[0].__self__, DeviceManager):
-            r.put(resp)
-
+        r.put(resp)
+        # if hasattr(next[0], '__self__') and isinstance(next[0].__self__, DeviceManager):
+        #     r.put(resp)
         next = q.get()
 
 
@@ -162,10 +167,14 @@ if __name__ == '__main__':
     log.info("Starting garage...")
 
 
+
     '''Subscriber - Dispatcher '''
     command_queue = Queue()
     response_queue = Queue()
     dispatch_queue = Queue()
+
+    my_garageURLCmdProcessor = garageURLCmdProcessor(dispatch_queue)
+
     # pub1 = Pub1(dispatch_queue)
     sub1 = DeviceManager({})
     sub2 = AlertManager()
@@ -174,18 +183,22 @@ if __name__ == '__main__':
     thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue',
                                args=(dispatch_queue, command_queue, [sub1, sub2]))
 
-    thread_garage_manager = Thread(target=GarageManager.monitor, args=(garage_manager_handler,), name='garage_manager', daemon=True)
+    thread_garage_manager = Thread(target=GarageManager.monitor,
+                                   args=(garage_manager_handler, my_garageURLCmdProcessor.deviceList), name='garage_manager',
+                                   daemon=True)
+    thread_garage_manager.start()
+    # thread_garage_manager = Thread(target=GarageManager.monitor, args=(garage_manager_handler,device_manager_handler), name='garage_manager', daemon=True)
 
 
     thread_command_queue.start()
     thread_dispatcher.start()
-    thread_garage_manager.start()
+    # thread_garage_manager.start()
 
     # pub1.cmdloop()
 
 
 
-    cherrypy.quickstart(garageURLCmdProcessor(dispatch_queue), '/', conf)
+    cherrypy.quickstart(my_garageURLCmdProcessor, '/', conf)
     # System out here ! code not run.
 
 
@@ -194,7 +207,7 @@ if __name__ == '__main__':
 
     thread_command_queue.join(THREAD_TIMEOUTS)
     thread_dispatcher.join(THREAD_TIMEOUTS)
-    thread_garage_manager.join(THREAD_TIMEOUTS)
+    # thread_garage_manager.join(THREAD_TIMEOUTS)
 
     cherrypy.engine.exit()
     exit(0)

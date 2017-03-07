@@ -1,12 +1,13 @@
 import logging
 from GarageBackend.Constants import *
 from GarageBackend.CommandQResponse import *
+from GarageBackend.SingletonMeta import SingletonMeta
 
 
 log = logging.getLogger('garageCmdProcessor')
 
 
-class AlertManager():
+class AlertManager(metaclass=SingletonMeta):
     s_id = -1
     s_status = G_UNKNOWN
     s_board_pin = 7
@@ -21,7 +22,7 @@ class AlertManager():
         # log.info(str(self.deviceList))
         logbuf = "AlertManager Cmd Received: %s/%s/%s " % (mything, myservice, myid)
         log.info(logbuf)
-        resp = CommmandQResponse(0,"processDeviceCommand AlertManager called %s/%s/%s " % (mything, myservice, myid))
+        resp = CommmandQResponse(0,"Alert=None")
         return (resp)
 
     def enableSiren(self,mything,myservice,myid):

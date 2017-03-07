@@ -3,6 +3,7 @@ from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.Sensor import Sensor
 from GarageBackend.CommandQResponse import *
+from GarageBackend.SingletonMeta import SingletonMeta
 
 
 from time import sleep
@@ -11,8 +12,7 @@ from nanpy import ArduinoApi, SerialManager
 log = logging.getLogger('DeviceManager')
 
 
-
-class DeviceManager():
+class DeviceManager(metaclass=SingletonMeta):
     def __init__(self,deviceList):
         self.deviceList=deviceList
         self.mypin=GARAGE_BOARD_PIN[0] #Hard coded!  remove !
@@ -69,14 +69,15 @@ class DeviceManager():
     def processDeviceCommand(self,mything,myservice,myid):
         #log.info(str(self.deviceList))
         logbuf="Cmd Received: %s/%s/%s " % (mything,myservice,myid)
-        log.info ( logbuf )
-        if (log.isEnabledFor(logging.DEBUG)):
+        log.debug ( logbuf )
+        if log.isEnabledFor(logging.DEBUG):
             self._listDevices(self.deviceList)
 
         obj_key = "%s_%s" % (mything,myid)
         if ( obj_key in self.deviceList):
             thisdevice = self.deviceList[obj_key]
             try:
+                log.debug("Calling %s class %s" % (obj_key, thisdevice.__class__.__name__)  )
                 thingToCall = getattr(thisdevice, myservice)
             except AttributeError:
                 ex_text="Method %s doesn't exist ! nothing will happen for %s/%s/%s..." % (myservice,mything,myservice,myid)
@@ -90,15 +91,19 @@ class DeviceManager():
             resp = CommmandQResponse(self, 0, ex_text)
             log.error(ex_text)
 
+        #self.listDevices(self.deviceList)
         return resp
 
-
-    def _listDevices(self, deviceList):
+    def listDevices(self, deviceList):
         devlistidx = 0
         for key in deviceList:
             obj = deviceList[key]
+            sensor_status_str=""
             if isinstance(obj, GarageDoor):
-                logstr = "Garage Obj %d  %s Garage Configured -  Name: %s" % (obj.g_id, key, obj.g_name)
+                logstr = "listDevices Garage Obj#%d %s Garage Configured - Name:%s  g_status:%s " % (obj.g_id, key, obj.g_name, obj.g_status)
+                for sensor in obj.g_sensor_props:
+                    sensor_status_str = sensor_status_str + sensor + "=" + obj.g_sensor_props[sensor].status + " "
+                logstr = logstr + sensor_status_str
                 log.info(logstr)
             else:
                 log.info("typedef not found!")
