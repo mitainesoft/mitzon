@@ -13,8 +13,9 @@ log = logging.getLogger('DeviceManager')
 
 
 class DeviceManager(metaclass=SingletonMeta):
-    def __init__(self,deviceList):
-        self.deviceList=deviceList
+    def __init__(self):
+
+        self.deviceList=deviceList = {}
         self.mypin=GARAGE_BOARD_PIN[0] #Hard coded!  remove !
         self.usbConnectHandler = None
 
@@ -68,7 +69,7 @@ class DeviceManager(metaclass=SingletonMeta):
 
     def processDeviceCommand(self,mything,myservice,myid):
         #log.info(str(self.deviceList))
-        logbuf="Cmd Received: %s/%s/%s " % (mything,myservice,myid)
+        logbuf="processDeviceCommand Received: %s/%s/%s " % (mything,myservice,myid)
         log.debug ( logbuf )
         if log.isEnabledFor(logging.DEBUG):
             self._listDevices(self.deviceList)
@@ -94,10 +95,10 @@ class DeviceManager(metaclass=SingletonMeta):
         #self.listDevices(self.deviceList)
         return resp
 
-    def listDevices(self, deviceList):
+    def listDevices(self):
         devlistidx = 0
-        for key in deviceList:
-            obj = deviceList[key]
+        for key in self.deviceList:
+            obj = self.deviceList[key]
             sensor_status_str=""
             if isinstance(obj, GarageDoor):
                 logstr = "listDevices Garage Obj#%d %s Garage Configured - Name:%s  g_status:%s " % (obj.g_id, key, obj.g_name, obj.g_status)

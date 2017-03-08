@@ -14,6 +14,10 @@ from threading import Thread
 from GarageBackend.SingletonMeta import SingletonMeta
 import types
 from cherrypy.lib import httputil, file_generator
+from time import sleep
+import time
+import datetime
+
 
 log = logging.getLogger('garageCmdProcessor')
 
@@ -24,11 +28,11 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
     def __init__(self, dispatch: Queue):
 
         log.info("init garageURLCmdProcessor...")
-        self.deviceList = {}
+        #self.deviceList = {}
         self.dispatch = dispatch
         # Read Building Config
         '''Create new device hanlder and connect to USB port for arduino'''
-        self.dev_manager_handler = DeviceManager(self.deviceList)
+        self.dev_manager_handler = DeviceManager()
         self.alert_manager_handler = AlertManager()
 
 
@@ -62,7 +66,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         cherrypy.session['myservice'] = myservice
         cherrypy.session['myid'] = myid
         logbuf = "GarageBackend Request Received POST: %s %s %s " % (mything, myservice, myid)
-        log.info(logbuf)
+        log.debug(logbuf)
 
         ## Test Arduino Device
         # self.dispatch.put(('testConnection',"msg Hard coded pin"))
@@ -79,7 +83,8 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
             except Empty:
                 resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))
 
-        DeviceManager.listDevices(self,self.deviceList)
+        if log.isEnabledFor(logging.INFO):
+            self.dev_manager_handler.listDevices()
         return resp_str
 
 
@@ -103,7 +108,7 @@ def command_queue_fn(q: Queue, r: Queue):
     while next is not None:
         # log.info(next[0] +'/' + next[1:])
         resp=next[0](*(next[1:]))
-        log.debug("isinstance next = %s", next[0].__self__.__class__.__name__)
+        log.debug("command_queue_fn isinstance next = %s", next[0].__self__.__class__.__name__)
         r.put(resp)
         # if hasattr(next[0], '__self__') and isinstance(next[0].__self__, DeviceManager):
         #     r.put(resp)
@@ -118,7 +123,7 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
         # log.info('dispatcher_fn name=' + getattr(sub, str(name)) + '  args=' + list(args) )
         for sub in subscribers:
             try:
-                # log.info('dispatcher_fn name= ' + name + 'args=' + args[0] )
+                #log.debug('dispatcher_fn name= ' + name + 'args=' + args[0] )
                 command.put(([getattr(sub, str(name))] + list(args)))
             except AttributeError as exc:
                 log.error("dispatcher_fn fn:'%s' arg:'%s'" % (name, args[0]))
@@ -163,10 +168,7 @@ if __name__ == '__main__':
 
 
     log.setLevel(logging.DEBUG)
-
     log.info("Starting garage...")
-
-
 
     '''Subscriber - Dispatcher '''
     command_queue = Queue()
@@ -176,7 +178,7 @@ if __name__ == '__main__':
     my_garageURLCmdProcessor = garageURLCmdProcessor(dispatch_queue)
 
     # pub1 = Pub1(dispatch_queue)
-    sub1 = DeviceManager({})
+    sub1 = DeviceManager()
     sub2 = AlertManager()
 
     thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,response_queue,))
@@ -184,29 +186,19 @@ if __name__ == '__main__':
                                args=(dispatch_queue, command_queue, [sub1, sub2]))
 
     thread_garage_manager = Thread(target=GarageManager.monitor,
-                                   args=(garage_manager_handler, my_garageURLCmdProcessor.deviceList), name='garage_manager',
+                                   args=(garage_manager_handler,), name='garage_manager',
                                    daemon=True)
-    thread_garage_manager.start()
-    # thread_garage_manager = Thread(target=GarageManager.monitor, args=(garage_manager_handler,device_manager_handler), name='garage_manager', daemon=True)
-
-
     thread_command_queue.start()
     thread_dispatcher.start()
-    # thread_garage_manager.start()
-
-    # pub1.cmdloop()
-
-
+    thread_garage_manager.start()
 
     cherrypy.quickstart(my_garageURLCmdProcessor, '/', conf)
-    # System out here ! code not run.
-
 
     dispatch_queue.put(None)
     command_queue.put(None)
 
-    thread_command_queue.join(THREAD_TIMEOUTS)
-    thread_dispatcher.join(THREAD_TIMEOUTS)
+    # thread_command_queue.join(THREAD_TIMEOUTS)
+    # thread_dispatcher.join(THREAD_TIMEOUTS)
     # thread_garage_manager.join(THREAD_TIMEOUTS)
 
     cherrypy.engine.exit()

@@ -4,8 +4,7 @@ from GarageBackend.ReadBuildingConfig import *
 from GarageBackend.CommandQResponse import *
 from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.Sensor import Sensor
-
-
+from GarageBackend.DeviceManager import DeviceManager
 from time import sleep
 import time
 import datetime
@@ -17,22 +16,21 @@ class GarageManager():
     def __init__(self):
         log.info("GarageManager Starting")
 
-
-    def monitor(self,deviceList):
-        self.deviceList=deviceList
+    def monitor(self):
+        self.dev_manager_handler = DeviceManager()
+        self.deviceList=self.dev_manager_handler.deviceList
         i=0
         while (True):
-            log.info("garageManager %06d" % (i))
+            if log.isEnabledFor(logging.INFO):
+                log.debug("garageManager %06d" % (i))
+                self.dev_manager_handler.listDevices()
 
             for key in self.deviceList:
                 sensor_status_str = ""
                 obj = self.deviceList[key]
                 if isinstance(obj, GarageDoor):
-                    logstr = "Garage Obj %d  %s Garage Configured -  Name: %s " % (obj.g_id, key, obj.g_name)
-                    for sensor in obj.g_sensor_props:
-                        sensor_status_str = sensor_status_str + sensor + "=" + obj.g_sensor_props[sensor].status + " "
-                    logstr = logstr + sensor_status_str
-                    log.info(logstr)
+                    obj.status()
+                    pass
                 else:
                     log.info("typedef not found!")
 

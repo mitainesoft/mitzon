@@ -1,4 +1,6 @@
 
+from threading import Lock
+
 class SingletonMeta(type):
     __instances = {}
     def __call__(cls, *args, **kwargs):

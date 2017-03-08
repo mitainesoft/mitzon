@@ -36,7 +36,7 @@ class GarageDoor():
             read_status = self.usbConnectHandler.digitalRead(self.g_sensor_props[sensor].board_pin_id)
             self.g_sensor_props[sensor].status=S_SENSOR_STATUS_LIST[read_status] #0=open 1=closed
             sensor_status_text = sensor_status_text + "%s/%s/%s " % (self.g_name,sensor,S_SENSOR_STATUS_LIST[read_status])
-            log.info("Sensor %s Status = %d" % (sensor,read_status) )
+            log.debug("Sensor %s Status = %d" % (sensor,read_status) )
 
         resp = CommmandQResponse(0, sensor_status_text )
         return (resp)
@@ -69,8 +69,5 @@ class GarageDoor():
 
 
     def initBoardPinModeInput(self, pin):
-        #self.usbConnectHandler = ArduinoApi(connection=connection)
-        #ArduinoApi()
-
         log.info("Init Board Pin %d Mode Input %s" % (pin, self.g_name))
         self.usbConnectHandler.pinMode(pin, self.usbConnectHandler.INPUT)
