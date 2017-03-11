@@ -166,7 +166,7 @@ if __name__ == '__main__':
                             'engine.autoreload_on': False,
                             })
 
-
+    log = logging.getLogger('garageCmdProcessor')
     log.setLevel(logging.DEBUG)
     log.info("Starting garage...")
 
