@@ -106,13 +106,9 @@ class DeviceManager(metaclass=SingletonMeta):
                     sensor_status_str = sensor_status_str + sensor + "=" + obj.g_sensor_props[sensor].status + " "
                 printdate=datetime.datetime.fromtimestamp(obj.g_sensor_props[sensor].modified_time).strftime("%Y%m%d-%H%M%S")
                 logstr = logstr + sensor_status_str + " Modified_Time=" + printdate
-                #datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-
                 log.info(logstr)
             else:
                 log.info("typedef not found!")
-
             devlistidx = devlistidx + 1
-        return 0
-
+        return
 
