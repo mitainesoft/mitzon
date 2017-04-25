@@ -1,6 +1,6 @@
 import logging
 from GarageBackend.GarageDoor import GarageDoor
-from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.ConfigManager import *
 from GarageBackend.Sensor import Sensor
 from GarageBackend.CommandQResponse import *
 from GarageBackend.SingletonMeta import SingletonMeta
@@ -14,9 +14,9 @@ log = logging.getLogger('DeviceManager')
 
 class DeviceManager(metaclass=SingletonMeta):
     def __init__(self):
-
+        self.config_handler = ConfigManager()
         self.deviceList=deviceList = {}
-        self.mypin=GARAGE_BOARD_PIN[0] #Hard coded!  remove !
+        self.mypin=self.config_handler.DefaultTestPin #Hard coded!  remove !
         self.usbConnectHandler = None
 
 
@@ -32,14 +32,15 @@ class DeviceManager(metaclass=SingletonMeta):
             return
 
         # replace by config
-        for garage_id in range(NBR_GARAGE):
+
+        for garage_id in range(self.config_handler.NBR_GARAGE):
             logging.info(
-                'Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, GARAGE_BOARD_PIN[garage_id]))
+                'Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, self.config_handler.GARAGE_BOARD_PIN[garage_id]))
             obj = GarageDoor(garage_id,self.usbConnectHandler)
             objSensorProp = {}
-            for sensor_pin_id in range(len(GARAGE_SENSORS_PIN[garage_id])):
+            for sensor_pin_id in range(len(self.config_handler.GARAGE_SENSORS_PIN[garage_id])):
                 objSensorProp_key = "sensor_%s" % sensor_pin_id
-                objSensorProp[objSensorProp_key] = Sensor(sensor_pin_id, GARAGE_SENSORS_PIN[garage_id][
+                objSensorProp[objSensorProp_key] = Sensor(sensor_pin_id, self.config_handler.GARAGE_SENSORS_PIN[garage_id][
                     sensor_pin_id])  # new object
                 obj.addSensor(objSensorProp_key, objSensorProp[objSensorProp_key])
                 log.info(str(objSensorProp[objSensorProp_key]))
@@ -52,8 +53,8 @@ class DeviceManager(metaclass=SingletonMeta):
         self.initBoardPinMode(self.mypin)
         logbuf="Arduino Init Pin=%d" % self.mypin
         log.info(logbuf)
-        for n in range(0, NBR_GARAGE-1):
-            self.mypin=GARAGE_BOARD_PIN[n];
+        for n in range(0, self.config_handler.NBR_GARAGE-1):
+            self.mypin=self.config_handler.GARAGE_BOARD_PIN[n];
             self.usbConnectHandler.digitalWrite(self.mypin, self.usbConnectHandler.HIGH)
             log.info("ON")
             sleep(2)

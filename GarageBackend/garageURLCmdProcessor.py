@@ -4,7 +4,7 @@ import cherrypy
 from GarageBackend.Sensor import Sensor
 from GarageBackend.Constants import *
 from GarageBackend.CommandQResponse import *
-from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.ConfigManager import *
 from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.AlertManager import AlertManager
 from GarageBackend.DeviceManager import DeviceManager
@@ -12,6 +12,7 @@ from GarageBackend.GarageManager import GarageManager
 from queue import *
 from threading import Thread
 from GarageBackend.SingletonMeta import SingletonMeta
+from GarageBackend.ConfigManager import *
 import types
 from cherrypy.lib import httputil, file_generator
 from time import sleep
@@ -32,6 +33,8 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         self.dispatch = dispatch
         # Read Building Config
         '''Create new device hanlder and connect to USB port for arduino'''
+        self.config_handler = ConfigManager()
+        self.config_handler.setConfigFileName("config/garage_backend.config")
         self.dev_manager_handler = DeviceManager()
         self.alert_manager_handler = AlertManager()
 
@@ -78,7 +81,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
 
         for sub_nbr in range(0,2): #Subscribers are DeviceManager and Alert Manager
             try:
-                resp=response_queue.get(True, RESP_TIMEOUT)
+                resp=response_queue.get(True, self.config_handler.RESP_TIMEOUT)
                 resp_str = resp_str +  resp.getRspPropsToString()
             except Empty:
                 resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))

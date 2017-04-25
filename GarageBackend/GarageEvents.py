@@ -1,6 +1,6 @@
 import logging
 from GarageBackend.Constants import *
-from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.ConfigManager import *
 from GarageBackend.CommandQResponse import *
 from nanpy import ArduinoApi, SerialManager
 

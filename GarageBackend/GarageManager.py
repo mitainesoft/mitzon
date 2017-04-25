@@ -1,10 +1,11 @@
 import logging
 from GarageBackend.Constants import *
-from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.ConfigManager import *
 from GarageBackend.CommandQResponse import *
 from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.Sensor import Sensor
 from GarageBackend.DeviceManager import DeviceManager
+from GarageBackend.ConfigManager import *
 from time import sleep
 import time
 import datetime
@@ -15,6 +16,8 @@ class GarageManager():
 
     def __init__(self):
         log.info("GarageManager Starting")
+        self.config_handler = ConfigManager()
+
 
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
@@ -34,7 +37,7 @@ class GarageManager():
                 else:
                     log.info("typedef not found!")
 
-            sleep(GARAGE_MANAGER_LOOP_TIMEOUT)
+            sleep(self.config_handler.GARAGE_MANAGER_LOOP_TIMEOUT)
             i=i+1
         pass
 

@@ -3,9 +3,8 @@ from GarageBackend.Constants import *
 from GarageBackend.CommandQResponse import *
 from GarageBackend.SingletonMeta import SingletonMeta
 from GarageBackend.CommandQResponse import *
+from GarageBackend.ConfigManager import *
 from queue import *
-
-
 
 log = logging.getLogger('garageCmdProcessor')
 
@@ -14,6 +13,7 @@ class AlertManager(metaclass=SingletonMeta):
 
 
     def __init__(self):
+        self.config_handler = ConfigManager()
         log.info("AlertManager started...")
         self.s_id = -1
         self.s_status = G_UNKNOWN

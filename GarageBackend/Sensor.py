@@ -1,5 +1,5 @@
 from GarageBackend.Constants import *
-from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.ConfigManager import *
 import datetime
 import time
 

@@ -1,5 +1,5 @@
 from GarageBackend.Constants import *
-from GarageBackend.ReadBuildingConfig import *
+from GarageBackend.ConfigManager import *
 
 class CommmandQResponse():
     def __init__(self,cmdid,rsptxt):
