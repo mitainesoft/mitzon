@@ -33,6 +33,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         self.dispatch = dispatch
         # Read Building Config
         '''Create new device hanlder and connect to USB port for arduino'''
+
         self.config_handler = ConfigManager()
         self.config_handler.setConfigFileName("config/garage_backend.config")
         self.dev_manager_handler = DeviceManager()
@@ -81,7 +82,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
 
         for sub_nbr in range(0,2): #Subscribers are DeviceManager and Alert Manager
             try:
-                resp=response_queue.get(True, self.config_handler.RESP_TIMEOUT)
+                resp=response_queue.get(True, float(self.config_handler.getConfigParam("THREAD_CONTROL","RESP_TIMEOUT")))
                 resp_str = resp_str +  resp.getRspPropsToString()
             except Empty:
                 resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))

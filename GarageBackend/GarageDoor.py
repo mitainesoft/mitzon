@@ -20,8 +20,9 @@ class GarageDoor():
     def __init__(self,garage_id,usbConnectHandler):
         self.config_handler = ConfigManager()
         self.g_id = garage_id
-        self.g_name = self.config_handler.GARAGE_NAME[garage_id]
-        self.g_board_pin_relay = self.config_handler.GARAGE_BOARD_PIN[garage_id]
+        self.g_name = "GARAGE_%d" % garage_id
+        self.g_board_pin_relay = int(self.config_handler.getConfigParam(self.g_name,"GarageBoardPin"))
+
         self.g_status = G_UNKNOWN
         self.g_sensor_props = {}
         self.modified_time=int(time.time())
@@ -34,7 +35,7 @@ class GarageDoor():
 
         self.usbConnectHandler=usbConnectHandler
 
-        self.initBoardPinModeOutput(self.config_handler.GARAGE_BOARD_PIN[garage_id])
+        self.initBoardPinModeOutput(int(self.config_handler.getConfigParam(self.g_name,"GarageBoardPin")))
 
 
     def isGarageOpen(self,mything,myservice,myid):
@@ -82,7 +83,7 @@ class GarageDoor():
                         #log.warning(logstr)
 
                     self.nbrfault=self.nbrfault+1
-                    if (self.nbrfault>self.config_handler.GARAGE_MANAGER_MAX_FAILURE):
+                    if self.nbrfault>float(self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_MANAGER_MAX_FAILURE")):
                         sensor_status_text = "Garage " + self.g_name + " Sensor " + A_ERROR
                         self.g_sensor_props[sensor].status=S_ERROR
                         self.g_status=G_ERROR

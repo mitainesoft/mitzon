@@ -16,7 +16,8 @@ class DeviceManager(metaclass=SingletonMeta):
     def __init__(self):
         self.config_handler = ConfigManager()
         self.deviceList=deviceList = {}
-        self.mypin=self.config_handler.DefaultTestPin #Hard coded!  remove !
+        self.defaultgarage=self.config_handler.getConfigParam("GARAGE_MANAGER","GARAGE_NAME_FOR_TEST")
+        self.mypin= int(self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin"))
         self.usbConnectHandler = None
 
 
