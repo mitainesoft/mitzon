@@ -24,10 +24,6 @@ class GarageManager():
         self.deviceList=self.dev_manager_handler.deviceList
         i=0
         while (True):
-            if log.isEnabledFor(logging.INFO):
-                log.info("garageManager %06d" % (i))
-                self.dev_manager_handler.listDevices()
-
             for key in self.deviceList:
                 sensor_status_str = ""
                 obj = self.deviceList[key]
@@ -36,8 +32,13 @@ class GarageManager():
                     pass
                 else:
                     log.info("typedef not found!")
+
+            if log.isEnabledFor(logging.INFO):
+                log.info("garageManager %06d" % (i))
+                self.dev_manager_handler.listDevices()
+
+
             sleep(float(self.config_handler.getConfigParam("GARAGE_MANAGER","GARAGE_MANAGER_LOOP_TIMEOUT")))
-            # sleep(self.config_handler.GARAGE_MANAGER_LOOP_TIMEOUT)
             i=i+1
         pass
 

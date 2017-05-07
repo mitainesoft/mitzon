@@ -35,6 +35,7 @@ class AlertManager(metaclass=SingletonMeta):
         return isgarageopen
 
     def addAlert(self, alert: CommmandQResponse):
+        log.warning("Add Alert Queue: " + alert.text)
         self.alertQ.put(alert)
         pass
 

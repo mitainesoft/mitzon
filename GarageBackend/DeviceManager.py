@@ -108,13 +108,39 @@ class DeviceManager(metaclass=SingletonMeta):
         for key in self.deviceList:
             obj = self.deviceList[key]
             sensor_status_str=""
+
             if isinstance(obj, GarageDoor):
-                logstr = "listDevices Garage Obj#%d %s Garage Configured - Name:%s  g_status:%s " % (obj.g_id, key, obj.g_name, obj.g_status)
+                logstr = "listDevices %d) %s-%s g_status:%s " % (obj.g_id, key, obj.g_name, obj.g_status)
                 for sensor in obj.g_sensor_props:
                     sensor_status_str = sensor_status_str + sensor + "=" + obj.g_sensor_props[sensor].status + " "
-                printdate=datetime.datetime.fromtimestamp(obj.g_sensor_props[sensor].modified_time).strftime("%Y%m%d-%H%M%S")
-                logstr = logstr + sensor_status_str + " Modified_Time=" + printdate
-                log.info(logstr)
+                if obj.g_update_time != None:
+                    printut=datetime.datetime.fromtimestamp(obj.g_update_time).strftime("%Y%m%d-%H%M%S")
+                else:
+                    printut="None"
+                if obj.g_open_time != None:
+                    printot = datetime.datetime.fromtimestamp(obj.g_open_time).strftime("%Y%m%d-%H%M%S")
+                else:
+                    printot="None"
+                if obj.g_close_time!=None:
+                    printct = datetime.datetime.fromtimestamp(obj.g_close_time).strftime("%Y%m%d-%H%M%S")
+                else:
+                    printct="None"
+                if obj.g_error_time!=None:
+                    printerrt = datetime.datetime.fromtimestamp(obj.g_error_time).strftime("%Y%m%d-%H%M%S")
+                else:
+                    printerrt="None"
+                if obj.g_last_alert_send_time!=None:
+                    printlast = datetime.datetime.fromtimestamp(obj.g_last_alert_send_time).strftime("%Y%m%d-%H%M%S")
+                else:
+                    printlast="None"
+                try:
+                    logstr = logstr + sensor_status_str + " utime=" + printut+ " otime=" + printot + " ctime=" + printct + " errtime=" + printerrt+ " LastAlertTime=" + printlast
+                    log.info(logstr)
+                except Exception:
+                    log.error ("Time Stamp print error ?!?  print to stdout ")
+                    print (logstr)
+
+
             else:
                 log.info("typedef not found!")
             devlistidx = devlistidx + 1
