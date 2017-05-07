@@ -8,6 +8,7 @@ from time import sleep
 import time
 import datetime
 from nanpy import ArduinoApi, SerialManager
+import re
 
 log = logging.getLogger('DeviceManager')
 
@@ -34,17 +35,22 @@ class DeviceManager(metaclass=SingletonMeta):
 
         # replace by config
 
-        for garage_id in range(self.config_handler.NBR_GARAGE):
+        for garageNameKey in self.config_handler.GARAGE_NAME:
+            matchObj = re.findall(r'\d', garageNameKey,1)
+            garage_id=int(matchObj[0])
             logging.info(
-                'Initialize board garage_id %d ** Control Board Pin %d' % (garage_id, self.config_handler.GARAGE_BOARD_PIN[garage_id]))
-            obj = GarageDoor(garage_id,self.usbConnectHandler)
+                'Initialize board garage_id %s ** Control Board Pin %s' % (garageNameKey, self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin")))
+            obj = GarageDoor(garageNameKey,self.usbConnectHandler)
             objSensorProp = {}
-            for sensor_pin_id in range(len(self.config_handler.GARAGE_SENSORS_PIN[garage_id])):
-                objSensorProp_key = "sensor_%s" % sensor_pin_id
-                objSensorProp[objSensorProp_key] = Sensor(sensor_pin_id, self.config_handler.GARAGE_SENSORS_PIN[garage_id][
-                    sensor_pin_id])  # new object
+            sensorPinArray=self.config_handler.getConfigParam(garageNameKey, "GarageSensorsBoardPin").split(",")
+            sensorId=0
+            for sensorPinKey in sensorPinArray:
+                sensor_pin_id=int(sensorPinKey)
+                objSensorProp_key = "sensor_%s" % sensorId
+                objSensorProp[objSensorProp_key] = Sensor(sensorId, int(sensor_pin_id))  # new object
                 obj.addSensor(objSensorProp_key, objSensorProp[objSensorProp_key])
-                log.info(str(objSensorProp[objSensorProp_key]))
+                log.debug(str(objSensorProp[objSensorProp_key]))
+                sensorId+=1
             obj_key = "GarageDoor_%d" % garage_id
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1

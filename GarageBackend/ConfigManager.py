@@ -16,25 +16,9 @@ class ConfigManager(metaclass=SingletonMeta):
         log.debug("Started...")
         self.configfilename="config/garage_backend.config"
         self.config = configparser.ConfigParser()
-
-        # Legacy Value to get rif of !
-
-        # self.DefaultTestPin = 7
         self.configSections = []
         self.NBR_GARAGE=0 #Calculated value
-
-        self.GARAGE_BOARD_PIN = [7, 6, 5, 4]
-
-        ''' 2 sensor on top config '''
-        self.GARAGE_SENSORS_PIN = [[8, 9],
-                              [10, 11],
-                              [8, 9],  # invalid !
-                              [10, 11]  # invalid !
-                              ]
-
         self.GARAGE_NAME = [] # ["GARAGE_0", "GARAGE_1", "GARAGE_2", "GARAGE_3"]
-
-        pass
 
     def setConfigFileName(self,filename):
         log.info("Set config file name...")

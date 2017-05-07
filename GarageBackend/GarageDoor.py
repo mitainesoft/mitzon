@@ -17,10 +17,14 @@ log = logging.getLogger('GarageDoor')
 
 class GarageDoor():
 
-    def __init__(self,garage_id,usbConnectHandler):
+    def __init__(self,garage_name,usbConnectHandler):
         self.config_handler = ConfigManager()
+
+        matchObj = re.findall(r'\d', garage_name, 1)
+        garage_id = int(matchObj[0])
         self.g_id = garage_id
-        self.g_name = "GARAGE_%d" % garage_id
+
+        self.g_name = garage_name
         self.g_board_pin_relay = int(self.config_handler.getConfigParam(self.g_name,"GarageBoardPin"))
 
         self.g_status = G_UNKNOWN
