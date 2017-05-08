@@ -58,7 +58,7 @@ class GarageManager():
 
                         #close door !
                         if gd.g_next_cmd_allowed_time != None and time.time() > gd.g_next_cmd_allowed_time:
-                            gd.closeGarageDoor()
+                            gd.triggerGarageDoor()
                     elif time.time() > (gd.g_open_time + self.GarageOpenTriggerAlarmElapsedTime ):
                         status_text = gd.g_name + " GARAGE OPEN TIME WARNING ALERT"
                         self.alarm_magr_handler.addAlert(CommmandQResponse(0, status_text))

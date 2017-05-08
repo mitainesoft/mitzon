@@ -19,6 +19,7 @@ class GarageDoor():
 
     def __init__(self,garage_name,usbConnectHandler):
         self.config_handler = ConfigManager()
+        self.alarm_mgr_handler = AlertManager()
 
         matchObj = re.findall(r'\d', garage_name, 1)
         garage_id = int(matchObj[0])
@@ -50,8 +51,7 @@ class GarageDoor():
 
 
     def isGarageOpen(self,mything,myservice,myid):
-        isgarageopen= True
-        return isgarageopen
+        return self.g_status==G_OPEN
 
 
     def updateSensor(self):
@@ -63,10 +63,10 @@ class GarageDoor():
             self.g_sensor_props[sensor].status=S_SENSOR_STATUS_LIST[read_status] #0=open 1=closed
             sensor_status_text = sensor_status_text + "%s/%s/%s " % (self.g_name,sensor,S_SENSOR_STATUS_LIST[read_status])
             log.debug("Sensor %s Status = %d" % (sensor,read_status) )
-        resp=self.dertermineGarageDoorOpenClosedStatus()
+        resp=self.determineGarageDoorOpenClosedStatus()
         return resp
 
-    def dertermineGarageDoorOpenClosedStatus(self):
+    def determineGarageDoorOpenClosedStatus(self):
         log.debug("GarageDoor dertermine Door Open Closed Status called !")
         sensorkey0="[UNKNOWN]"
         sensor_status_text=A_OK
@@ -97,8 +97,8 @@ class GarageDoor():
                         sensor_status_text = "Garage " + self.g_name + " Sensor " + A_ERROR
                         self.g_sensor_props[sensor].status=S_ERROR
                         self.g_status=G_ERROR
-                        am=AlertManager()
-                        am.addAlert(CommmandQResponse(0, sensor_status_text ))
+
+                        self.alarm_mgr_handler.addAlert(CommmandQResponse(0, sensor_status_text ))
                         self.g_last_alert_send_time = time.time()
                         log.error(sensor_status_text)
         log.debug(logstr)
@@ -141,7 +141,37 @@ class GarageDoor():
         self.usbConnectHandler.pinMode(pin, self.usbConnectHandler.INPUT)
         self.s_update_time=time.time()
 
-    def closeGarageDoor(self):
+    def open(self):
+        status_text=self.g_name + " "
+        if (self.g_status  == G_CLOSED):
+            if time.time() > self.g_next_cmd_allowed_time:
+                status_text+=" open. Trigger garage door !"
+                self.triggerGarageDoor()
+            else:
+                status_text+="open denied. Too early to retry!"
+        else:
+            status_text += "open denied. current status is " + self.g_status
+
+        resp=CommmandQResponse(0, status_text)
+        self.alarm_mgr_handler.addAlert(resp)
+        return resp
+
+    def close(self):
+        status_text = self.g_name + " "
+        if (self.g_status == G_OPEN):
+            if time.time() > self.g_next_cmd_allowed_time:
+                status_text += " close. Trigger garage door !"
+                self.triggerGarageDoor()
+            else:
+                status_text += "close denied. Too early to retry!"
+        else:
+            status_text += "close denied. current status is " + self.g_status
+
+        resp=CommmandQResponse(0, status_text)
+        self.alarm_mgr_handler.addAlert(resp)
+        return resp
+
+    def triggerGarageDoor(self):
         try:
             self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.HIGH)
             log.info(self.g_name + "Press button!")
@@ -152,7 +182,7 @@ class GarageDoor():
             self.g_next_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeRetryCloseDoor"))
             self.g_last_cmd_sent_time=time.time()
         except Exception:
-            log.error("closeGarageDoor problem !")
+            log.error("triggerGarageDoor Open or Close problem !")
             traceback.print_exc()
             os._exit(-1)
 
