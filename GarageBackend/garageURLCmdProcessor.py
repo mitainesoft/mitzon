@@ -22,7 +22,7 @@ import datetime
 
 log = logging.getLogger('garageCmdProcessor')
 
-garage_manager_handler = GarageManager()
+garage_manager_handler = None #GarageManager()
 
 @cherrypy.expose
 class garageURLCmdProcessor(metaclass=SingletonMeta):
@@ -38,6 +38,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         self.config_handler.setConfigFileName("config/garage_backend.config")
         self.dev_manager_handler = DeviceManager()
         self.alert_manager_handler = AlertManager()
+        # self.garage_manager_handler = GarageManager()
 
 
     @cherrypy.tools.accept(media='text/plain')
@@ -189,6 +190,7 @@ if __name__ == '__main__':
     thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue',
                                args=(dispatch_queue, command_queue, [sub1, sub2]))
 
+    garage_manager_handler = GarageManager()
     thread_garage_manager = Thread(target=GarageManager.monitor,
                                    args=(garage_manager_handler,), name='garage_manager',
                                    daemon=True)

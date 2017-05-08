@@ -65,7 +65,7 @@ class ConfigManager(metaclass=SingletonMeta):
         try:
             val=self.config[section][param]
         except KeyError:
-            log.info("Section:"+section+" param:" + param +" Not exist! Die !!!")
+            log.error("Section="+section+" param=" + param +" Not exist! Die !!!")
             traceback.print_exc()
             os._exit(-1)
         return val

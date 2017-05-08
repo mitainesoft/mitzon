@@ -35,6 +35,10 @@ class GarageDoor():
         self.g_close_time = None
         self.g_error_time = None
         self.g_last_alert_send_time = None
+        self.g_last_cmd_sent_time = None
+        self.g_next_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeRetryCloseDoor"))
+
+
         self.g_alert_light_time = None
         self.g_force_ignore_cmd = False
         self.nbrfault=0
@@ -52,9 +56,9 @@ class GarageDoor():
 
     def updateSensor(self):
         sensor_status_text=""
-        self.g_update_time = int(time.time())
+        self.g_update_time = time.time()
         for sensor in self.g_sensor_props:
-            self.g_sensor_props[sensor].s_update_time = int(time.time())
+            self.g_sensor_props[sensor].s_update_time = time.time()
             read_status = self.usbConnectHandler.digitalRead(self.g_sensor_props[sensor].board_pin_id)
             self.g_sensor_props[sensor].status=S_SENSOR_STATUS_LIST[read_status] #0=open 1=closed
             sensor_status_text = sensor_status_text + "%s/%s/%s " % (self.g_name,sensor,S_SENSOR_STATUS_LIST[read_status])
@@ -95,7 +99,7 @@ class GarageDoor():
                         self.g_status=G_ERROR
                         am=AlertManager()
                         am.addAlert(CommmandQResponse(0, sensor_status_text ))
-                        self.g_last_alert_send_time = int(time.time())
+                        self.g_last_alert_send_time = time.time()
                         log.error(sensor_status_text)
         log.debug(logstr)
 
@@ -103,11 +107,11 @@ class GarageDoor():
             log.info(self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status)
             self.g_prevstatus = self.g_status
             if self.g_status == G_OPEN:
-                self.g_open_time = int(time.time())
+                self.g_open_time = time.time()
             elif self.g_status == G_CLOSED:
-                self.g_close_time = int(time.time())
+                self.g_close_time = time.time()
             elif self.g_status == G_ERROR:
-                self.g_error_time = int(time.time())
+                self.g_error_time = time.time()
         else:
             log.info(self.g_name + " no change !")
 
@@ -123,19 +127,34 @@ class GarageDoor():
         self.g_sensor_props[key]=sensor_props
         self.initBoardPinModeInput(self.g_sensor_props[key].board_pin_id)
         log.debug(str(sensor_props))
-        self.s_update_time = int(time.time())
+        self.s_update_time = time.time()
         pass
 
     def initBoardPinModeOutput(self, pin):
         log.info("Init Board Pin %d Mode Output %s" % (pin, self.g_name))
         self.usbConnectHandler.pinMode(pin, self.usbConnectHandler.OUTPUT)
-        self.s_update_time = int(time.time())
+        self.s_update_time = time.time()
 
 
     def initBoardPinModeInput(self, pin):
         log.info("Init Board Pin %d Mode Input %s" % (pin, self.g_name))
         self.usbConnectHandler.pinMode(pin, self.usbConnectHandler.INPUT)
-        self.s_update_time=int(time.time())
+        self.s_update_time=time.time()
+
+    def closeGarageDoor(self):
+        try:
+            self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.HIGH)
+            log.info(self.g_name + "Press button!")
+            sleep(float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeToKeepButtonPressedMilliSec"))/1000)
+            self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.LOW)
+            log.info(self.g_name + "Release button!")
+            sleep(float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeToKeepButtonPressedMilliSec"))/1000)
+            self.g_next_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeRetryCloseDoor"))
+            self.g_last_cmd_sent_time=time.time()
+        except Exception:
+            log.error("closeGarageDoor problem !")
+            traceback.print_exc()
+            os._exit(-1)
 
     def test(self):
         self.initBoardPinModeOutput(self.g_board_pin_relay)

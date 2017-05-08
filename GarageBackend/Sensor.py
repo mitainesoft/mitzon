@@ -12,12 +12,12 @@ class Sensor():
         self.board_pin_id=board_pin_id
         self.status=S_UNKNOWN
         self.digital=True
-        self.s_update_time = int(time.time())
+        self.s_update_time = time.time()
         pass
 
     def updateSensorProps(self,status):
         self.status=status
-        self.s_update_time = int(time.time())
+        self.s_update_time = time.time()
         pass
 
 
