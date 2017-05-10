@@ -41,7 +41,7 @@ class GarageDoor():
 
 
         self.g_alert_light_time = None
-        self.g_force_ignore_cmd = False
+        self.g_auto_force_ignore_garage_open_close_cmd = False
         self.nbrfault=0
         self.g_statusEventList=[]
 
@@ -70,6 +70,7 @@ class GarageDoor():
         log.debug("GarageDoor dertermine Door Open Closed Status called !")
         sensorkey0="[UNKNOWN]"
         sensor_status_text=A_OK
+        logstr=""
         for i, sensor in enumerate(self.g_sensor_props):
             logstr="%d Garage %d Sensor %s Status = %s" % (i, self.g_id, sensor, self.g_sensor_props[sensor].status)
 
@@ -81,10 +82,13 @@ class GarageDoor():
                     self.g_status=self.g_sensor_props[sensor].status
                     if (S_ERROR in self.g_statusEventList):
                         self.g_statusEventList.remove(S_ERROR)
-                        AlertManager().clearAlert()
+                        for sensorkey in self.g_sensor_props:
+                            sensordevname = self.g_name + "_" + sensorkey
+                            self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname)
                         self.nbrfault=0
                 else:
                     self.g_status = S_ERROR
+                    self.g_error_time = time.time()
                     logstr = " %d Garage %d Sensor %s Status = %s" % (
                         i, self.g_id, sensor, S_WARNING)
 
@@ -94,13 +98,16 @@ class GarageDoor():
 
                     self.nbrfault=self.nbrfault+1
                     if self.nbrfault>float(self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_MANAGER_MAX_FAILURE")):
-                        sensor_status_text = "Garage " + self.g_name + " Sensor " + A_ERROR
+                        # sensor_status_text = "Garage " + self.g_name + " Sensor " + S_ERROR
                         self.g_sensor_props[sensor].status=S_ERROR
                         self.g_status=G_ERROR
-
-                        self.alarm_mgr_handler.addAlert(CommmandQResponse(0, sensor_status_text ))
+                        # self.alarm_mgr_handler.addAlert(CommmandQResponse(0, sensor_status_text ))
                         self.g_last_alert_send_time = time.time()
+                        sensor_status_text = self.alarm_mgr_handler.addAlert("GS001", self.g_name+"_"+sensor)
                         log.error(sensor_status_text)
+                        self.g_auto_force_ignore_garage_open_close_cmd = True
+                        status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
+                        log.error(status_text)
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):
@@ -109,11 +116,27 @@ class GarageDoor():
             if self.g_status == G_OPEN:
                 self.g_open_time = time.time()
             elif self.g_status == G_CLOSED:
+                # self.g_auto_force_ignore_garage_open_close_cmd = False
+
                 self.g_close_time = time.time()
+                # Clear all alarms when all sensors are OK since garage is closed.
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
+                for sensorkey in self.g_sensor_props:
+                    sensordevname=self.g_name+"_"+sensorkey
+                    self.alarm_mgr_handler.clearAlertDevice("SENSOR",sensordevname)
+
             elif self.g_status == G_ERROR:
                 self.g_error_time = time.time()
         else:
-            log.info(self.g_name + " no change !")
+            log.debug(self.g_name + "status no change !")
+            if (self.g_status == G_CLOSED \
+                        and self.g_auto_force_ignore_garage_open_close_cmd==True \
+                        and (time.time() > (self.g_error_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageDoorAssumedClosedTime") ) ) )
+                             ):
+                if (time.time() > (self.g_close_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageDoorAssumedClosedTime")))):
+                    self.g_auto_force_ignore_garage_open_close_cmd = False
+                    self.alarm_mgr_handler.clearAlertID("GCD01", self.g_name)
+                    log.info(self.g_name+ " assumed closed. Garage back to auto close mode!")
 
         resp = CommmandQResponse(0, sensor_status_text )
         return (resp)
@@ -142,36 +165,55 @@ class GarageDoor():
         self.s_update_time=time.time()
 
     def open(self):
-        status_text=self.g_name + " "
+        status_text=""
         if (self.g_status  == G_CLOSED):
             if time.time() > self.g_next_cmd_allowed_time:
-                status_text+=" open. Trigger garage door !"
+                # status_text+=" open. Trigger garage door !"
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
                 self.triggerGarageDoor()
+                status_text = self.alarm_mgr_handler.addAlert("GTO01", self.g_name)
             else:
-                status_text+="open denied. Too early to retry!"
+                # status_text+="open denied. Too early to retry!"
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                status_text = self.alarm_mgr_handler.addAlert("GTO02", self.g_name)
+
         else:
-            status_text += "open denied. current status is " + self.g_status
+            # status_text += "open denied. current status is " + self.g_status
+            self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+            status_text = self.alarm_mgr_handler.addAlert("GTO003", self.g_name,self.g_status)
 
         resp=CommmandQResponse(0, status_text)
-        self.alarm_mgr_handler.addAlert(resp)
+
+        log.warning(status_text)
         return resp
 
     def close(self):
-        status_text = self.g_name + " "
-        if (self.g_status == G_OPEN):
-            if time.time() > self.g_next_cmd_allowed_time:
-                status_text += " close. Trigger garage door !"
-                self.triggerGarageDoor()
-            else:
-                status_text += "close denied. Too early to retry!"
+        status_text = ""
+        if self.g_auto_force_ignore_garage_open_close_cmd == True:
+            status_text=self.g_name + " " +  self.alarm_mgr_handler.alertFileListJSON["GDC01"]["text"]+" "
+            log.warning(status_text)
         else:
-            status_text += "close denied. current status is " + self.g_status
+            if (self.g_status == G_OPEN):
+                if time.time() > self.g_next_cmd_allowed_time:
+                    # status_text += " close. Trigger garage door !"
+                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                    status_text = self.alarm_mgr_handler.addAlert("GTC01", self.g_name)
+                    self.triggerGarageDoor()
+                else:
+                    # status_text += "close denied. Too early to retry!"
+                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                    status_text = self.alarm_mgr_handler.addAlert("GTC02", self.g_name)
+            else:
+                # status_text += "close denied. current status is " + self.g_status
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                status_text = self.alarm_mgr_handler.addAlert("GTC03", self.g_name,self.g_status)
 
         resp=CommmandQResponse(0, status_text)
-        self.alarm_mgr_handler.addAlert(resp)
         return resp
 
     def triggerGarageDoor(self):
+
         try:
             self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.HIGH)
             log.info(self.g_name + "Press button!")

@@ -1,0 +1,73 @@
+{
+    "GO001": {
+        "deviceType": "Garage",
+        "severity": "1" ,
+        "category": "GARAGE_OPEN",
+        "text": "GARAGE OPEN TIME EXPIRED ALERT" ,
+        "workaround": "Close the garage door!"
+    },
+        "GO002": {
+        "deviceType": "Garage",
+        "severity": "2" ,
+        "category": "GARAGE_OPEN",
+        "text": "GARAGE OPEN TIME WARNING ALERT" ,
+        "workaround": "Close the garage door!"
+    },
+        "GCD01": {
+        "deviceType": "Garage",
+        "severity": "1" ,
+        "category": "GARAGE_LOCK",
+        "text": "GARAGE AUTO CLOSE DISABLED" ,
+        "workaround": "Check logs, raspberry or arduino communication!"
+    },
+        "GS001": {
+        "deviceType": "Garage Sensor",
+        "severity": "1" ,
+        "category": "SENSOR",
+        "text": "Garage Sensor Error" ,
+        "workaround": "Fix Sensor or garage door alignment to sensor!"
+    },
+        "GTO01": {
+        "deviceType": "Garage",
+        "severity": "2" ,
+        "category": "GARAGE_COMMAND",
+        "text": "open. Trigger garage door !" ,
+        "workaround": "Get out of the way!"
+    },
+        "GTO02": {
+        "deviceType": "Garage",
+        "severity": "3" ,
+        "category": "GARAGE_COMMAND",
+        "text": "open denied. Too early to retry!" ,
+        "workaround": "Calm down! Wait before trying again!"
+    },
+        "GTO003": {
+        "deviceType": "Garage",
+        "severity": "2" ,
+        "category": "GARAGE_COMMAND",
+        "text": "open denied. current status is " ,
+        "workaround": "Calm down! Stop trying !"
+    },
+        "GTC01": {
+        "deviceType": "Garage",
+        "severity": "2" ,
+        "category": "GARAGE_COMMAND",
+        "text": "close. Trigger garage door !" ,
+        "workaround": "Get out of the way!"
+    },
+        "GTC02": {
+        "deviceType": "Garage",
+        "severity": "3" ,
+        "category": "GARAGE_COMMAND",
+        "text": "close denied. Too early to retry!" ,
+        "workaround": "Calm down! Wait before trying again!"
+    },
+        "GTC03": {
+        "deviceType": "Garage",
+        "severity": "2" ,
+        "category": "GARAGE_COMMAND",
+        "text": "close denied. current status is " ,
+        "workaround": "Calm down! Stop trying !"
+    }
+
+}
