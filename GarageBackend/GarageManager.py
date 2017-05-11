@@ -32,7 +32,8 @@ class GarageManager():
                 sensor_status_str = ""
                 obj = self.deviceList[key]
                 if isinstance(obj, GarageDoor):
-                    obj.status()
+                    obj.updateSensor()
+                    obj.determineGarageDoorOpenClosedStatus()
                     self.checkGaragePolicy(obj)
                     pass
                 else:

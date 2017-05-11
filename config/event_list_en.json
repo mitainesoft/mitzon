@@ -68,6 +68,13 @@
         "category": "GARAGE_COMMAND",
         "text": "close denied. current status is " ,
         "workaround": "Calm down! Stop trying !"
+    },
+        "HW001": {
+        "deviceType": "Sensor",
+        "severity": "1" ,
+        "category": "HARDWARE",
+        "text": "USB Commuucation error" ,
+        "workaround": "Calm down! Stop trying !"
     }
 
 }

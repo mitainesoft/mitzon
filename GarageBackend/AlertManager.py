@@ -10,6 +10,7 @@ import time
 import datetime
 import json
 
+
 log = logging.getLogger('garageCmdProcessor')
 
 
@@ -42,12 +43,88 @@ class AlertManager(metaclass=SingletonMeta):
             log.error("Exiting...")
             os._exit(-1)
 
+
+    def processAlerts(self):
+        # log.info(str(self.deviceList))
+        logbuf = "AlertManager Cmd Received: "
+        log.info(logbuf)
+        alertlisttxt="Alertlist="
+        crazyloop = 0;
+        keyiter = iter(self.alertCurrentList)
+        clmax = 500
+        try:
+            keyalert = keyiter.__next__()
+            while keyalert != None and crazyloop < clmax:
+                tmptxt = "%d>Alert Key=%s %d" % (crazyloop, keyalert, keyiter.__sizeof__())
+                log.debug(tmptxt)
+                crazyloop += 1
+                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
+                    "%Y%m%d-%H%M%S")
+                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s " % (
+                    self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
+                    self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
+                    self.alertCurrentList[keyalert].text, altime)
+                alertlisttxt += "%s;" % txt
+
+
+
+                keyalert = keyiter.__next__()
+                crazyloop += 1
+            if (crazyloop >= clmax):
+                os._exit(clmax)
+        except StopIteration:
+            if (crazyloop > 0):
+                alertlisttxt = alertlisttxt[:-1]
+            else:
+                alertlisttxt = "processAlerts=None"
+            log.debug("processAlerts Alarm List empty StopIteration!")
+        except Exception:
+            # traceback.print_exc()
+            log.error("processAlerts Alarm List empty Exception! Should not be here !")
+
+        resp = CommmandQResponse(time.time(), alertlisttxt)
+        return (resp)
+
+
     #required for subcriber
     def processDeviceCommand(self, mything, myservice, myid):
         # log.info(str(self.deviceList))
         logbuf = "AlertManager Cmd Received: %s/%s/%s " % (mything, myservice, myid)
         log.info(logbuf)
-        resp = CommmandQResponse(0,"Alert=None")
+        alertlisttxt="Alertlist="
+
+        crazyloop=0;
+        keyiter=iter(self.alertCurrentList)
+        clmax=500
+        try:
+            keyalert = keyiter.__next__()
+            while keyalert != None and crazyloop<clmax:
+                tmptxt="%d>Alert Key=%s %d" %(crazyloop,keyalert,keyiter.__sizeof__())
+                log.debug(tmptxt)
+                crazyloop += 1
+                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
+                    "%Y%m%d-%H%M%S")
+                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s " % (
+                self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
+                self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
+                self.alertCurrentList[keyalert].text, altime)
+                alertlisttxt += "%s;" % txt
+                keyalert = keyiter.__next__()
+                crazyloop+=1
+            if (crazyloop>=clmax):
+                os._exit(clmax)
+        except StopIteration:
+            if(crazyloop>0):
+                alertlisttxt=alertlisttxt[:-1]
+            else:
+                alertlisttxt = "Alertlist=None"
+            log.debug("processDeviceCommand Alarm List empty StopIteration!")
+        except Exception:
+            # traceback.print_exc()
+            log.error("processDeviceCommand Alarm List empty Exception! Should not be here !")
+
+
+        resp = CommmandQResponse(time.time(),alertlisttxt)
         return (resp)
 
     def enableSiren(self,mything,myservice,myid):
@@ -155,5 +232,5 @@ class AlertManager(metaclass=SingletonMeta):
             traceback.print_exc()
             log.error("Unable to print alarm list !")
             os._exit(-1)
-        resp = CommmandQResponse(0,"status AlertManager" )
+        resp = CommmandQResponse(time.time(),"status AlertManager" )
         return (resp)

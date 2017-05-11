@@ -57,19 +57,31 @@ class GarageDoor():
     def updateSensor(self):
         sensor_status_text=""
         self.g_update_time = time.time()
-        for sensor in self.g_sensor_props:
-            self.g_sensor_props[sensor].s_update_time = time.time()
-            read_status = self.usbConnectHandler.digitalRead(self.g_sensor_props[sensor].board_pin_id)
-            self.g_sensor_props[sensor].status=S_SENSOR_STATUS_LIST[read_status] #0=open 1=closed
-            sensor_status_text = sensor_status_text + "%s/%s/%s " % (self.g_name,sensor,S_SENSOR_STATUS_LIST[read_status])
-            log.debug("Sensor %s Status = %d" % (sensor,read_status) )
-        resp=self.determineGarageDoorOpenClosedStatus()
+        try:
+            for sensor in self.g_sensor_props:
+                self.g_sensor_props[sensor].s_update_time = time.time()
+                read_status = self.usbConnectHandler.digitalRead(self.g_sensor_props[sensor].board_pin_id)
+                self.g_sensor_props[sensor].status=S_SENSOR_STATUS_LIST[read_status] #0=open 1=closed
+                sensor_status_text = sensor_status_text + "%s/%s/%s " % (self.g_name,sensor,S_SENSOR_STATUS_LIST[read_status])
+                log.debug("Sensor %s Status = %d" % (sensor,read_status) )
+            resp=self.determineGarageDoorOpenClosedStatus()
+        except Exception:
+            self.g_last_alert_send_time = time.time()
+            sensor_status_text = self.alarm_mgr_handler.addAlert("HW001", self.g_name + "_" + sensor)
+            log.error(sensor_status_text)
+            self.g_auto_force_ignore_garage_open_close_cmd = True
+            status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
+            log.error(status_text)
+            resp = CommmandQResponse(time.time(), status_text)
+            # sleep(60)
+            # os._exit(6)
+
         return resp
 
     def determineGarageDoorOpenClosedStatus(self):
         log.debug("GarageDoor dertermine Door Open Closed Status called !")
         sensorkey0="[UNKNOWN]"
-        sensor_status_text=A_OK
+        sensor_status_text="determineGarageDoorOpenClosedStatus"
         logstr=""
         for i, sensor in enumerate(self.g_sensor_props):
             logstr="%d Garage %d Sensor %s Status = %s" % (i, self.g_id, sensor, self.g_sensor_props[sensor].status)
@@ -111,7 +123,9 @@ class GarageDoor():
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):
-            log.info(self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status)
+            sensor_status_text=self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status
+            log.info(sensor_status_text)
+
             self.g_prevstatus = self.g_status
             if self.g_status == G_OPEN:
                 self.g_open_time = time.time()
@@ -137,13 +151,17 @@ class GarageDoor():
                     self.g_auto_force_ignore_garage_open_close_cmd = False
                     self.alarm_mgr_handler.clearAlertID("GCD01", self.g_name)
                     log.info(self.g_name+ " assumed closed. Garage back to auto close mode!")
+            else:
+                sensor_status_text = self.g_name + ":" + self.g_status
+                # log.info(sensor_status_text)
 
-        resp = CommmandQResponse(0, sensor_status_text )
+        resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
         return (resp)
 
     def status(self):
         log.debug("GarageDoor status called !")
-        resp = self.updateSensor()
+        self.updateSensor()
+        resp = self.determineGarageDoorOpenClosedStatus()
         return (resp)
 
     def addSensor(self, key,sensor_props):
