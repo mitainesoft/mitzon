@@ -1,0 +1,26 @@
+# Send Mail to gmail
+# import smtplib
+# server = smtplib.SMTP('smtp.gmail.com', 587)
+#
+# Log in to the server
+# server.login("myEmail@gmail.com","myPassword")
+#
+# Send mail
+# msg = "\nHello!"
+#server.sendmail("myEmail@gmail.com","recipient@gmail.com", msg)
+#
+[EMAIL_ACCOUNT_INFORMATION]
+SMTP_SERVER=smtp.Xmail.com
+USER=myEmail@gmail.com
+PASSWORD=myPassword
+
+[NOTIFICATION_MANAGER]
+NOTIFICATION_MANAGER_LOOP_TIMEOUT = 5
+#NOTIFICATION_MANAGER__MAX_FAILURE = 1
+
+[THREAD_CONTROL]
+RESP_TIMEOUT = 10
+
+[INTERNAL]
+CONFIG_FILE_REV=0.0
+

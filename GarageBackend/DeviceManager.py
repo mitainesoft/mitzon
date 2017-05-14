@@ -111,7 +111,9 @@ class DeviceManager(metaclass=SingletonMeta):
             sensor_status_str=""
 
             if isinstance(obj, GarageDoor):
-                logstr = "listDevices %d) %s-%s g_status:%s " % (obj.g_id, key, obj.g_name, obj.g_status)
+                # logstr = "listDevices %d) %s-%s g_status:%s " % (obj.g_id, key, obj.g_name, obj.g_status)
+                logstr = "Dev: %s/%s status:%s " % (key, obj.g_name, obj.g_status)
+
                 for sensor in obj.g_sensor_props:
                     sensor_status_str = sensor_status_str + sensor + "=" + obj.g_sensor_props[sensor].status + " "
                 if obj.g_update_time != None:

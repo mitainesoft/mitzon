@@ -4,15 +4,15 @@ import cherrypy
 from GarageBackend.Sensor import Sensor
 from GarageBackend.Constants import *
 from GarageBackend.CommandQResponse import *
-from GarageBackend.ConfigManager import *
+from GarageBackend.ConfigManager import ConfigManager
 from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.AlertManager import AlertManager
 from GarageBackend.DeviceManager import DeviceManager
 from GarageBackend.GarageManager import GarageManager
+from GarageBackend.NotificationManager import NotificationManager
 from queue import *
 from threading import Thread
 from GarageBackend.SingletonMeta import SingletonMeta
-from GarageBackend.ConfigManager import *
 import types
 from cherrypy.lib import httputil, file_generator
 from time import sleep
@@ -23,11 +23,11 @@ import datetime
 log = logging.getLogger('garageCmdProcessor')
 
 garage_manager_handler = None #GarageManager()
+notification_manager_handler = None
 
 @cherrypy.expose
 class garageURLCmdProcessor(metaclass=SingletonMeta):
     def __init__(self, dispatch: Queue):
-
         log.info("init garageURLCmdProcessor...")
         #self.deviceList = {}
         self.dispatch = dispatch
@@ -38,8 +38,6 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         self.config_handler.setConfigFileName("config/garage_backend.config")
         self.dev_manager_handler = DeviceManager()
         self.alert_manager_handler = AlertManager()
-        # self.garage_manager_handler = GarageManager()
-
 
     @cherrypy.tools.accept(media='text/plain')
     # s.post('http://127.0.0.1:8080/garage/open/g0')
@@ -194,9 +192,16 @@ if __name__ == '__main__':
     thread_garage_manager = Thread(target=GarageManager.monitor,
                                    args=(garage_manager_handler,), name='garage_manager',
                                    daemon=True)
+
+    notification_manager_handler = NotificationManager()
+    thread_notification_manager = Thread(target=NotificationManager.processnotif,
+                                   args=(notification_manager_handler,), name='notification_manager',
+                                   daemon=True)
+
     thread_command_queue.start()
     thread_dispatcher.start()
     thread_garage_manager.start()
+    thread_notification_manager.start()
 
     cherrypy.quickstart(my_garageURLCmdProcessor, '/', conf)
 

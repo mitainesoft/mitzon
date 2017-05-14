@@ -11,7 +11,7 @@ import datetime
 import json
 
 
-log = logging.getLogger('garageCmdProcessor')
+log = logging.getLogger('AlertManager')
 
 
 class AlertManager(metaclass=SingletonMeta):

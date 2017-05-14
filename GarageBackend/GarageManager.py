@@ -40,7 +40,7 @@ class GarageManager():
                     log.info("typedef not found!")
 
             if log.isEnabledFor(logging.INFO):
-                log.info("garageManager %06d" % (i))
+                log.info("** garageManager %06d **" % (i))
                 self.dev_manager_handler.listDevices()
                 self.alarm_mgr_handler.status()
             sleep(float(self.config_handler.getConfigParam("GARAGE_MANAGER","GARAGE_MANAGER_LOOP_TIMEOUT")))
