@@ -5,6 +5,7 @@ from GarageBackend.CommandQResponse import *
 from GarageBackend.SingletonMeta import SingletonMeta
 from GarageBackend.CommandQResponse import *
 from GarageBackend.ConfigManager import *
+from GarageBackend.NotificationManager import *
 from queue import *
 import time
 import datetime
@@ -19,6 +20,7 @@ class AlertManager(metaclass=SingletonMeta):
 
     def __init__(self):
         self.config_handler = ConfigManager()
+        self.notif_handler = NotificationManager()
         self.alertfilename="config/event_list_en.json"
         log.info("AlertManager started...")
         self.s_id = -1
@@ -47,7 +49,7 @@ class AlertManager(metaclass=SingletonMeta):
     def processAlerts(self):
         # log.info(str(self.deviceList))
         logbuf = "AlertManager Cmd Received: "
-        log.info(logbuf)
+        log.debug(logbuf)
         alertlisttxt="Alertlist="
         crazyloop = 0;
         keyiter = iter(self.alertCurrentList)
@@ -65,9 +67,6 @@ class AlertManager(metaclass=SingletonMeta):
                     self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
                     self.alertCurrentList[keyalert].text, altime)
                 alertlisttxt += "%s;" % txt
-
-
-
                 keyalert = keyiter.__next__()
                 crazyloop += 1
             if (crazyloop >= clmax):
@@ -81,6 +80,9 @@ class AlertManager(metaclass=SingletonMeta):
         except Exception:
             # traceback.print_exc()
             log.error("processAlerts Alarm List empty Exception! Should not be here !")
+
+
+        self.notif_handler.addNotif(alertlisttxt)
 
         resp = CommmandQResponse(time.time(), alertlisttxt)
         return (resp)
@@ -142,7 +144,7 @@ class AlertManager(metaclass=SingletonMeta):
             log.error(alert_text)
             os._exit(-1)
 
-        log.warning("Add Alert Queue: " + id+">"+alert_text)
+        log.debug("Add Alert Queue: " + id+">"+alert_text)
         return alert_text
 
 

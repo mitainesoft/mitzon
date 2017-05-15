@@ -116,10 +116,10 @@ class GarageDoor():
                         # self.alarm_mgr_handler.addAlert(CommmandQResponse(0, sensor_status_text ))
                         self.g_last_alert_send_time = time.time()
                         sensor_status_text = self.alarm_mgr_handler.addAlert("GS001", self.g_name+"_"+sensor)
-                        log.error(sensor_status_text)
+                        log.debug(sensor_status_text)
                         self.g_auto_force_ignore_garage_open_close_cmd = True
                         status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
-                        log.error(status_text)
+                        log.debug(status_text)
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):

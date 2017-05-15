@@ -13,6 +13,8 @@
 SMTP_SERVER=smtp.Xmail.com
 USER=myEmail@gmail.com
 PASSWORD=myPassword
+#Separate myReceivers with ;
+RECIPIENTLIST=myReceivers
 
 [NOTIFICATION_MANAGER]
 NOTIFICATION_MANAGER_LOOP_TIMEOUT = 5

@@ -39,6 +39,8 @@ class GarageManager():
                 else:
                     log.info("typedef not found!")
 
+            self.alarm_mgr_handler.processAlerts()
+
             if log.isEnabledFor(logging.INFO):
                 log.info("** garageManager %06d **" % (i))
                 self.dev_manager_handler.listDevices()

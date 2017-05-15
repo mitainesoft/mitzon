@@ -75,8 +75,18 @@
             For example the following line will make notepad++ (installed to default location) your global editor of files in git: 
             git config --global core.editor "C:\Program Files (x86)\Notepad++\notepad++.exe"
 
-
-2. Other references
+2. Notofication
+    
+    gmail:
+    https://www.google.com/settings/security/lesssecureapps
+    
+            self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"), 465)
+            self.email_server.ehlo()
+            log.info("Login with %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"))
+            self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
+                                    self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
+            
+3. Other references
 
         Clone
         1.cd /c/git 
