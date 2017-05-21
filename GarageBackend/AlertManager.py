@@ -23,13 +23,16 @@ class AlertManager(metaclass=SingletonMeta):
         self.notif_handler = NotificationManager()
         self.alertfilename="config/event_list_en.json"
         log.info("AlertManager started...")
-        self.s_id = -1
-        self.s_status = G_UNKNOWN
-        self.s_board_pin = 7
-        self.s_name = "[UNKNOWN]"
+
         self.alertFileListJSON = {}
         self.alertCurrentList = {}
         self.Alert = collections.namedtuple('Alert', ['id', 'device', 'severity', 'category', 'text', 'time'])
+
+        #Time supervision
+        self.last_alert_sent_time=0
+        self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
+
+
 
         try:
             f=open(self.alertfilename)
@@ -50,27 +53,28 @@ class AlertManager(metaclass=SingletonMeta):
         # log.info(str(self.deviceList))
         logbuf = "AlertManager Cmd Received: "
         log.debug(logbuf)
-        alertlisttxt="Alertlist="
+        alertlisttxt="Alertlist:\n"
         crazyloop = 0;
         keyiter = iter(self.alertCurrentList)
-        clmax = 500
+        clmax = 100
+        alert_triggered=False
+
         try:
             keyalert = keyiter.__next__()
             while keyalert != None and crazyloop < clmax:
+                alert_triggered=True
                 tmptxt = "%d>Alert Key=%s %d" % (crazyloop, keyalert, keyiter.__sizeof__())
                 log.debug(tmptxt)
                 crazyloop += 1
                 altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
                     "%Y%m%d-%H%M%S")
-                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s " % (
+                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s" % (
                     self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                     self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
                     self.alertCurrentList[keyalert].text, altime)
-                alertlisttxt += "%s;" % txt
+                alertlisttxt += "%s\n" % txt
                 keyalert = keyiter.__next__()
                 crazyloop += 1
-            if (crazyloop >= clmax):
-                os._exit(clmax)
         except StopIteration:
             if (crazyloop > 0):
                 alertlisttxt = alertlisttxt[:-1]
@@ -81,12 +85,47 @@ class AlertManager(metaclass=SingletonMeta):
             # traceback.print_exc()
             log.error("processAlerts Alarm List empty Exception! Should not be here !")
 
+        #Send Alert?!?
+        if (alert_triggered == True and self.isAlertToBeSent() == True):
+            log.debug("Sending '%d' Alerts Notification thread" % crazyloop)
+            self.notif_handler.addNotif(alertlisttxt)
 
-        self.notif_handler.addNotif(alertlisttxt)
+        if (crazyloop >= clmax):
+            log.error("Error code handling. Crazy loop %d" %crazyloop)
+            os._exit(crazyloop)
 
         resp = CommmandQResponse(time.time(), alertlisttxt)
         return (resp)
 
+    def isAlertToBeSent(self):
+        sendalert=False
+        lastalerttime = "%s" % datetime.datetime.fromtimestamp(int(self.last_alert_sent_time)).strftime("%Y%m%d-%H%M%S")
+        tmpmsg= "Last Alert sent at %s" % lastalerttime
+        try:
+            #Last check if any alarms left due to some racing condition
+            keyiter = iter(self.alertCurrentList)
+            keyalert = keyiter.__next__()
+            if (time.time() > (self.last_alert_sent_time + self.seconds_between_alerts)):
+                prev_alert_time = self.last_alert_sent_time
+                self.last_alert_sent_time = time.time()
+                nbrmin= int((self.last_alert_sent_time-prev_alert_time))/60
+                tmpmsg = tmpmsg + (" last alert sent %d minutes ago" % nbrmin)
+                log.info("Alert send authorized. " + tmpmsg)
+                sendalert = True
+            else:
+                tmpmsg = tmpmsg + (" (Time between alerts:%dsec)" % self.seconds_between_alerts )
+                log.info("Alert Send denied! "+tmpmsg)
+        except StopIteration:
+            log.info("No alert left due to racing condition. Alert send denied! " +tmpmsg )
+        except Exception:
+            log.error("Alert!  Unexpected code condition! Die! " + tmpmsg)
+            traceback.print_exc()
+            os._exit(-1)
+
+        if (sendalert==False):
+            log.debug("No alert to send. " + tmpmsg)
+
+        return sendalert
 
     #required for subcriber
     def processDeviceCommand(self, mything, myservice, myid):

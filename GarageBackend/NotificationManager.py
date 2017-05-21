@@ -8,6 +8,9 @@ from GarageBackend.SingletonMeta import SingletonMeta
 from GarageBackend.CommandQResponse import CommmandQResponse
 from GarageBackend.ConfigManager import ConfigManager
 import smtplib
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import configparser
 from queue import *
 import time
@@ -16,6 +19,7 @@ import json
 from time import sleep
 import time
 import datetime
+import string
 
 
 log = logging.getLogger('NotificationManager')
@@ -36,14 +40,14 @@ class NotificationManager(metaclass=SingletonMeta):
     def processnotif(self):
         i=0
         while (True):
-            log.info("** Notif Loop %d (q=%d) **" % (i,self.notifQueue.qsize()))
+            log.debug("** Notif Loop %d (q=%d) **" % (i,self.notifQueue.qsize()))
             while  not self.notifQueue.empty():
                 try:
                     notif_obj=self.notifQueue.get(True,int(self.getConfigParam("NOTIFICATION_MANAGER","NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
                     msg=notif_obj[2]
                     sender=notif_obj[0]
                     recipients=notif_obj[1]
-                    logtxt=" Notif from %s to %s msg=%s" %(sender,recipients,msg)
+                    logtxt=" Notif from %s to %s msg:<<<%s>>>" %(sender,recipients,msg)
                     log.info(logtxt)
                     self.send_email(sender,recipients,msg)
                 except Empty:
@@ -54,7 +58,47 @@ class NotificationManager(metaclass=SingletonMeta):
             i=i+1
         pass
 
-    def send_email(self,sender,recipients,msg):
+    def send_email(self, sender, recipients, msg):
+        try:
+            COMMASPACE = ', '
+            mmrecipients=recipients.split(',')
+            log.info("Connecting to SMTP %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"), 465)
+            self.email_server.ehlo()
+
+            log.info("Login with %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"))
+
+            self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"), \
+                                    self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "PASSWORD"))
+
+            user_name=self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "EMAIL_SENDER_NAME")
+
+            log.info("Send email: <<%s>>" % msg)
+            # subject = "Alerte Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
+
+            # mmmsg = MIMEMultipart()
+            mmmsg=MIMEText(msg, 'plain')
+            mmmsg['Subject']="Alerte Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
+            mmmsg['From'] = ("%s <%s>" % (user_name, sender))
+            mmmsg['To'] = COMMASPACE.join(mmrecipients)
+
+            # smtpmsg = ("From: %s\nTo: %s\nSubject: %s\n%s\n"
+            #            % (sender, recipients, subject, msg))
+            smtpmsg = mmmsg.as_string()
+            # self.email_server.sendmail(sender, mmrecipients, smtpmsg)
+
+            self.email_server.send_message(mmmsg)
+
+            log.info("Close %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            self.email_server.close()
+        except Exception:
+
+            traceback.print_exc()
+            log.error("Unable to send email notification !")
+            self.email_server.close()
+            os._exit(10)
+
+    def send_email_legacy(self,sender,recipients,msg):
         try:
             log.info("Connecting to SMTP %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"))
             self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"), 465)
@@ -65,10 +109,11 @@ class NotificationManager(metaclass=SingletonMeta):
             self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
                                     self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
 
-            log.info("Send msg %s" % msg)
+            log.info("Send email: %s" % msg)
             subject="Alert Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
-            smtpmsg = ("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s\r\n\r\n"
+            smtpmsg = ("From: %s\nTo: %s\nSubject: %s\n%s\n"
                    % (sender, recipients,subject,msg))
+
             self.email_server.sendmail(sender, recipients, smtpmsg)
 
 
@@ -123,7 +168,7 @@ class NotificationManager(metaclass=SingletonMeta):
         try:
             sender=self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER")
             recipients=self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "RECIPIENTLIST")
-            notif_text = "Msg from: " + sender + " " + txt
+            notif_text = "Msg from: " + sender + "\n\n" + txt
             self.notifQueue.put(self.Notif(sender, recipients,notif_text,time.time()))
             log.debug("Notif added to queue:" + notif_text )
         except Exception:
