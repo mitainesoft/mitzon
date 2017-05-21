@@ -21,18 +21,17 @@ class AlertManager(metaclass=SingletonMeta):
     def __init__(self):
         self.config_handler = ConfigManager()
         self.notif_handler = NotificationManager()
-        self.alertfilename="config/event_list_en.json"
+        self.alertfilename="config/event_list.json"
         log.info("AlertManager started...")
+        self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
 
         self.alertFileListJSON = {}
         self.alertCurrentList = {}
-        self.Alert = collections.namedtuple('Alert', ['id', 'device', 'severity', 'category', 'text', 'time'])
+        self.Alert = collections.namedtuple('Alert', ['id', 'device', 'severity', 'category', 'text', 'workaround', 'time'])
 
         #Time supervision
         self.last_alert_sent_time=0
         self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
-
-
 
         try:
             f=open(self.alertfilename)
@@ -53,7 +52,7 @@ class AlertManager(metaclass=SingletonMeta):
         # log.info(str(self.deviceList))
         logbuf = "AlertManager Cmd Received: "
         log.debug(logbuf)
-        alertlisttxt="Alertlist:\n"
+        alertlisttxt="Liste Alerte:\n"
         crazyloop = 0;
         keyiter = iter(self.alertCurrentList)
         clmax = 100
@@ -68,13 +67,10 @@ class AlertManager(metaclass=SingletonMeta):
                 crazyloop += 1
                 altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
                     "%Y%m%d-%H%M%S")
-                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s" % (
-                    self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
-                    self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
-                    self.alertCurrentList[keyalert].text, altime)
+                txt = "%d) %s\t%s -> %s (%s)" % (crazyloop,
+                    self.alertCurrentList[keyalert].device,self.alertCurrentList[keyalert].text, self.alertCurrentList[keyalert].workaround,self.alertCurrentList[keyalert].id)
                 alertlisttxt += "%s\n" % txt
                 keyalert = keyiter.__next__()
-                crazyloop += 1
         except StopIteration:
             if (crazyloop > 0):
                 alertlisttxt = alertlisttxt[:-1]
@@ -145,10 +141,10 @@ class AlertManager(metaclass=SingletonMeta):
                 crazyloop += 1
                 altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
                     "%Y%m%d-%H%M%S")
-                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s " % (
+                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s workaround:%s time:%s " % (
                 self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                 self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
-                self.alertCurrentList[keyalert].text, altime)
+                self.alertCurrentList[keyalert].text,self.alertCurrentList[keyalert].workaround, altime)
                 alertlisttxt += "%s;" % txt
                 keyalert = keyiter.__next__()
                 crazyloop+=1
@@ -174,10 +170,13 @@ class AlertManager(metaclass=SingletonMeta):
 
     def addAlert(self, id, device,extratxt=""):
         try:
-            alert_text = device + " " + self.alertFileListJSON[id]["text"]+" "+extratxt
+            alert_text = device + " " + self.alertFileListJSON[self.default_language][id]["text"]+" "+extratxt
             keyalert=id+"_"+device
-            self.alertCurrentList[keyalert] = self.Alert(id,device,self.alertFileListJSON[id]["severity"],
-                                                         self.alertFileListJSON[id]["category"],self.alertFileListJSON[id]["text"],time.time())
+            self.alertCurrentList[keyalert] = self.Alert(id,device,self.alertFileListJSON[self.default_language][id]["severity"],
+                                                         self.alertFileListJSON[self.default_language][id]["category"],
+                                                         self.alertFileListJSON[self.default_language][id]["text"],
+                                                         self.alertFileListJSON[self.default_language][id]["workaround"],
+                                                         time.time())
         except Exception:
             traceback.print_exc()
             log.error(alert_text)
@@ -263,9 +262,9 @@ class AlertManager(metaclass=SingletonMeta):
                 log.info("AlertManager status: %d alerts", (nbralerts))
                 for keyalert in self.alertCurrentList:
                     altime="%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime("%Y%m%d-%H%M%S")
-                    txt="Alert id:%s %s sev:%s cat:%s text:%s time:%s " % (self.alertCurrentList[keyalert].id,self.alertCurrentList[keyalert].device,\
+                    txt="Alert id:%s %s sev:%s cat:%s text:%s %s time:%s " % (self.alertCurrentList[keyalert].id,self.alertCurrentList[keyalert].device,\
                                                                     self.alertCurrentList[keyalert].severity,self.alertCurrentList[keyalert].category,\
-                                                                    self.alertCurrentList[keyalert].text,altime)
+                                                                    self.alertCurrentList[keyalert].text,self.alertCurrentList[keyalert].workaround,altime)
                     # +" time:"+ altime
 
                     log.info(txt)

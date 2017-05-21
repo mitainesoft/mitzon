@@ -27,13 +27,17 @@ log = logging.getLogger('NotificationManager')
 class NotificationManager(metaclass=SingletonMeta):
     def __init__(self):
         self.Notif = collections.namedtuple('Notif', ['sender', 'receipients', 'text', 'time'])
-
+        self.config_handler = ConfigManager()
         # self.config_handler = ConfigManager()
         self.configfilename="config/notification_manager.config"
         self.nm_config = configparser.ConfigParser()
         self.nm_configSections = []
         self.readNMConfigFileName(self.configfilename)
         self.notifQueue = Queue()
+
+        self.notif_enabled=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "NotificationEnabled")
+        self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
+
         log.info("NotificationManager started...")
 
 
@@ -49,7 +53,10 @@ class NotificationManager(metaclass=SingletonMeta):
                     recipients=notif_obj[1]
                     logtxt=" Notif from %s to %s msg:<<<%s>>>" %(sender,recipients,msg)
                     log.info(logtxt)
-                    self.send_email(sender,recipients,msg)
+                    if (self.notif_enabled.upper() == "TRUE"):
+                        self.send_email(sender,recipients,msg)
+                    else:
+                        log.error("Notification disabled by config NOTIFICATION_MANAGER-->NotificationEnabled!")
                 except Empty:
                     log.debug("notifQueue empty!?!?")
                     pass
@@ -117,7 +124,7 @@ class NotificationManager(metaclass=SingletonMeta):
             self.email_server.sendmail(sender, recipients, smtpmsg)
 
 
-            log.info("Close %s"% self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"))
+            log.debug("Close %s"% self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"))
             self.email_server.close()
         except Exception:
 

@@ -14,7 +14,14 @@ SMTP_SERVER=smtp.Xmail.com
 USER=myEmail@gmail.com
 EMAIL_SENDER_NAME=myEmailName
 PASSWORD=myPassword
-#Separate myReceivers with ;
+
+
+#Separate myReceivers with ,
+# Specify language if different from default with ;
+# Example1:
+#  allo@hotmail.com,myhello@yahoo.ca
+# Example2:
+#  allo@hotmail.com,myhello@yahoo.ca;En,hello@xmail.ca;Klingon
 RECIPIENTLIST=myReceivers
 
 [NOTIFICATION_MANAGER]
