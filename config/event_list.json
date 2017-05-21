@@ -78,7 +78,7 @@
             "workaround": "Calm down! Stop trying !"
         }
     },
-      "Fr": {
+    "Fr": {
         "GO001": {
             "deviceType": "Garage",
             "severity": "1",
@@ -91,7 +91,7 @@
             "severity": "2",
             "category": "GARAGE_OPEN",
             "text": "Attention, porte ouverte!",
-            "workaround": "Close the garage door!"
+            "workaround": "Fermez la porte!"
         },
         "GCD01": {
             "deviceType": "Garage",
@@ -147,7 +147,7 @@
             "severity": "2",
             "category": "GARAGE_COMMAND",
             "text": "Fermeture refusée. Le status est ",
-            "workaround": "Calm down! Stop trying !"
+            "workaround": "Arrêtez d'essayer !"
         },
         "HW001": {
             "deviceType": "Sensor",
@@ -155,6 +155,85 @@
             "category": "HARDWARE",
             "text": "USB Commuucation error",
             "workaround": "Appelez le service technique au 1-800-PLAINTE!"
+        }
+    },
+    "FrMule": {
+        "GO001": {
+            "deviceType": "Garage",
+            "severity": "1",
+            "category": "GARAGE_OPEN",
+            "text": "Temps d'ouverture de la porte expirée mule!",
+            "workaround": "Ferme la porte mule si elle ne se ferme pas toute seule!"
+        },
+        "GO002": {
+            "deviceType": "Garage",
+            "severity": "2",
+            "category": "GARAGE_OPEN",
+            "text": "Attention, porte ouverte mule!",
+            "workaround": "Grouille toi de fermer la porte mule!"
+        },
+        "GCD01": {
+            "deviceType": "Garage",
+            "severity": "1",
+            "category": "GARAGE_LOCK",
+            "text": "Fermeture automatique déactivé pour les mules",
+            "workaround": "Verifiez la porte et les logs!"
+        },
+        "GS001": {
+            "deviceType": "Garage Sensor",
+            "severity": "1",
+            "category": "SENSOR",
+            "text": "problème avec un senseur sur la porte de mule",
+            "workaround": "La fermeture est peut-être bloquée par de la neige à cause d'une mule ou un des senseurs ne fonctionne plus!"
+        },
+        "GTO01": {
+            "deviceType": "Garage",
+            "severity": "2",
+            "category": "GARAGE_COMMAND",
+            "text": "Ouverture de la porte mule!",
+            "workaround": "Sauves-toi en courrant mule!"
+        },
+        "GTO02": {
+            "deviceType": "Garage",
+            "severity": "3",
+            "category": "GARAGE_COMMAND",
+            "text": "Ouverture refusée mule. Déclenchement trop récent!",
+            "workaround": "Calme toi tête de veau! Attendre un peu avant de re-ouvrir!"
+        },
+        "GTO003": {
+            "deviceType": "Garage",
+            "severity": "2",
+            "category": "GARAGE_COMMAND",
+            "text": "Ouverture refusée. Le status est ",
+            "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
+        },
+        "GTC01": {
+            "deviceType": "Garage",
+            "severity": "2",
+            "category": "GARAGE_COMMAND",
+            "text": "Fermeture demandée par une mule!",
+            "workaround": "Enlève ce qu'il y a dans le chemin de la porte tête de veau"
+        },
+        "GTC02": {
+            "deviceType": "Garage",
+            "severity": "3",
+            "category": "GARAGE_COMMAND",
+            "text": "Fermeture refusée mule. Déclenchement trop récent!",
+            "workaround": "Calme toi tête de veau! Attendre un peu avant de refermer!"
+        },
+        "GTC03": {
+            "deviceType": "Garage",
+            "severity": "2",
+            "category": "GARAGE_COMMAND",
+            "text": "Fermeture refusée. Le status est ",
+            "workaround": "Calme toi tête de veau! Arrêtes d'essayer !"
+        },
+        "HW001": {
+            "deviceType": "Sensor",
+            "severity": "1",
+            "category": "HARDWARE",
+            "text": "USB Commuucation error",
+            "workaround": "Appelez le service technique pour tête de veau au 1-800-VEAU"
         }
     }
 }
