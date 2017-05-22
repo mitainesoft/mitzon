@@ -25,21 +25,14 @@ import json
 
 
 log = logging.getLogger('NotificationManager')
-#metaclass=SingletonMeta
 
 class NotificationManager(metaclass=SingletonMeta):
     def __init__(self):
         self.Notif = collections.namedtuple('Notif', ['sender', 'receipients', 'text', 'time'])
         self.config_handler = ConfigManager()
-        self.configfilename="config/notification_manager.config"
         self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")
         self.alertFileListJSON = {}
-
-        self.nm_config = configparser.ConfigParser()
-        self.nm_configSections = []
-        self.readNMConfigFileName(self.configfilename)
         self.notifQueue = Queue()
-
         self.notif_enabled=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "NotificationEnabled")
         self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
 
@@ -66,7 +59,7 @@ class NotificationManager(metaclass=SingletonMeta):
             log.debug("** Notif Loop %d (q=%d) **" % (i,self.notifQueue.qsize()))
             while  not self.notifQueue.empty():
                 try:
-                    notif_obj=self.notifQueue.get(True,int(self.getConfigParam("NOTIFICATION_MANAGER","NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
+                    notif_obj=self.notifQueue.get(True,int(self.config_handler.getConfigParam("NOTIFICATION_MANAGER","NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
                     msg=notif_obj[2]
                     sender=notif_obj[0]
                     recipients=notif_obj[1]
@@ -80,7 +73,7 @@ class NotificationManager(metaclass=SingletonMeta):
                     log.debug("notifQueue empty!?!?")
                     pass
 
-            sleep(float(self.getConfigParam("NOTIFICATION_MANAGER","NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
+            sleep(float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER","NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
             i=i+1
         pass
 
@@ -88,16 +81,16 @@ class NotificationManager(metaclass=SingletonMeta):
         try:
             COMMASPACE = ', '
             mmrecipients=recipients.split(',')
-            log.info("Connecting to SMTP %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
-            self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"), 465)
+            log.info("Connecting to SMTP %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            self.email_server = smtplib.SMTP_SSL(self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"), 465)
             self.email_server.ehlo()
 
-            log.info("Login with %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"))
+            log.info("Login with %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"))
 
-            self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"), \
-                                    self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "PASSWORD"))
+            self.email_server.login(self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"), \
+                                    self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "PASSWORD"))
 
-            user_name=self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "EMAIL_SENDER_NAME")
+            user_name=self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "EMAIL_SENDER_NAME")
 
             log.info("Send email: <<%s>>" % msg)
             # subject = "Alerte Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
@@ -108,14 +101,10 @@ class NotificationManager(metaclass=SingletonMeta):
             mmmsg['From'] = ("%s <%s>" % (user_name, sender))
             mmmsg['To'] = COMMASPACE.join(mmrecipients)
 
-            # smtpmsg = ("From: %s\nTo: %s\nSubject: %s\n%s\n"
-            #            % (sender, recipients, subject, msg))
             smtpmsg = mmmsg.as_string()
-            # self.email_server.sendmail(sender, mmrecipients, smtpmsg)
-
             self.email_server.send_message(mmmsg)
 
-            log.info("Close %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            log.info("Close %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
             self.email_server.close()
         except Exception:
 
@@ -124,60 +113,14 @@ class NotificationManager(metaclass=SingletonMeta):
             self.email_server.close()
             os._exit(10)
 
-
-    def readNMConfigFileName(self, filename):
-        log.debug("Notif read config file name...")
-        self.configfilename = filename
-        try:
-            with open(self.configfilename) as f:
-                f.close()
-        except IOError:
-            log.error("NotificationManager Config file " + self.configfilename + " does not exist ! ")
-            log.error("Exiting...")
-            os._exit(-1)
-
-        try:
-            self.nm_config.read(self.configfilename)
-            self.nm_configSections = self.nm_config.sections()
-            for keySections in self.nm_configSections:
-                 for key in self.nm_config[keySections]:
-                    log.info(keySections + "/" + key + " = " + self.nm_config[keySections][key])
-
-            pass
-        except KeyError:
-            log.info("Something went wrong while reading the NotificationManager config, Suspect is wrong file name or param")
-            traceback.print_exc()
-            os._exit(-1)
-        except Exception:
-            log.info("Something went wrong while reading the NotificationManager config, Suspect is wrong file name")
-            traceback.print_exc()
-            os._exit(-1)
-            pass
-
-    def getConfigParam(self, section, param):
-        try:
-            val = self.nm_config[section][param]
-        except KeyError:
-            log.error("Section=" + section + " param=" + param + " Not exist! Die !!!")
-            traceback.print_exc()
-            os._exit(-1)
-        return val
-
     def addNotif(self, alert_current_list):
-
-        # notif_text="EMPTY.. delete var!"
         nbrnotif = 0;
-
-
         clmax = 10
-        alert_triggered = False
         recipientsHash={} #Key is language
 
-        sender = self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER")
+        sender = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER")
 
-        alert_triggered = True
-
-        recipient_email_lang_str = self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "RECIPIENTLIST")
+        recipient_email_lang_str = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "RECIPIENTLIST")
         recipient_email_lang_arr = recipient_email_lang_str.split(',')
 
         for email_lang in recipient_email_lang_arr:

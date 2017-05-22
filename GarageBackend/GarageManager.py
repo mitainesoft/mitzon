@@ -42,7 +42,7 @@ class GarageManager():
             self.alarm_mgr_handler.processAlerts()
 
             if log.isEnabledFor(logging.INFO):
-                log.info("** garageManager %06d **" % (i))
+                log.info("** garageManager %d **" % (i))
                 self.dev_manager_handler.listDevices()
                 self.alarm_mgr_handler.status()
             sleep(float(self.config_handler.getConfigParam("GARAGE_MANAGER","GARAGE_MANAGER_LOOP_TIMEOUT")))
