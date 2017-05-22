@@ -24,7 +24,7 @@ class AlertManager(metaclass=SingletonMeta):
         self.notif_handler = NotificationManager()
         self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")
         log.info("AlertManager started...")
-        self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
+        self.default_language=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "DEFAULT_LANGUAGE")
 
         self.alertFileListJSON = {}
         self.alertCurrentList = {}

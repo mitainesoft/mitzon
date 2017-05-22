@@ -34,7 +34,7 @@ class NotificationManager(metaclass=SingletonMeta):
         self.alertFileListJSON = {}
         self.notifQueue = Queue()
         self.notif_enabled=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "NotificationEnabled")
-        self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
+        self.default_language=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "DEFAULT_LANGUAGE")
 
         try:
             f = open(self.alertfilename)
