@@ -1,27 +1,28 @@
 import logging
 import collections
+import os
+import sys
+import traceback
 from GarageBackend.Constants import *
-from GarageBackend.CommandQResponse import *
+from GarageBackend.CommandQResponse import CommmandQResponse
 from GarageBackend.SingletonMeta import SingletonMeta
-from GarageBackend.CommandQResponse import *
-from GarageBackend.ConfigManager import *
-from GarageBackend.NotificationManager import *
+from GarageBackend.ConfigManager import ConfigManager
+from GarageBackend.NotificationManager import NotificationManager
 from queue import *
 import time
 import datetime
 import json
 
 
+
 log = logging.getLogger('AlertManager')
 
 
 class AlertManager(metaclass=SingletonMeta):
-
-
     def __init__(self):
         self.config_handler = ConfigManager()
         self.notif_handler = NotificationManager()
-        self.alertfilename="config/event_list.json"
+        self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")
         log.info("AlertManager started...")
         self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
 
@@ -49,49 +50,24 @@ class AlertManager(metaclass=SingletonMeta):
 
 
     def processAlerts(self):
-        # log.info(str(self.deviceList))
-        logbuf = "AlertManager Cmd Received: "
-        log.debug(logbuf)
-        alertlisttxt="Liste Alerte:\n"
-        crazyloop = 0;
-        keyiter = iter(self.alertCurrentList)
-        clmax = 100
         alert_triggered=False
-
+        keyiter = iter(self.alertCurrentList)
         try:
             keyalert = keyiter.__next__()
-            while keyalert != None and crazyloop < clmax:
+            if keyalert != None:
                 alert_triggered=True
-                tmptxt = "%d>Alert Key=%s %d" % (crazyloop, keyalert, keyiter.__sizeof__())
-                log.debug(tmptxt)
-                crazyloop += 1
-                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
-                    "%Y%m%d-%H%M%S")
-                txt = "%d) %s\t%s -> %s (%s)" % (crazyloop,
-                    self.alertCurrentList[keyalert].device,self.alertCurrentList[keyalert].text, self.alertCurrentList[keyalert].workaround,self.alertCurrentList[keyalert].id)
-                alertlisttxt += "%s\n" % txt
-                keyalert = keyiter.__next__()
         except StopIteration:
-            if (crazyloop > 0):
-                alertlisttxt = alertlisttxt[:-1]
-            else:
-                alertlisttxt = "processAlerts=None"
             log.debug("processAlerts Alarm List empty StopIteration!")
         except Exception:
-            # traceback.print_exc()
+            traceback.print_exc()
             log.error("processAlerts Alarm List empty Exception! Should not be here !")
 
         #Send Alert?!?
         if (alert_triggered == True and self.isAlertToBeSent() == True):
-            log.debug("Sending '%d' Alerts Notification thread" % crazyloop)
-            self.notif_handler.addNotif(alertlisttxt)
+            log.info("Sending '%d' Alerts Notification thread" % len(self.alertCurrentList))
+            self.notif_handler.addNotif(self.alertCurrentList)
 
-        if (crazyloop >= clmax):
-            log.error("Error code handling. Crazy loop %d" %crazyloop)
-            os._exit(crazyloop)
-
-        resp = CommmandQResponse(time.time(), alertlisttxt)
-        return (resp)
+        return (alert_triggered)
 
     def isAlertToBeSent(self):
         sendalert=False

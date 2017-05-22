@@ -1,35 +1,40 @@
 import logging
-import collections
+import os
 import sys
 import traceback
-import os
-from GarageBackend.Constants import *
+import collections
+
 from GarageBackend.SingletonMeta import SingletonMeta
-from GarageBackend.CommandQResponse import CommmandQResponse
+from GarageBackend.Constants import *
 from GarageBackend.ConfigManager import ConfigManager
+from GarageBackend.CommandQResponse import *
+from GarageBackend.ConfigManager import ConfigManager
+import time
+import datetime
+from time import sleep
+
+
 import smtplib
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import configparser
 from queue import *
-import time
-import datetime
-import json
-from time import sleep
-import time
-import datetime
 import string
+import json
 
 
 log = logging.getLogger('NotificationManager')
+#metaclass=SingletonMeta
 
 class NotificationManager(metaclass=SingletonMeta):
     def __init__(self):
         self.Notif = collections.namedtuple('Notif', ['sender', 'receipients', 'text', 'time'])
         self.config_handler = ConfigManager()
-        # self.config_handler = ConfigManager()
         self.configfilename="config/notification_manager.config"
+        self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")
+        self.alertFileListJSON = {}
+
         self.nm_config = configparser.ConfigParser()
         self.nm_configSections = []
         self.readNMConfigFileName(self.configfilename)
@@ -37,6 +42,20 @@ class NotificationManager(metaclass=SingletonMeta):
 
         self.notif_enabled=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "NotificationEnabled")
         self.default_language=self.config_handler.getConfigParam("GARAGE_COMMON", "DEFAULT_LANGUAGE")
+
+        try:
+            f = open(self.alertfilename)
+            self.alertFileListJSON = json.load(f)
+            f.close()
+            pass
+        except IOError:
+            log.error("Config file " + self.alertfilename + " does not exist ! ")
+            log.error("Exiting...")
+            os._exit(-1)
+        except Exception:
+            traceback.print_exc()
+            log.error("Exiting...")
+            os._exit(-1)
 
         log.info("NotificationManager started...")
 
@@ -56,7 +75,7 @@ class NotificationManager(metaclass=SingletonMeta):
                     if (self.notif_enabled.upper() == "TRUE"):
                         self.send_email(sender,recipients,msg)
                     else:
-                        log.error("Notification disabled by config NOTIFICATION_MANAGER-->NotificationEnabled!")
+                        log.error("Notification disabled by config NOTIFICATION_MANAGER-->NotificationEnabled=False !")
                 except Empty:
                     log.debug("notifQueue empty!?!?")
                     pass
@@ -105,33 +124,6 @@ class NotificationManager(metaclass=SingletonMeta):
             self.email_server.close()
             os._exit(10)
 
-    def send_email_legacy(self,sender,recipients,msg):
-        try:
-            log.info("Connecting to SMTP %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"))
-            self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"), 465)
-            self.email_server.ehlo()
-
-            log.info("Login with %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"))
-
-            self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
-                                    self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
-
-            log.info("Send email: %s" % msg)
-            subject="Alert Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
-            smtpmsg = ("From: %s\nTo: %s\nSubject: %s\n%s\n"
-                   % (sender, recipients,subject,msg))
-
-            self.email_server.sendmail(sender, recipients, smtpmsg)
-
-
-            log.debug("Close %s"% self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"))
-            self.email_server.close()
-        except Exception:
-
-            traceback.print_exc()
-            log.error("Unable to send email notification !")
-            self.email_server.close()
-            os._exit(10)
 
     def readNMConfigFileName(self, filename):
         log.debug("Notif read config file name...")
@@ -171,17 +163,83 @@ class NotificationManager(metaclass=SingletonMeta):
             os._exit(-1)
         return val
 
-    def addNotif(self, txt):
-        try:
-            sender=self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER")
-            recipients=self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "RECIPIENTLIST")
-            notif_text = "Msg from: " + sender + "\n\n" + txt
-            self.notifQueue.put(self.Notif(sender, recipients,notif_text,time.time()))
-            log.debug("Notif added to queue:" + notif_text )
-        except Exception:
-            traceback.print_exc()
-            log.error(notif_text)
-            os._exit(-1)
+    def addNotif(self, alert_current_list):
 
-        log.debug("Add Notif Queue:" + sender+" receipeints:"+recipients+" txt:"+notif_text)
-        return notif_text
+        # notif_text="EMPTY.. delete var!"
+        nbrnotif = 0;
+
+
+        clmax = 10
+        alert_triggered = False
+        recipientsHash={} #Key is language
+
+        sender = self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER")
+
+        alert_triggered = True
+
+        recipient_email_lang_str = self.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "RECIPIENTLIST")
+        recipient_email_lang_arr = recipient_email_lang_str.split(',')
+
+        for email_lang in recipient_email_lang_arr:
+            email_lang_arr=email_lang.split('+')
+            lang=self.default_language
+            if len(email_lang_arr) ==2:
+                email_addr = email_lang_arr[0]
+                lang=email_lang_arr[1]
+            elif len(email_lang_arr) ==1:
+                email_addr = email_lang_arr[0]
+                lang=self.default_language
+            else:
+                log.error("Bad format email and language. Ignore %s %s" % (email_addr,lang))
+
+            if lang in recipientsHash:
+                recipientsHash[lang] += email_addr + ","
+            else:
+                recipientsHash[lang]=email_addr+ ","
+            log.debug("AddNotif email:%s lang:%s recipientsHash:%s" % (email_addr, lang, recipientsHash[lang]))
+
+        lang_bookmarks = self.alertFileListJSON.keys()
+        # lb_str=""
+        # for lb in lang_bookmarks:
+        #     lb_str+=lb+";"
+        # lb_str=lb_str[:-1]
+        # log.info("Languages defined: " + lb_str)
+
+        for keylang in recipientsHash:
+            alertlisttxt = "Liste Alerte:\n"
+            recipients=recipientsHash[keylang][:-1]    #chomp comma
+            nbrnotif_recipient=0
+            try:
+                keyiter = iter(alert_current_list)
+                keyalert = keyiter.__next__()  # Goto except StopIteration if empty
+                while keyalert != None and nbrnotif < clmax:
+                    nbrnotif_recipient+=1
+                    tmptxt = "%d>Alert notif Key=%s %d" % (nbrnotif_recipient, keyalert, keyiter.__sizeof__())
+                    log.info(tmptxt)
+                    nbrnotif += 1
+                    altime = "%s" % datetime.datetime.fromtimestamp(int(alert_current_list[keyalert].time)).strftime(
+                        "%Y%m%d-%H%M%S")
+
+                    id=alert_current_list[keyalert].id
+                    altext=self.alertFileListJSON[keylang][id]["text"]
+                    alworkaround=self.alertFileListJSON[keylang][id]["workaround"]
+
+                    txt = "%d) %s\t%s -> %s (%s)" % (nbrnotif_recipient,alert_current_list[keyalert].device,altext,alworkaround,id)
+                    alertlisttxt += "%s\n" % txt
+                    keyalert = keyiter.__next__()
+
+            except StopIteration:
+                if (nbrnotif_recipient > 0):
+                    alertlisttxt = alertlisttxt[:-1]
+                else:
+                    alertlisttxt = "---"
+            except Exception:
+                traceback.print_exc()
+                log.error(alertlisttxt)
+                os._exit(-1)
+
+            notif_text = "Msg from: " + sender + "\n\n" + alertlisttxt
+            self.notifQueue.put(self.Notif(sender, recipients, notif_text, time.time()))
+            log.info("Notif added to queue for " + recipients+" <<<"+ notif_text + ">>>")
+        log.info("Send %d email notifications..." % nbrnotif )
+        return
