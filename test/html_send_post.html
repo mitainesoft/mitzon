@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Allo</title>
+</head>
+<body>
+<form action="" method="post">
+    <button type="button" onclick="alert('Allo !!!')">Click Me!</button>
+    <button type="button" onclick="proceed('status');">status</button>
+    <button type="button" onclick="proceed('open');">open</button>
+    <button type="button" onclick="proceed('close');">close</button>
+
+
+</form>
+<script>
+function proceed (subcmd) {
+    var form = document.createElement('form');
+    form.setAttribute('method', 'post');
+
+    cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/0'
+
+    form.setAttribute('action', cmd);
+    form.style.display = 'hidden';
+    document.body.appendChild(form)
+    form.submit();
+}
+</script>
+</body>
+</html>
