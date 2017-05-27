@@ -9,12 +9,6 @@ GARAGE_NAME_FOR_TEST=GARAGE_0
 RESP_TIMEOUT = 10
 
 [GARAGE_COMMON]
-########################
-# DEFAULT_LANGUAGE=
-#   Fr = Francais
-#   En = English
-# Hint: Add section in event_list to add extra language
-DEFAULT_LANGUAGE=Fr
 
 GarageOpenTriggerAlarmElapsedTime = 20
 GarageOpenTriggerCloseDoorElapsedTime = 60
@@ -48,6 +42,13 @@ TimeBetweenAlerts=1800
 
 [NOTIFICATION_COMMON]
 NotificationEnabled = False
+########################
+# DEFAULT_LANGUAGE=
+#   Fr = Francais
+#   En = English
+# Hint: Add section in event_list to add extra language
+DEFAULT_LANGUAGE=Fr
+
 
 # Send Mail to gmail
 # import smtplib
@@ -72,7 +73,7 @@ PASSWORD=myPassword
 # Example1:
 #  allo@hotmail.com,myhello@yahoo.ca
 # Example2:
-#  allo@hotmail.com,myhello@yahoo.ca;En,hello@xmail.ca;Klingon
+#  allo@hotmail.com,myhello@yahoo.ca+En,hello@xmail.ca+FrMule;
 RECIPIENTLIST=myReceivers
 
 [NOTIFICATION_MANAGER]

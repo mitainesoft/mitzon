@@ -21,7 +21,7 @@ class ConfigManager(metaclass=SingletonMeta):
         self.GARAGE_NAME = [] # ["GARAGE_0", "GARAGE_1", "GARAGE_2", "GARAGE_3"]
 
     def setConfigFileName(self,filename):
-        log.info("Set config file name...")
+        log.debug("Set config file name...")
         self.configfilename = filename
         try:
             with open(self.configfilename) as f:
@@ -46,7 +46,7 @@ class ConfigManager(metaclass=SingletonMeta):
                         else:
                             log.info("Skip garage in config:" + keySections + ". Should not supervise!")
                     else:
-                        log.info("config file, not garage: " + keySections + "...Skipping" )
+                        log.debug("config file, not garage: " + keySections + "...Skipping" )
                 for key in self.config[keySections]:
                     log.info(keySections + "/" + key + " = " + self.config[keySections][key])
 

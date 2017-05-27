@@ -17,6 +17,20 @@
 
 
 1. INSTALLATION INSTUCTIONS
+
+    ** Install Arduino Image **
+    First of all, you need to build the firmware and upload it on your Arduino, 
+    to do that clone the nanpy-firmware repository on Github or download it from PyPi.
+    
+    https://github.com/nanpy/nanpy
+
+        git clone https://github.com/nanpy/nanpy-firmware.git
+        cd nanpy-firmware
+        ./configure.sh
+
+        load and upload nanpy.ino
+        
+
     In linux Debian in Oracle VirtualBox
 
     ** install cherrypy for python3 **
