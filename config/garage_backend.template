@@ -9,13 +9,18 @@ GARAGE_NAME_FOR_TEST=GARAGE_0
 RESP_TIMEOUT = 10
 
 [GARAGE_COMMON]
-
+#nbr seconds before warning is sent
 GarageOpenTriggerAlarmElapsedTime = 20
+
+#nbr seconds before door will attempt to close
 GarageOpenTriggerCloseDoorElapsedTime = 60
+
 # Time it  takes to consider door closed. Used in context of alarm reset
 GarageDoorAssumedClosedTime = 30
+
 TimeToKeepButtonPressedMilliSec = 1000
 TimeBeforeRetryCloseDoor = 20
+GarageElapsedTimeForStatusChange=5
 
 [GARAGE_0]
 SuperviseThisGarage = True

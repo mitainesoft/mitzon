@@ -76,6 +76,13 @@
             "category": "HARDWARE",
             "text": "USB Commuucation error",
             "workaround": "Calm down! Stop trying !"
+        },
+        "HW002": {
+            "deviceType": "Garage",
+            "severity": "1",
+            "category": "HARDWARE",
+            "text": "Command sent but nothing happened!",
+            "workaround": "Check the door !"
         }
     },
     "Fr": {
@@ -155,6 +162,13 @@
             "category": "HARDWARE",
             "text": "USB Commuucation error",
             "workaround": "Appelez le service technique au 1-800-PLAINTE!"
+        },
+        "HW002": {
+            "deviceType": "Garage",
+            "severity": "1",
+            "category": "HARDWARE",
+            "text": "Command sent but nothing happened!",
+            "workaround": "Check the door !"
         }
     },
     "FrMule": {
@@ -234,6 +248,13 @@
             "category": "HARDWARE",
             "text": "USB Commuucation error",
             "workaround": "Appelez le service technique pour tête de veau au 1-800-VEAU"
+        },
+        "HW002": {
+            "deviceType": "Garage",
+            "severity": "1",
+            "category": "HARDWARE",
+            "text": "Command sent but nothing happened!",
+            "workaround": "Check the door !"
         }
     }
 }

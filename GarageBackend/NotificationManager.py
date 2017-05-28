@@ -166,6 +166,7 @@ class NotificationManager(metaclass=SingletonMeta):
                     id=alert_current_list[keyalert].id
                     altext=self.alertFileListJSON[keylang][id]["text"]
                     alworkaround=self.alertFileListJSON[keylang][id]["workaround"]
+                    #notif_sent
 
                     txt = "%d) %s\t%s -> %s (%s)" % (nbrnotif_recipient,alert_current_list[keyalert].device,altext,alworkaround,id)
                     alertlisttxt += "%s\n" % txt

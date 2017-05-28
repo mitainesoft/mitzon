@@ -31,12 +31,13 @@ class GarageDoor():
         self.g_status = G_UNKNOWN
         self.g_prevstatus = G_UNKNOWN
         self.g_sensor_props = {}
-        self.g_update_time=None
+        self.g_update_time=time.time()
         self.g_open_time = None
         self.g_close_time = None
         self.g_error_time = None
         self.g_last_alert_send_time = None
         self.g_last_cmd_sent_time = None
+        self.g_last_cmd_trigger_time = None
         self.g_next_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeRetryCloseDoor"))
 
 
@@ -56,7 +57,6 @@ class GarageDoor():
 
     def updateSensor(self):
         sensor_status_text=""
-        self.g_update_time = time.time()
         try:
             for sensor in self.g_sensor_props:
                 self.g_sensor_props[sensor].s_update_time = time.time()
@@ -124,6 +124,7 @@ class GarageDoor():
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):
+            self.g_update_time = time.time()
             sensor_status_text=self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status
             log.info(sensor_status_text)
 
@@ -155,6 +156,13 @@ class GarageDoor():
             else:
                 sensor_status_text = self.g_name + ":" + self.g_status
                 # log.info(sensor_status_text)
+            if self.g_update_time != None and self.g_last_cmd_sent_time != None \
+                and time.time() > (self.g_last_cmd_sent_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange")))\
+                and self.g_last_cmd_trigger_time > (self.g_update_time+float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange"))):
+                status_text = self.alarm_mgr_handler.addAlert("HW002", self.g_name)
+                self.g_update_time=time.time()
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                log.info("HW problem ? :"+status_text)
 
         resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
         return (resp)
@@ -163,6 +171,11 @@ class GarageDoor():
         log.debug("GarageDoor status called !")
         self.updateSensor()
         resp = self.determineGarageDoorOpenClosedStatus()
+        return (resp)
+
+    def clear(self):
+        # self.alarm_mgr_handler.clearAllAlert()
+        resp = CommmandQResponse(time.time()*1000000, "Garage alarm cleared" )
         return (resp)
 
     def addSensor(self, key,sensor_props):
@@ -185,6 +198,7 @@ class GarageDoor():
 
     def open(self):
         status_text=""
+        self.g_last_cmd_trigger_time=time.time()
         if (self.g_status  == G_CLOSED):
             if time.time() > self.g_next_cmd_allowed_time:
                 # status_text+=" open. Trigger garage door !"
@@ -208,6 +222,7 @@ class GarageDoor():
         return resp
 
     def close(self):
+        self.g_last_cmd_trigger_time=time.time()
         status_text = ""
         if self.g_auto_force_ignore_garage_open_close_cmd == True:
             status_text=self.g_name + " " +  self.alarm_mgr_handler.alertFileListJSON["GDC01"]["text"]+" "

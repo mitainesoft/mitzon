@@ -28,7 +28,7 @@ class AlertManager(metaclass=SingletonMeta):
 
         self.alertFileListJSON = {}
         self.alertCurrentList = {}
-        self.Alert = collections.namedtuple('Alert', ['id', 'device', 'severity', 'category', 'text', 'workaround', 'time'])
+        self.Alert = collections.namedtuple('Alert', ['id', 'device', 'severity', 'category', 'text', 'workaround', 'time','notif_sent'])
 
         #Time supervision
         self.last_alert_sent_time=0
@@ -63,9 +63,10 @@ class AlertManager(metaclass=SingletonMeta):
             log.error("processAlerts Alarm List empty Exception! Should not be here !")
 
         #Send Alert?!?
-        if (alert_triggered == True and self.isAlertToBeSent() == True):
-            log.info("Sending '%d' Alerts Notification thread" % len(self.alertCurrentList))
-            self.notif_handler.addNotif(self.alertCurrentList)
+        if (alert_triggered == True):
+            if self.isAlertToBeSent() == True:
+                log.info("Sending '%d' Alerts Notification thread" % len(self.alertCurrentList))
+                self.notif_handler.addNotif(self.alertCurrentList)
 
         return (alert_triggered)
 
@@ -102,42 +103,17 @@ class AlertManager(metaclass=SingletonMeta):
     #required for subcriber
     def processDeviceCommand(self, mything, myservice, myid):
         # log.info(str(self.deviceList))
-        logbuf = "AlertManager Cmd Received: %s/%s/%s " % (mything, myservice, myid)
+        logbuf = "AlertManager processDeviceCommand cmd Received: %s/%s/%s " % (mything, myservice, myid)
         log.info(logbuf)
-        alertlisttxt="Alertlist="
 
-        crazyloop=0;
-        keyiter=iter(self.alertCurrentList)
-        clmax=500
+
         try:
-            keyalert = keyiter.__next__()
-            while keyalert != None and crazyloop<clmax:
-                tmptxt="%d>Alert Key=%s %d" %(crazyloop,keyalert,keyiter.__sizeof__())
-                log.debug(tmptxt)
-                crazyloop += 1
-                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
-                    "%Y%m%d-%H%M%S")
-                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s workaround:%s time:%s " % (
-                self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
-                self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
-                self.alertCurrentList[keyalert].text,self.alertCurrentList[keyalert].workaround, altime)
-                alertlisttxt += "%s;" % txt
-                keyalert = keyiter.__next__()
-                crazyloop+=1
-            if (crazyloop>=clmax):
-                os._exit(clmax)
-        except StopIteration:
-            if(crazyloop>0):
-                alertlisttxt=alertlisttxt[:-1]
-            else:
-                alertlisttxt = "Alertlist=None"
-            log.debug("processDeviceCommand Alarm List empty StopIteration!")
-        except Exception:
-            # traceback.print_exc()
-            log.error("processDeviceCommand Alarm List empty Exception! Should not be here !")
-
-
-        resp = CommmandQResponse(time.time(),alertlisttxt)
+            log.info("Calling %s " % (self.__class__.__name__))
+            thingToCall = getattr(self, myservice)
+            resp = thingToCall()
+        except AttributeError:
+            resp = CommmandQResponse(time.time(), "Alert Manager Ok")
+        # resp = CommmandQResponse(time.time(),alertlisttxt)
         return (resp)
 
     def enableSiren(self,mything,myservice,myid):
@@ -152,7 +128,7 @@ class AlertManager(metaclass=SingletonMeta):
                                                          self.alertFileListJSON[self.default_language][id]["category"],
                                                          self.alertFileListJSON[self.default_language][id]["text"],
                                                          self.alertFileListJSON[self.default_language][id]["workaround"],
-                                                         time.time())
+                                                         time.time(),None)
         except Exception:
             traceback.print_exc()
             log.error(alert_text)
@@ -161,10 +137,15 @@ class AlertManager(metaclass=SingletonMeta):
         log.debug("Add Alert Queue: " + id+">"+alert_text)
         return alert_text
 
+    def clear(self):
+        # Not called  Bug !
+        self.clearAllAlert()
+        resp = CommmandQResponse(time.time()*1000000, "AlertManager alarm cleared" )
+        return (resp)
 
     def clearAllAlert(self):
         self.alertCurrentList.clear()
-        log.warning("Alert Queue Blindly Cleared (need to improve!!!)!!!")
+        log.warning("All Alerts cleared!")
 
     def clearAlertDevice(self,cat,dev):
         log.debug("Clear alert request " + cat + " for " + dev)
@@ -226,27 +207,76 @@ class AlertManager(metaclass=SingletonMeta):
             # traceback.print_exc()
             log.debug("Alarm List empty Exception!")
 
+    def clearAlertNotifSent(self, dev):
+        log.debug("Clear alert Notif Sent for " + dev)
+
+        crazyloop = 0;
+        keyiter = iter(self.alertCurrentList)
+        clmax = 100
+        try:
+            keyalert = keyiter.__next__()
+            while keyalert != None and crazyloop < clmax:
+                tmptxt = "%d>Alert Key=%s %d" % (crazyloop, keyalert, keyiter.__sizeof__())
+                log.debug(tmptxt)
+                crazyloop += 1
+                if self.alertCurrentList[keyalert].alert_sent != None:
+                    altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
+                        "%Y%m%d-%H%M%S")
+                    nstime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].notif_sent)).strftime(
+                        "%Y%m%d-%H%M%S")
+                    txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s Notif:%s" % (
+                        self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
+                        self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category, \
+                        self.alertCurrentList[keyalert].text, altime, nstime)
+                    log.info("Clear alert Notif Sent for " + dev + "-->" + txt)
+                    del self.alertCurrentList[keyalert]
+                keyalert = keyiter.__next__()
+            if (crazyloop >= clmax):
+                log.fatal("Too many alerts ! Die !")
+                os._exit(clmax)
+        except StopIteration:
+            log.debug("Alarm List empty StopIteration!")
+        except Exception:
+            # traceback.print_exc()
+            log.debug("Alarm List empty Exception!")
+
     def test(self):
 
         return CommmandQResponse(0, "test AlertManager")
 
     def status(self):
-        nbralerts=self.alertCurrentList.__len__()
 
+        alertlisttxt="Alertlist="
+
+        crazyloop=0;
+        keyiter=iter(self.alertCurrentList)
+        clmax=500
         try:
-            if nbralerts>0:
-                log.info("AlertManager status: %d alerts", (nbralerts))
-                for keyalert in self.alertCurrentList:
-                    altime="%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime("%Y%m%d-%H%M%S")
-                    txt="Alert id:%s %s sev:%s cat:%s text:%s %s time:%s " % (self.alertCurrentList[keyalert].id,self.alertCurrentList[keyalert].device,\
-                                                                    self.alertCurrentList[keyalert].severity,self.alertCurrentList[keyalert].category,\
-                                                                    self.alertCurrentList[keyalert].text,self.alertCurrentList[keyalert].workaround,altime)
-                    # +" time:"+ altime
+            keyalert = keyiter.__next__()
+            while keyalert != None and crazyloop<clmax:
+                tmptxt="%d>Alert Key=%s %d" %(crazyloop,keyalert,keyiter.__sizeof__())
+                log.debug(tmptxt)
+                crazyloop += 1
+                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
+                    "%Y%m%d-%H%M%S")
+                txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s workaround:%s time:%s " % (
+                self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
+                self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
+                self.alertCurrentList[keyalert].text,self.alertCurrentList[keyalert].workaround, altime)
+                alertlisttxt += "%s;" % txt
+                keyalert = keyiter.__next__()
+                crazyloop+=1
+            if (crazyloop>=clmax):
+                os._exit(clmax)
+        except StopIteration:
+            if(crazyloop>0):
+                alertlisttxt=alertlisttxt[:-1]
+            else:
+                alertlisttxt = "Alertlist=None"
+            log.debug("processDeviceCommand Alarm List empty StopIteration!")
+        except Exception:
+            # traceback.print_exc()
+            log.error("processDeviceCommand Alarm List empty Exception! Should not be here !")
 
-                    log.info(txt)
-        except  Exception:
-            traceback.print_exc()
-            log.error("Unable to print alarm list !")
-            os._exit(-1)
-        resp = CommmandQResponse(time.time(),"status AlertManager" )
+        resp = CommmandQResponse(time.time(),alertlisttxt )
         return (resp)
