@@ -68,6 +68,8 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         cherrypy.session['mything'] = mything
         cherrypy.session['myservice'] = myservice
         cherrypy.session['myid'] = myid
+        cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+        cherrypy.response.headers["Allow"] = "POST, GET, OPTIONS, DELETE, PUT, PATCH"
         logbuf = "GarageBackend Request Received POST: %s %s %s " % (mything, myservice, myid)
         log.debug(logbuf)
 
@@ -148,14 +150,25 @@ if __name__ == '__main__':
                         handlers=[logging.FileHandler("log/garage.log"),
                                   logging.StreamHandler()])
 
-    conf = {
+    garage_backend_conf = {
         '/': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
             'tools.sessions.on': True,
             'tools.response_headers.on': False,
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+            # 'server.socket_host': '0.0.0.0',
+            # 'server.socket_port': 8050,
+            # 'tools.staticdir.on': True,
+            # 'tools.request_headers.on': False,
+            # 'tools.staticdir.dir': "log",
+            # 'log.access_file': "log/garage_cherrypy_access.log",
+            # 'log.error_file': "log/garage_cherrypy_error.log",
+            # 'log.screen': False,
+            # 'engine.autoreload_on': False,
         }
     }
+
+    # cherrypy.config.update(garage_backend_conf)
     cherrypy.config.update({'server.socket_host': '0.0.0.0',
                             'server.socket_port': 8050,
                             'tools.staticdir.on': True,
@@ -203,7 +216,10 @@ if __name__ == '__main__':
     thread_garage_manager.start()
     thread_notification_manager.start()
 
-    cherrypy.quickstart(my_garageURLCmdProcessor, '/', conf)
+    cherrypy.quickstart(my_garageURLCmdProcessor, '/', garage_backend_conf)
+    # cherrypy.tree.mount(my_garageURLCmdProcessor, '/backend', garage_backend_conf)
+    # cherrypy.engine.start()
+    # cherrypy.engine.block()
 
     dispatch_queue.put(None)
     command_queue.put(None)
@@ -213,5 +229,5 @@ if __name__ == '__main__':
     # thread_garage_manager.join(THREAD_TIMEOUTS)
 
     cherrypy.engine.exit()
-    exit(0)
+    os._exit(0)
 

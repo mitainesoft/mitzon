@@ -106,7 +106,6 @@ class AlertManager(metaclass=SingletonMeta):
         logbuf = "AlertManager processDeviceCommand cmd Received: %s/%s/%s " % (mything, myservice, myid)
         log.info(logbuf)
 
-
         try:
             log.info("Calling %s " % (self.__class__.__name__))
             thingToCall = getattr(self, myservice)

@@ -5,12 +5,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="Responsive Site Designer 1.5.1390">
-  <title>Index</title>
+  <title>Mitaine Garage</title>
   <link rel="stylesheet" href="css/coffeegrinder.min.css">
   <link rel="stylesheet" href="css/wireframe-theme.min.css">
   <script>document.createElement( "picture" );</script>
   <script src="js/picturefill.min.js" class="picturefill" async="async"></script>
+  <script src="js/jquery-3.2.1.js"></script>
+
   <link rel="stylesheet" href="css/main.css">
+
 </head>
 
 <body>
@@ -89,24 +92,28 @@
   </aside>
   <footer class="row FooterRow">
     <div class="coffee-span-12">
-      <p class="paragraph Footer">4128 LONG VALLEY ROAD <br>ATLANTA, GEORGIA<br>(770) 985 9856 GHOSTMAIL@GMAIL.COM</p>
-      <p class="paragraph FooterCredit"><span class="paragraph-text-2">Designed with <a title="" href="http://www.coffeecup.com/designer/" class="p-link">Responsive Site Designer</a> by&nbsp;<a title="" href="http://www.coffeecup.com/" class="p-link">CoffeeCup Software</a></span>
+      <p class="paragraph Footer">Ile-Bizard<br>(514) 594 3818 mitainesoft@gmail.com</p>
+      <p class="paragraph FooterCredit"><span  <a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft</a></span>
       </p>
     </div>
   </footer>
 
 <script>
 function proceed (subcmd,id) {
-    var form = document.createElement('form');
-    form.setAttribute('method', 'post');
-
-    cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
-
-    form.setAttribute('action', cmd);
-    form.style.display = 'hidden';
-    document.body.appendChild(form)
-    form.submit();
+//    var form = document.createElement('form');
+//    form.setAttribute('method', 'post');
+//
+//    cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
+//
+//    form.setAttribute('action', cmd);
+//    form.style.display = 'hidden';
+//    document.body.appendChild(form)
+//    form.submit();
+    var cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
+    var posting=$.post( cmd, function( data ) {alert( "Data Loaded: " + data );})
+//   posting.done(function() {alert( "second success:" + data ); })
 }
+
 </script>
 </body>
 
