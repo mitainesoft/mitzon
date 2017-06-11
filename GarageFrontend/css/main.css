@@ -273,7 +273,7 @@ a.link-button.action-button.nav-button {
   color: #fff;
 }
 
-a.link-button.learnbutton.nav-button {
+a.link-button.errordoorbutton.nav-button {
   padding: 12px 25px;
   border-width: 2px;
   border-color: #ba042a;
@@ -286,6 +286,44 @@ a.link-button.learnbutton.nav-button {
   opacity: 1;
 }
 
+a.link-button.unknownstatusdoorbutton.nav-button {
+  padding: 12px 25px;
+  border-width: 2px;
+  border-color: #5a6469;
+  border-top-left-radius: 40px 30px;
+  border-top-right-radius: 40px 30px;
+  border-bottom-right-radius: 40px 30px;
+  border-bottom-left-radius: 40px 30px;
+  background-color: rgba(128, 128, 128, .8);
+  color: #fff;
+  opacity: 1;
+}
+
+a.link-button.opendoorbutton.nav-button {
+  padding: 12px 25px;
+  border-width: 2px;
+  border-color: #5a6469;
+  border-top-left-radius: 40px 30px;
+  border-top-right-radius: 40px 30px;
+  border-bottom-right-radius: 40px 30px;
+  border-bottom-left-radius: 40px 30px;
+  background-color: rgba(226, 155, 0, .8);
+  color: #fff;
+  opacity: 1;
+}
+
+a.link-button.closeddoorbutton.nav-button {
+  padding: 12px 25px;
+  border-width: 2px;
+  border-color: #5a6469;
+  border-top-left-radius: 40px 30px;
+  border-top-right-radius: 40px 30px;
+  border-bottom-right-radius: 40px 30px;
+  border-bottom-left-radius: 40px 30px;
+  background-color: rgba(0, 239, 3, .8);
+  color: #fff;
+  opacity: 1;
+}
 a.link-button.active-nav.nav-button {
   border-top-width: 3px;
   border-top-color: #8e0b27;
@@ -312,9 +350,22 @@ a.link-button.action-button.nav-button:hover {
   color: #fff;
 }
 
-a.link-button.learnbutton.nav-button:hover {
+a.link-button.errordoorbutton.nav-button:hover {
   opacity: .8;
 }
+
+a.link-button.unknownstatusdoorbutton.nav-button:hover {
+  opacity: .3;
+}
+
+a.link-button.opendoorbutton.nav-button:hover {
+  opacity: .3;
+}
+
+a.link-button.closeddoorbutton.nav-button:hover {
+  opacity: 1;
+}
+
 
 /* Layout Elements */
 
@@ -700,7 +751,18 @@ a.social-image.socialicon:focus {
 
   /* Interaction Elements */
 
-  a.link-button.learnbutton.nav-button {
+  a.link-button.unknownstatusdoorbutton.nav-button {
+    padding: 10px 20px;
+  }
+  a.link-button.errordoorbutton.nav-button {
+    padding: 10px 20px;
+  }
+
+  a.link-button.opendoorbutton.nav-button {
+    padding: 10px 20px;
+  }
+
+    a.link-button.closeddoorbutton.nav-button {
     padding: 10px 20px;
   }
 

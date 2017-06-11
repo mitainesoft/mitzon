@@ -81,12 +81,14 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
 
         resp_str=""
 
-        for sub_nbr in range(0,2): #Subscribers are DeviceManager and Alert Manager
+        for sub_nbr in range(0,1): #  1 only DeviceManager 2 Subscribers are DeviceManager and Alert Manager
             try:
                 resp=response_queue.get(True, float(self.config_handler.getConfigParam("THREAD_CONTROL","RESP_TIMEOUT")))
                 resp_str = resp_str +  resp.getRspPropsToString()
             except Empty:
                 resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))
+
+        resp_str += self.alert_manager_handler.status().getRspPropsToString()
 
         if log.isEnabledFor(logging.INFO):
             self.dev_manager_handler.listDevices()
@@ -113,8 +115,14 @@ def command_queue_fn(q: Queue, r: Queue):
     while next is not None:
         # log.info(next[0] +'/' + next[1:])
         resp=next[0](*(next[1:]))
-        log.debug("command_queue_fn isinstance next = %s", next[0].__self__.__class__.__name__)
-        r.put(resp)
+        if log.isEnabledFor(logging.DEBUG):
+            log.debug("command_queue_fn isinstance next = %s", next[0].__self__.__class__.__name__)
+        if next[0].__self__.__class__.__name__ == "DeviceManager":
+            r.put(resp)
+        else:
+            if log.isEnabledFor(logging.DEBUG):
+                log.debug("command_queue_fn NOT ADDED TO QUEUE isinstance next = %s", next[0].__self__.__class__.__name__)
+            # r.put(CommmandQResponse(0,next[0].__self__.__class__.__name__))
         # if hasattr(next[0], '__self__') and isinstance(next[0].__self__, DeviceManager):
         #     r.put(resp)
         next = q.get()

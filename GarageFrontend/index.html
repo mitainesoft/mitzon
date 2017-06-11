@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="css/main.css">
 
+
 </head>
 
 <body>
@@ -29,18 +30,16 @@
     <header class="coffee-span-12 call-out">
       <h5 class="smallTitle2">Commandes</h5>
       <h1 class="MainTitle2">Porte 0</h1>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('open','0');">Ouvre</a>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('close','0');">Ferme</a>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('status','0');">Status</a>
+      <a id="garagecmd0" class="link-button opendoorbutton nav-button" href="#" onclick="proceed('open','0');">???</a>
+      <a id="garagestatus0" class="link-button nav-button unknownstatusdoorbutton" href="#" onclick="doorStatus();">Status</a>
 
       <h1 class="MainTitle2">Porte 1</h1>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('open','1');">Ouvre</a>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('close','1');">Ferme</a>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('status','1');">Status</a>
+      <a id="garagecmd1" class="link-button nav-button opendoorbutton" href="#" onclick="proceed('open','1');">Ouvre</a>
+      <a id='garagestatus1' class="link-button nav-button errordoorbutton" href="#" onclick="proceed('status','1');">Status</a>
 
       <h1 class="MainTitle2">Alertes</h1>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('clear','0');">Efface</a>
-      <a class="link-button nav-button learnbutton" href="#" onclick="proceed('status','0');">Status</a>
+      <a class="link-button nav-button errordoorbutton" href="#" onclick="proceed('clear','0');">Efface</a>
+      <a class="link-button nav-button errordoorbutton" href="#" onclick="proceed('status','0');">Status</a>
 
 
       <!--
@@ -100,18 +99,34 @@
 
 <script>
 function proceed (subcmd,id) {
-//    var form = document.createElement('form');
-//    form.setAttribute('method', 'post');
-//
-//    cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
-//
-//    form.setAttribute('action', cmd);
-//    form.style.display = 'hidden';
-//    document.body.appendChild(form)
-//    form.submit();
-    var cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
-    var posting=$.post( cmd, function( data ) {alert( "Data Loaded: " + data );})
-//   posting.done(function() {alert( "second success:" + data ); })
+        var cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
+    var posting=$.post( cmd, function( data ) {parseResponse( data );})
+}
+
+function doorStatus () {
+    for (count = 0;count <= 1;count++)
+    {
+
+        cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
+        garageid="garagestatus"+count;
+        posting = $.post(cmd,
+            function (data) {
+//            $("[id^='garagestatus0']").text("Allo"+count)
+                // $("#"+ garageid).text("Hello"+count)
+//        $("body").find("#"+garageid).text("Hello"+count);
+//              alert("status: " + data);
+                parseResponse(data,status)
+            },null,"text")
+
+
+
+    }
+}
+function parseResponse( data) {
+//    alert("Garage reponse: " + data)
+    document.write(data)
+    document.write("<br></br>")
+
 }
 
 </script>

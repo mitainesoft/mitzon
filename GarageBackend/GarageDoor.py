@@ -125,8 +125,9 @@ class GarageDoor():
 
         if (self.g_prevstatus != self.g_status):
             self.g_update_time = time.time()
-            sensor_status_text=self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status
-            log.info(sensor_status_text)
+            sensor_status_text=self.g_name + ":" +self.g_status
+            log_status_text=self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status
+            log.info(log_status_text)
 
             self.g_prevstatus = self.g_status
             if self.g_status == G_OPEN:
@@ -164,13 +165,14 @@ class GarageDoor():
                 self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
                 log.info("HW problem ? :"+status_text)
 
-        resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
-        return (resp)
+        # resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
+        return (sensor_status_text)
 
     def status(self):
         log.debug("GarageDoor status called !")
         self.updateSensor()
-        resp = self.determineGarageDoorOpenClosedStatus()
+
+        resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] "+self.determineGarageDoorOpenClosedStatus())
         return (resp)
 
     def clear(self):

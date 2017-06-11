@@ -277,5 +277,7 @@ class AlertManager(metaclass=SingletonMeta):
             # traceback.print_exc()
             log.error("processDeviceCommand Alarm List empty Exception! Should not be here !")
 
-        resp = CommmandQResponse(time.time(),alertlisttxt )
+        resp = CommmandQResponse(time.time(),"[AlertManager] "+ alertlisttxt )
+        # resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] "+self.determineGarageDoorOpenClosedStatus().getRspPropsToString())
+
         return (resp)
