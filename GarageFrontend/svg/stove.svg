@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 245.754 245.754" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 245.754 245.754">
+  <g>
+    <path d="M206.294,14.245V0h-67v14.245h-32.833V0h-67v14.245H15.877v231.509h214V14.245H206.294z M199.877,75.833h-154V44.245h154   V75.833z M155.211,215.754H90.544V150.25h64.667V215.754z M185.211,215.754V120.25H60.544v95.504H45.877V105.833h154v109.921   H185.211z"/>
+    <circle cx="72.167" cy="59" r="9.882"/>
+    <circle cx="105.974" cy="59" r="9.882"/>
+    <circle cx="139.781" cy="59" r="9.882"/>
+    <circle cx="173.587" cy="59" r="9.882"/>
+  </g>
+</svg>

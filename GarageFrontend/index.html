@@ -2,134 +2,181 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Responsive Site Designer 1.5.1390">
-  <title>Mitaine Garage</title>
-  <link rel="stylesheet" href="css/coffeegrinder.min.css">
-  <link rel="stylesheet" href="css/wireframe-theme.min.css">
-  <script>document.createElement( "picture" );</script>
-  <script src="js/picturefill.min.js" class="picturefill" async="async"></script>
-  <script src="js/jquery-3.2.1.js"></script>
+    <meta charset="utf-8">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <!--<meta name="generator" content="Responsive Site Designer 1.5.1390">-->
+    <title>Mitaine Garage</title>
 
-  <link rel="stylesheet" href="css/main.css">
+    <!--<script src="../js/jquery-3.2.1.js"></script>-->
+    <!--<script src="../js/jquery.mobile-1.4.5.min.js"></script>-->
+
+    <link rel="stylesheet" href="../css/coffeegrinder.min.css">
+    <link rel="stylesheet" href="../css/wireframe-theme.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+
+    <!--<link href="http://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" type="text/css"/>-->
+    <link rel="stylesheet" type="text/css" href="../css/flaticon.css">
 
 
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <!--<script>document.createElement("picture");</script>-->
+    <!--<script src="../js/picturefill.min.js" class="picturefill" async="async"></script>-->
+
+
+    <style>
+
+
+        [class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+            font-family: Flaticon;
+            font-size: 120px;
+            font-style: normal;
+            margin-left: 20px;
+            color: #333;
+        }
+
+        #glyphs {
+            border-bottom: 1px solid #ccc;
+            padding: 2em 0;
+            text-align: center;
+        }
+
+        .glyph {
+            display: inline-block;
+            width: 9em;
+            margin: 1em;
+            text-align: center;
+            vertical-align: top;
+            background: #FFF;
+        }
+
+        .glyph .glyph-icon {
+            padding: 10px;
+            display: block;
+            font-family: "Flaticon";
+            font-size: 64px;
+            line-height: 1;
+        }
+
+        .glyph .glyph-icon:before {
+            font-size: 64px;
+            color: #222;
+            margin-left: 0;
+        }
+
+
+    </style>
 </head>
 
 <body>
-  <header class="row NavPicture">
-    <div class="coffee-span-3 coffee-670-span-12">
-      <h1 class="MainTitle">Mitaine Garage</h1>
-      <h3>Anti-Mule Systeme</h3>
-    </div>
-    <div class="coffee-span-9 coffee-670-span-12">
-      <nav class="container nav-container"><a class="link-button nav-button active-nav" href="index.html">Home</a><a class="link-button nav-button" href="about.html">About</a><a class="link-button nav-button" href="#">Members</a><a class="link-button nav-button" href="news.html">News</a><a class="link-button nav-button action-button" href="#">Action</a>
-      </nav>
-    </div>
-    <header class="coffee-span-12 call-out">
-      <h5 class="smallTitle2">Commandes</h5>
-      <h1 class="MainTitle2">Porte 0</h1>
-      <a id="garagecmd0" class="link-button opendoorbutton nav-button" href="#" onclick="proceed('open','0');">???</a>
-      <a id="garagestatus0" class="link-button nav-button unknownstatusdoorbutton" href="#" onclick="doorStatus();">Status</a>
 
-      <h1 class="MainTitle2">Porte 1</h1>
-      <a id="garagecmd1" class="link-button nav-button opendoorbutton" href="#" onclick="proceed('open','1');">Ouvre</a>
-      <a id='garagestatus1' class="link-button nav-button errordoorbutton" href="#" onclick="proceed('status','1');">Status</a>
+<div data-role="page" id="foo" class="row NavPicture">
 
-      <h1 class="MainTitle2">Alertes</h1>
-      <a class="link-button nav-button errordoorbutton" href="#" onclick="proceed('clear','0');">Efface</a>
-      <a class="link-button nav-button errordoorbutton" href="#" onclick="proceed('status','0');">Status</a>
+    <div data-role="header">
 
-
-      <!--
-      <a class="link-button nav-button learnbutton" href="#">Porte #2</a>
-      <a class="link-button nav-button learnbutton" href="#">Porte #3</a>
-      -->
-
-      <!--     <button type="button" onclick="proceed('open');">open</button>
-      -->
-
-
-    </header>
-  </header>
-  <main class="row">
-    <div class="coffee-span-12 introduction">
-      <h1 class="MainTitle3">Mon Titre </h1>
-      <p class="paragraph intro-paragraph">Du texte...</p>
-    </div>
-  </main>
-  <main class="row">
-    <div class="coffee-span-12 coffee-670-span-12 flex-column">
-      <div class="container flex-card">
-        <div class="responsive-picture thumbimage">
-          <picture><img alt="Lady Bug on a Leaf" srcset="./LadyBug/ladybug-796482_640.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-          </picture>
+        <div class="coffee-span-12 coffee-670-span-12">
+            <h1 class="MainTitle">Mitaine Garage</h1>
+            <h3>Anti-Mule Systeme</h3>
         </div>
-        <h6 class="PictureCaption">About Mitaine Garage</h6>
-        <p class="paragraph picturecaption">No se1  </p>
-        <a class="link-text picturecaption" href="#">Learn More --&gt;</a>
-      </div>
-      <div class="container flex-card">
-        <div class="responsive-picture thumbimage">
-          <picture><img alt="Lady Bug on a Leaf" srcset="./LadyBug/ladybug-973917_640_r.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
-          </picture>
+        <div data-role="navbar">
+            <ul>
+                <li><a class="flaticon-house-3 ui-btn-active" href="index.html"></a></li>
+                <li><a class="flaticon-cctv" href="index.html"></a></li>
+                <li><a class="flaticon-info" href="about.html"></a></li>
+            </ul>
+
         </div>
-        <h6 class="PictureCaption">Ou Acheter</h6>
-        <p class="paragraph picturecaption">no se2</p>
-        <a class="link-text picturecaption" href="#">Learn More --&gt;</a>
-      </div>
-    </div>
-    <div class="coffee-span-12 introduction">
-      <h1 class="MainTitle3">Attention!</h1>
-      <p class="paragraph intro-paragraph">Auto peut etre...</p>
-    </div>
-  </main>
-  <aside class="row socialrow">
-    <div class="coffee-span-12"><a href="#" target="_blank" class="social-image socialicon"><img class="facebook-icon" src="./socialicons/webicon-facebook.png" alt="Social Icon"></a><a href="#" target="_blank" class="social-image socialicon"><img class="instagram-icon" src="./socialicons/webicon-instagram.png" alt="Social Icon"></a><a href="#" target="_blank" class="social-image socialicon"><img class="twitter-icon" src="./socialicons/webicon-twitter.png" alt="Social Icon"></a><a href="#" target="_blank" class="social-image socialicon"><img class="googleplus-icon" src="./socialicons/webicon-googleplus.png" alt="Social Icon"></a><a href="#" target="_blank" class="social-image socialicon"><img class="linkedin-icon" src="./socialicons/webicon-linkedin.png" alt="Social Icon"></a>
-    </div>
-  </aside>
-  <footer class="row FooterRow">
-    <div class="coffee-span-12">
-      <p class="paragraph Footer">Ile-Bizard<br>(514) 594 3818 mitainesoft@gmail.com</p>
-      <p class="paragraph FooterCredit"><span  <a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft</a></span>
-      </p>
-    </div>
-  </footer>
 
-<script>
-function proceed (subcmd,id) {
-        var cmd = 'http://192.168.1.83:8050/GarageDoor/'+subcmd+'/'+id
-    var posting=$.post( cmd, function( data ) {parseResponse( data );})
-}
+    </div><!-- /header -->
 
-function doorStatus () {
-    for (count = 0;count <= 1;count++)
-    {
+    <div role="main" class="ui-content coffee-span-12 call-out">
 
-        cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
-        garageid="garagestatus"+count;
-        posting = $.post(cmd,
-            function (data) {
+        <h5 class="smallTitle2">Commandes</h5>
+        <!--<h1 class="MainTitle3">Porte 0</h1>-->
+        <a id="garagecmd0" class="link-button opendoorbutton nav-button flaticon-garage" href="#"
+           onclick="proceed('open','0');">0</a>
+
+        <a id="garagestatus0" class="link-button nav-button unknownstatusdoorbutton  flaticon-garage" href="#"
+           onclick="doorStatus();">S0</a>
+        <br></br>
+
+
+        <!--<h1 class="MainTitle3">Porte 1</h1>-->
+        <a id="garagecmd1" class="link-button nav-button opendoorbutton  flaticon-garage" href="#"
+           onclick="proceed('open','1');">1</a>
+        <a id='garagestatus1' class="link-button nav-button errordoorbutton  flaticon-garage" href="#"
+           onclick="proceed('status','1');">S1</a>
+        <br></br>
+
+        <!--<h1 class="MainTitle3">Alertes</h1>-->
+        <a class="link-button nav-button errordoorbutton flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
+        <a class="link-button nav-button errordoorbutton flaticon-info" href="#" onclick="proceed('status','0');"></a>
+
+    </div><!-- /content -->
+
+
+    <div data-role="footer">
+        <div class="coffee-span-12"><a href="#" target="_blank" class="social-image socialicon"><img
+                class="facebook-icon" src="../socialicons/webicon-facebook.png" alt="Social Icon"></a><a href="#"
+                                                                                                         target="_blank"
+                                                                                                         class="social-image socialicon"><img
+                class="instagram-icon" src="../socialicons/webicon-instagram.png" alt="Social Icon"></a><a href="#"
+                                                                                                           target="_blank"
+                                                                                                           class="social-image socialicon"><img
+                class="twitter-icon" src="../socialicons/webicon-twitter.png" alt="Social Icon"></a><a href="#"
+                                                                                                       target="_blank"
+                                                                                                       class="social-image socialicon"><img
+                class="googleplus-icon" src="../socialicons/webicon-googleplus.png" alt="Social Icon"></a><a
+                href="#"
+                target="_blank"
+                class="social-image socialicon"><img
+                class="linkedin-icon" src="../socialicons/webicon-linkedin.png" alt="Social Icon"></a>
+        </div>
+
+        <div class="coffee-span-12">
+            <p class="paragraph Footer">Ile-Bizard<br>(514) 594 3818 mitainesoft@gmail.com</p>
+            <p class="paragraph FooterCredit"><span <a title="Mitainesoft" href="http://www.github.com/mitainesoft/"
+                                                       class="p-link">Mitainesoft</a></span>
+            </p>
+        </div>
+    </div><!-- /footer -->
+
+    <script>
+        function proceed(subcmd, id) {
+            var cmd = 'http://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
+            var posting = $.post(cmd, function (data) {
+                parseResponse(data);
+            })
+        }
+
+        function doorStatus() {
+            for (count = 0; count <= 1; count++) {
+
+                cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
+                garageid = "garagestatus" + count;
+                posting = $.post(cmd,
+                    function (data) {
 //            $("[id^='garagestatus0']").text("Allo"+count)
-                // $("#"+ garageid).text("Hello"+count)
+                        // $("#"+ garageid).text("Hello"+count)
 //        $("body").find("#"+garageid).text("Hello"+count);
 //              alert("status: " + data);
-                parseResponse(data,status)
-            },null,"text")
+                        parseResponse(data, status)
+                    }, null, "text")
 
 
-
-    }
-}
-function parseResponse( data) {
+            }
+        }
+        function parseResponse(data) {
 //    alert("Garage reponse: " + data)
-    document.write(data)
-    document.write("<br></br>")
+            document.write(data)
+            document.write("<br></br>")
 
-}
+        }
 
-</script>
+    </script>
+</div><!-- /page -->
 </body>
 
 </html>
