@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="../css/main.css">
 
     <!--<link href="http://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" type="text/css"/>-->
-    <link rel="stylesheet" type="text/css" href="../css/flaticon.css">
+    <link rel="stylesheet" href="../css/flaticon.css">
 
 
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
@@ -25,49 +25,6 @@
     <!--<script>document.createElement("picture");</script>-->
     <!--<script src="../js/picturefill.min.js" class="picturefill" async="async"></script>-->
 
-
-    <style>
-
-
-        [class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
-            font-family: Flaticon;
-            font-size: 120px;
-            font-style: normal;
-            margin-left: 20px;
-            color: #333;
-        }
-
-        #glyphs {
-            border-bottom: 1px solid #ccc;
-            padding: 2em 0;
-            text-align: center;
-        }
-
-        .glyph {
-            display: inline-block;
-            width: 9em;
-            margin: 1em;
-            text-align: center;
-            vertical-align: top;
-            background: #FFF;
-        }
-
-        .glyph .glyph-icon {
-            padding: 10px;
-            display: block;
-            font-family: "Flaticon";
-            font-size: 64px;
-            line-height: 1;
-        }
-
-        .glyph .glyph-icon:before {
-            font-size: 64px;
-            color: #222;
-            margin-left: 0;
-        }
-
-
-    </style>
 </head>
 
 <body>
@@ -82,9 +39,9 @@
         </div>
         <div data-role="navbar">
             <ul>
-                <li><a class="flaticon-house-3 ui-btn-active" href="index.html"></a></li>
-                <li><a class="flaticon-cctv" href="index.html"></a></li>
-                <li><a class="flaticon-info" href="about.html"></a></li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-house-3 ui-btn-active" href="index.html"></a></li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-cctv" href="index.html"></a></li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-info" href="about.html"></a></li>
             </ul>
 
         </div>
@@ -93,7 +50,7 @@
 
     <div role="main" class="ui-content coffee-span-12 call-out">
 
-        <h5 class="smallTitle2">Commandes</h5>
+        <!--<h5 class="smallTitle2">Commandes</h5>-->
         <!--<h1 class="MainTitle3">Porte 0</h1>-->
         <a id="garagecmd0" class="link-button opendoorbutton nav-button flaticon-garage" href="#"
            onclick="proceed('open','0');">0</a>
@@ -107,12 +64,12 @@
         <a id="garagecmd1" class="link-button nav-button opendoorbutton  flaticon-garage" href="#"
            onclick="proceed('open','1');">1</a>
         <a id='garagestatus1' class="link-button nav-button errordoorbutton  flaticon-garage" href="#"
-           onclick="proceed('status','1');">S1</a>
+           onclick="doorStatus();">S1</a>
         <br></br>
 
         <!--<h1 class="MainTitle3">Alertes</h1>-->
         <a class="link-button nav-button errordoorbutton flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
-        <a class="link-button nav-button errordoorbutton flaticon-info" href="#" onclick="proceed('status','0');"></a>
+        <a class="link-button nav-button errordoorbutton flaticon-info" href="#" onclick="doorStatus();"></a>
 
     </div><!-- /content -->
 
@@ -156,23 +113,73 @@
 
                 cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
                 garageid = "garagestatus" + count;
-                posting = $.post(cmd,
-                    function (data) {
-//            $("[id^='garagestatus0']").text("Allo"+count)
-                        // $("#"+ garageid).text("Hello"+count)
+                posting = $.post(cmd, function (data) {
+                    parseResponse(data, status)
+                }, null, "text")
+
+                //            $("[id^='garagestatus0']").text("Allo"+count)
+                // $("#"+ garageid).text("Hello"+count)
 //        $("body").find("#"+garageid).text("Hello"+count);
 //              alert("status: " + data);
-                        parseResponse(data, status)
-                    }, null, "text")
-
-
             }
         }
         function parseResponse(data) {
-//    alert("Garage reponse: " + data)
-            document.write(data)
-            document.write("<br></br>")
+            // alert("Garage reponse: " + data)
+            // document.write(data)
+            // document.write("<br></br>")
+            // tid:00001497820533214351 [DeviceManager] GARAGE_0:CLOSED tid:00000000001497820533 [AlertManager] Alertlist=None
+            if (data == null) return;
+//            var re = new RegExp('/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s\w+\=(.*)');
+//            var tmpstr="tid:00001497820533214351 [DeviceManager] GARAGE_0:CLOSED tid:00000000001497820533 [AlertManager] Alertlist=None";
 
+            tmpstr=data.toString();
+            var myArray = tmpstr.match(/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s(\w+)\=(.*)/);
+            document.writeln("<br></br>");
+            document.writeln("'"+tmpstr+"'");
+
+            if(myArray==null) return ;
+            document.writeln("<br></br>");
+            document.writeln("array:"+myArray)
+            document.writeln("<br></br>");
+            document.writeln("0:"+myArray[0]);
+            document.writeln("<br></br>");
+            document.writeln("1:"+myArray[1]);
+            document.writeln("<br></br>");
+            document.writeln("2:"+myArray[2]);
+            document.writeln("<br></br>");
+            document.writeln("3:"+myArray[3]);
+            document.writeln("<br></br>");
+            document.writeln("4:"+myArray[4]);
+            document.writeln("<br></br>");
+            document.writeln("5:"+myArray[5]);
+            document.writeln("<br></br>");
+            document.writeln("6:"+myArray[6]);
+            document.writeln("<br></br>");
+            document.writeln("7:"+myArray[7]);
+            document.writeln("<br></br>");
+
+
+            document.write("<br></br>");
+            console.log("ZPS0009");
+            console.log(myArray);
+
+
+
+//            var tidcount=0;
+//            var tidnextpos=0;
+//            while (tidpos=data.indexOf("tid:",tidnextpos)>=0) {
+//
+//                tidnextpos+=tidpos;
+//                tidcount++;
+//            }
+//
+//            if (tidcount==0) return;
+//
+//            var devmanagerpos=data.indexOf("[DeviceManager]")
+//            var alertmanagerpos=data.indexOf("[AlertManager]")
+
+
+            var partsArray = data.split('-');
         }
 
     </script>

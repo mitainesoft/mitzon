@@ -97,7 +97,7 @@ class DeviceManager(metaclass=SingletonMeta):
             resp=thingToCall()
             pass
         else:
-            ex_text="Invalid command %s/%s/%s"  % (mything,myservice,myid)
+            ex_text="[DeviceManager] Invalid_Command:%s_%s_%s"  % (mything,myservice,myid)
             resp = CommmandQResponse(0, ex_text)
             log.error(ex_text)
 

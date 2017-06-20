@@ -81,7 +81,7 @@ class GarageDoor():
     def determineGarageDoorOpenClosedStatus(self):
         log.debug("GarageDoor dertermine Door Open Closed Status called !")
         sensorkey0="[UNKNOWN]"
-        sensor_status_text="determineGarageDoorOpenClosedStatus"
+        sensor_status_text=self.g_name+":"+G_UNKNOWN
         logstr=""
         for i, sensor in enumerate(self.g_sensor_props):
             logstr="%d Garage %d Sensor %s Status = %s" % (i, self.g_id, sensor, self.g_sensor_props[sensor].status)

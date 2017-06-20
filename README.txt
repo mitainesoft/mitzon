@@ -45,7 +45,7 @@
 
 
     ** install git **
-        Step 1 — Installing Git with APT
+        Step 1 ï¿½ Installing Git with APT
         Before you install Git, make sure that your package lists are updated by executing the following command:
 
         sudo apt-get update
@@ -108,10 +108,10 @@
 
 
         View bracnhes
-        •git gui 
-        •git log --graph --decorate --oneline --all ?git show ??? 
+        ï¿½git gui 
+        ï¿½git log --graph --decorate --oneline --all ?git show ??? 
 
-        •git log --graph --decorate --oneline M026_changes 
+        ï¿½git log --graph --decorate --oneline M026_changes 
 
         Checkout branch
 
@@ -139,10 +139,10 @@
         git checkout master
         git co -b  sandbox/<userid>/<anyBranchName>
         .
-        .    changes¡K
+        .    changesï¿½K
         .
         git   add    .
-        git commit ¡Va ¡Vm  ¡§message¡¨ 
+        git commit ï¿½Va ï¿½Vm  ï¿½ï¿½messageï¿½ï¿½ 
         git push    --set-upstream   origin     sandbox/<userid>/<anyBranchName>
 
 
@@ -157,6 +157,29 @@
     chmod 777 /dev/ttyUSB0
 
 
+4.  Test
+Outputs in main Garage Backend console
+
+1.1 Test Status
+$ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+
+1.2 Test Open Close
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+
+1.3 Test Relay
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
+5. HW
 
+a) Raspberry Overheat !
+
+    #Check the raspberry temperature.  The mdn dashboard will turn off the screen
+    #  if temperature exceed a certain value (check in scipts!)
+    #  the graphical display is creating overheat.
+    # Make sure you ordered the cooling fan kit for the raspberry or it wont survive !
+
+
+    watch -n 60 /opt/vc/bin/vcgencmd measure_temp
+    # temp below 50C is OK !

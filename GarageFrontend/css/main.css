@@ -369,6 +369,7 @@ a.link-button.closeddoorbutton.nav-button:hover {
 
 /* Layout Elements */
 
+
 body > .row.NavPicture {
     min-height: 600px;
     max-width: none;
@@ -376,6 +377,7 @@ body > .row.NavPicture {
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-color: #000000;
 }
 
 body > .row.socialrow {
