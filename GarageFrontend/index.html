@@ -49,27 +49,19 @@
     </div><!-- /header -->
 
     <div role="main" class="ui-content coffee-span-12 call-out">
+        <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
 
-        <!--<h5 class="smallTitle2">Commandes</h5>-->
-        <!--<h1 class="MainTitle3">Porte 0</h1>-->
-        <a id="garagecmd0" class="link-button opendoorbutton nav-button flaticon-garage" href="#"
+        <a id="garagecmd0" class="link-button nav-button flaticon-garage" href="#"
            onclick="proceed('open','0');">0</a>
 
-        <a id="garagestatus0" class="link-button nav-button unknownstatusdoorbutton  flaticon-garage" href="#"
-           onclick="doorStatus();">S0</a>
-        <br></br>
-
-
-        <!--<h1 class="MainTitle3">Porte 1</h1>-->
-        <a id="garagecmd1" class="link-button nav-button opendoorbutton  flaticon-garage" href="#"
+        <a id="garagecmd1" class="link-button nav-button flaticon-garage" href="#"
            onclick="proceed('open','1');">1</a>
-        <a id='garagestatus1' class="link-button nav-button errordoorbutton  flaticon-garage" href="#"
-           onclick="doorStatus();">S1</a>
+
         <br></br>
 
         <!--<h1 class="MainTitle3">Alertes</h1>-->
-        <a class="link-button nav-button errordoorbutton flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
-        <a class="link-button nav-button errordoorbutton flaticon-info" href="#" onclick="doorStatus();"></a>
+        <a class="link-button nav-button unknownstatusdoorbutton flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
+        <a class="link-button nav-button unknownstatusdoorbutton flaticon-info" href="#" onclick="doorStatus();"></a>
 
     </div><!-- /content -->
 
@@ -101,6 +93,9 @@
     </div><!-- /footer -->
 
     <script>
+        window.onload = function () {
+            doorStatus();
+        }
         function proceed(subcmd, id) {
             var cmd = 'http://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
             var posting = $.post(cmd, function (data) {
@@ -110,76 +105,88 @@
 
         function doorStatus() {
             for (count = 0; count <= 1; count++) {
-
                 cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
                 garageid = "garagestatus" + count;
                 posting = $.post(cmd, function (data) {
                     parseResponse(data, status)
                 }, null, "text")
-
-                //            $("[id^='garagestatus0']").text("Allo"+count)
-                // $("#"+ garageid).text("Hello"+count)
-//        $("body").find("#"+garageid).text("Hello"+count);
-//              alert("status: " + data);
             }
         }
         function parseResponse(data) {
-            // alert("Garage reponse: " + data)
-            // document.write(data)
-            // document.write("<br></br>")
-            // tid:00001497820533214351 [DeviceManager] GARAGE_0:CLOSED tid:00000000001497820533 [AlertManager] Alertlist=None
+            console.log("-- parseResponse -------------------------------------------------------\n");
             if (data == null) return;
-//            var re = new RegExp('/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s\w+\=(.*)');
-//            var tmpstr="tid:00001497820533214351 [DeviceManager] GARAGE_0:CLOSED tid:00000000001497820533 [AlertManager] Alertlist=None";
-
-            tmpstr=data.toString();
+            tmpstr = data.toString();
             var myArray = tmpstr.match(/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s(\w+)\=(.*)/);
-            document.writeln("<br></br>");
-            document.writeln("'"+tmpstr+"'");
 
-            if(myArray==null) return ;
-            document.writeln("<br></br>");
-            document.writeln("array:"+myArray)
-            document.writeln("<br></br>");
-            document.writeln("0:"+myArray[0]);
-            document.writeln("<br></br>");
-            document.writeln("1:"+myArray[1]);
-            document.writeln("<br></br>");
-            document.writeln("2:"+myArray[2]);
-            document.writeln("<br></br>");
-            document.writeln("3:"+myArray[3]);
-            document.writeln("<br></br>");
-            document.writeln("4:"+myArray[4]);
-            document.writeln("<br></br>");
-            document.writeln("5:"+myArray[5]);
-            document.writeln("<br></br>");
-            document.writeln("6:"+myArray[6]);
-            document.writeln("<br></br>");
-            document.writeln("7:"+myArray[7]);
-            document.writeln("<br></br>");
+//            console.log("'" + tmpstr + "'\n");
+            if (myArray == null) return;
+            console.log("array:" + myArray + "\n")
+            for (var i = 0; i <= 7; i++) {
+                console.log(i + ":" + myArray[i] + "\n");
+            }
 
 
-            document.write("<br></br>");
-            console.log("ZPS0009");
-            console.log(myArray);
+            /*  0:tid:00001498254616977432 [DeviceManager] GARAGE_0:CLOSED tid:00000000001498254616 [AlertManager] Alertlist=None
+             1:00001498254616977432
+             2:[DeviceManager]
+             3:GARAGE_0
+             4:CLOSED
+             5:00000000001498254616
+             6:Alertlist
+             7:None */
+            var labelstr = "";
+            if (/\[DeviceManager\]/.test(myArray[2])) {
+
+                switch (true) {
+                    case /GARAGE/.test(myArray[3]):
+                        <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
+                        var deviceArray = myArray[3].split('_');
+                        if (deviceArray == null || deviceArray.length != 2) {
+                            console.log("parseResponse::Invalid Device format returned by backend server:" + myArray[2]);
+                            return;
+                        }
+                        deviceid = deviceArray[1];
+                        //garagestatus1
+                        labelstr = "garagecmd" + deviceArray[1];
+                        clearClassGarage(labelstr);
+                        console.log("parseResponse::labelstr=" + labelstr);
+//                        $('#' + labelstr).removeClass('unknownstatusdoorbutton');
+                        switch (true) {
+                            case /^CLOSED/.test(myArray[4]):
+                                $('#' + labelstr).addClass('closeddoorbutton');
+                                break;
+                            case /^OPEN/.test(myArray[4]):
+                                $('#' + labelstr).addClass('opendoorbutton');
+                                break;
+                            case /^ERROR/.test(myArray[4]):
+                                $('#' + labelstr).addClass('errordoorbutton');
+                                break;
+                            case /^UNKNOWN/.test(myArray[4]):
+                                $('#' + labelstr).addClass('unknownstatusdoorbutton');
+                                break;
+                            default:
+                                $('#' + labelstr).addClass('programerrorbutton');
+                                console.log("parseResponse Unknown status:" + myArray[4]);
+                                break;
+                        }
+                        break;
+                    default:
+                        console.log("parseResponse::Unknown device command:" + tmpstr);
+                        break;
+                }
+            } else {
+                console.log("parseResponse::Not DeviceManage:" + tmpstr);
+            }
 
 
-
-//            var tidcount=0;
-//            var tidnextpos=0;
-//            while (tidpos=data.indexOf("tid:",tidnextpos)>=0) {
-//
-//                tidnextpos+=tidpos;
-//                tidcount++;
-//            }
-//
-//            if (tidcount==0) return;
-//
-//            var devmanagerpos=data.indexOf("[DeviceManager]")
-//            var alertmanagerpos=data.indexOf("[AlertManager]")
+        }
+        function clearClassGarage(labelid) {
+            $('#' + labelid).removeClass('opendoorbutton');
+            $('#' + labelid).removeClass('errordoorbutton');
+            $('#' + labelid).removeClass('closeddoorbutton');
+            $('#' + labelid).removeClass('unknownstatusdoorbutton');
 
 
-            var partsArray = data.split('-');
         }
 
     </script>

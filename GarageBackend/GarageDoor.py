@@ -157,7 +157,7 @@ class GarageDoor():
             else:
                 sensor_status_text = self.g_name + ":" + self.g_status
                 # log.info(sensor_status_text)
-            if self.g_update_time != None and self.g_last_cmd_sent_time != None \
+            if self.g_update_time != None and self.g_last_cmd_sent_time != None and self.g_last_cmd_trigger_time !=None \
                 and time.time() > (self.g_last_cmd_sent_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange")))\
                 and self.g_last_cmd_trigger_time > (self.g_update_time+float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange"))):
                 status_text = self.alarm_mgr_handler.addAlert("HW002", self.g_name)

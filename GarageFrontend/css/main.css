@@ -325,6 +325,19 @@ a.link-button.closeddoorbutton.nav-button {
     opacity: 1;
 }
 
+
+a.link-button.programerrorbutton.nav-button {
+    padding: 12px 25px;
+    border-width: 2px;
+    border-color: #990099;
+    border-top-left-radius: 40px 30px;
+    border-top-right-radius: 40px 30px;
+    border-bottom-right-radius: 40px 30px;
+    border-bottom-left-radius: 40px 30px;
+    background-color: rgba(0, 239, 3, .8);
+    color: #fff;
+    opacity: 1;
+}
 a.link-button.active-nav.nav-button {
     border-top-width: 3px;
     border-top-color: #8e0b27;
@@ -365,6 +378,10 @@ a.link-button.opendoorbutton.nav-button:hover {
 
 a.link-button.closeddoorbutton.nav-button:hover {
     opacity: 1;
+}
+
+a.link-button.programerrorbutton.nav-button:hover {
+    opacity: .3;
 }
 
 /* Layout Elements */
@@ -762,6 +779,9 @@ a.social-image.socialicon:focus {
         padding: 10px 20px;
     }
 
+    a.link-button.programerrorbutton.nav-button {
+        padding: 10px 20px;
+    }
     /* Layout Elements */
     body > .row > [class*='coffee-span-'].call-out {
         text-align: center;
