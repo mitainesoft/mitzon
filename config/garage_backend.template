@@ -10,17 +10,19 @@ RESP_TIMEOUT = 10
 
 [GARAGE_COMMON]
 #nbr seconds before warning is sent
-GarageOpenTriggerAlarmElapsedTime = 20
+GarageOpenTriggerAlarmElapsedTime = 180
 
 #nbr seconds before door will attempt to close
-GarageOpenTriggerCloseDoorElapsedTime = 60
+GarageOpenTriggerCloseDoorElapsedTime = 600
 
 # Time it  takes to consider door closed. Used in context of alarm reset
-GarageDoorAssumedClosedTime = 30
+GarageDoorAssumedClosedTime = 15
 
 TimeToKeepButtonPressedMilliSec = 1000
-TimeBeforeRetryCloseDoor = 20
-GarageElapsedTimeForStatusChange=5
+TimeBeforeRetryCloseDoor = 60
+
+#Minimum Time between commands. Compare current time vs last cmd sent time
+GarageElapsedTimeForStatusChange=20
 
 [GARAGE_0]
 SuperviseThisGarage = True

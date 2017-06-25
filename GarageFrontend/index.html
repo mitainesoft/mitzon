@@ -52,16 +52,16 @@
         <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
 
         <a id="garagecmd0" class="link-button nav-button flaticon-garage" href="#"
-           onclick="proceed('open','0');">0</a>
+           onclick="proceed('trigger','0');">0</a>
 
         <a id="garagecmd1" class="link-button nav-button flaticon-garage" href="#"
-           onclick="proceed('open','1');">1</a>
+           onclick="proceed('trigger','1');">1</a>
 
         <br></br>
 
         <!--<h1 class="MainTitle3">Alertes</h1>-->
-        <a class="link-button nav-button unknownstatusdoorbutton flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
-        <a class="link-button nav-button unknownstatusdoorbutton flaticon-info" href="#" onclick="doorStatus();"></a>
+        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
+        <a id="alertlist" class="link-button nav-button flaticon-info" href="#" onclick="displayAlert();"></a>
 
     </div><!-- /content -->
 
@@ -93,14 +93,99 @@
     </div><!-- /footer -->
 
     <script>
+        var intervalEvent = setInterval(doorStatus, 60000);
         window.onload = function () {
             doorStatus();
+            intervalEvent = setInterval(doorStatus, 30000);
         }
+
+
+        $(window).on("blur focus", function (e) {
+            var prevType = $(this).data("prevType");
+
+            if (prevType != e.type) {   //  reduce double fire issues
+                switch (e.type) {
+                    case "blur":
+                        clearInterval(intervalEvent);
+                        break;
+                    case "focus":
+                        intervalEvent = setInterval(doorStatus, 7000);
+                        break;
+                }
+            }
+
+            $(this).data("prevType", e.type);
+        })
+
         function proceed(subcmd, id) {
+
+            var labelstr = "garagecmd" + id;
+            var prevstatus = "UNKNOWN";
+            var status = "UNKNOWN";
+            var alertlistArray = null;
+
+            switch (true) {
+                case /^clear/.test(subcmd):
+                    $('#alertlist').removeClass('errordoorbutton');
+                    $('#alertclear').removeClass('errordoorbutton');
+                    $('#alertclear').removeClass('link-butto');
+                    $('#alertclear').removeClass('nav-button');
+                    $('#alertclear').removeClass('flaticon-garbage');
+                    break;
+                case /^trigger/.test(subcmd):
+                    /* Check current button status to make sure status of
+                     door was correct in the UI especially if operations are
+                     done remote!
+                     */
+                    <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
+                    if ($('#garagecmd' + id).hasClass('closeddoorbutton')) {
+                        prevstatus = "CLOSED";
+                        subcmd = "open";
+                        console.log("Command is now 'open'!");
+                    } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
+                        prevstatus = "OPEN";
+                        subcmd = "close";
+                        console.log("Command is now 'close'!");
+                    } else {
+                        console.log("proceed::Door will not be trigger denied ! ");
+                        alert("Door will not be trigger denied ! ");
+                        return;
+                    }
+
+                    //Check real door status
+                    doorStatus();
+                    var status = "UNKNOWN";
+                    if ($('#garagecmd' + id).hasClass('closeddoorbutton')) {
+                        status = "CLOSED";
+                    } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
+                        status = "OPEN";
+                    } else {
+                        console.log("proceed::Door will not be triggered due to current status UNKNOWN or ERROR!");
+                        alert("Door will not be triggered due to current status UNKNOWN or ERROR!");
+                        return;
+                    }
+
+                    if (status !== prevstatus) {
+                        console.log("proceed::Door will not be triggered due to UI display not refreshed!  Try again ! ");
+                        alert("Door will not be triggered due to UI display not refreshed!  Try again ! ");
+
+                        return;
+                    } else {
+
+                    }
+                    break;
+
+                default:
+                    console.log("proceed::Invalid command:" + subcmd)
+                    break;
+
+            } //switch
+
             var cmd = 'http://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
             var posting = $.post(cmd, function (data) {
                 parseResponse(data);
             })
+
         }
 
         function doorStatus() {
@@ -112,6 +197,7 @@
                 }, null, "text")
             }
         }
+
         function parseResponse(data) {
             console.log("-- parseResponse -------------------------------------------------------\n");
             if (data == null) return;
@@ -120,6 +206,7 @@
 
 //            console.log("'" + tmpstr + "'\n");
             if (myArray == null) return;
+
             console.log("array:" + myArray + "\n")
             for (var i = 0; i <= 7; i++) {
                 console.log(i + ":" + myArray[i] + "\n");
@@ -141,7 +228,7 @@
                     case /GARAGE/.test(myArray[3]):
                         <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
                         var deviceArray = myArray[3].split('_');
-                        if (deviceArray == null || deviceArray.length != 2) {
+                        if (deviceArray == null || deviceArray.length !== 2) {
                             console.log("parseResponse::Invalid Device format returned by backend server:" + myArray[2]);
                             return;
                         }
@@ -174,21 +261,70 @@
                         console.log("parseResponse::Unknown device command:" + tmpstr);
                         break;
                 }
-            } else {
-                console.log("parseResponse::Not DeviceManage:" + tmpstr);
+            } //if device
+
+            /*   7:Alert id:GCD01 dev:GARAGE_0 sev:1 cat:GARAGE_LOCK text:Fermeture automatique déactivé workaround:Verifiez la porte et les logs!
+             time:20170624-092526 ;Alert id:HW002 dev:GARAGE_0 sev:1 cat:HARDWARE text:Command sent but nothing happened! workaround:Check
+             the door ! time:20170624-092508 ;Alert id:GS001 dev:GARAGE_0_sensor_1 sev:1 cat:SENSOR text:problème avec un senseur sur la porte
+             workaround:La fermeture est peut-être bloquée par de la neige ou un des senseurs ne fonctionne plus! time:20170624-092526
+             */
+            if (myArray[7] == null) {
+                console.log("Alert list is null. (" + tmpstr + ")");
             }
 
+            alertlistArray = myArray[7].split(';');
+            if (alertlistArray.length <= 0) {
+                alertlistArray[0] = myArray[7];
+            }
 
+            if (/^None/.test(alertlistArray[0])) {
+                console.log("No Alerts!");
+                clearAlerts();
+                alertlistArray = null;
+                //link-button nav-button flaticon-garbage
+            } else {
+                for (var i = 0; i < alertlistArray.length; i++) {
+                    console.log(i + ":" + alertlistArray[i] + "\n");
+                }
+                //Enable alert buttons
+                colorAlertButton();
+            }
         }
+
         function clearClassGarage(labelid) {
             $('#' + labelid).removeClass('opendoorbutton');
             $('#' + labelid).removeClass('errordoorbutton');
             $('#' + labelid).removeClass('closeddoorbutton');
             $('#' + labelid).removeClass('unknownstatusdoorbutton');
-
-
         }
 
+        function clearAlerts() {
+            $('#alertlist').removeClass('errordoorbutton');
+            $('#alertclear').removeClass('errordoorbutton');
+            $('#alertclear').removeClass('link-butto');
+            $('#alertclear').removeClass('nav-button');
+            $('#alertclear').removeClass('flaticon-garbage');
+        }
+
+        function colorAlertButton() {
+            $('#alertlist').addClass('errordoorbutton');
+            $('#alertclear').addClass('errordoorbutton');
+            $('#alertclear').addClass('link-butto');
+            $('#alertclear').addClass('nav-button');
+            $('#alertclear').addClass('flaticon-garbage');
+        }
+
+        function displayAlert() {
+            if (alertlistArray == null) {
+                console.log("displayAlert is null !");
+            } else {
+                alerttxt="";
+                for (var i = 0; i < alertlistArray.length; i++) {
+                    alerttxt=alerttxt+ i + ":" + alertlistArray[i] + "\n";
+                }
+                alert(alerttxt);
+            }
+        }
     </script>
 </div><!-- /page -->
 </body>

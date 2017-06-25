@@ -99,8 +99,8 @@ class GarageDoor():
                             self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname)
                         self.nbrfault=0
                 else:
-                    self.g_status = S_ERROR
-                    self.g_error_time = time.time()
+                    self.g_sensor_props[sensor].status = S_ERROR
+                    self.g_sensor_props[sensor].s_update_time = time.time()
                     logstr = " %d Garage %d Sensor %s Status = %s" % (
                         i, self.g_id, sensor, S_WARNING)
 
@@ -120,7 +120,7 @@ class GarageDoor():
                         log.debug(sensor_status_text)
                         self.g_auto_force_ignore_garage_open_close_cmd = True
                         status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
-                        log.debug(status_text)
+                        log.info(status_text)
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):
