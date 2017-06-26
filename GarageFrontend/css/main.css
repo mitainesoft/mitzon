@@ -325,6 +325,44 @@ a.link-button.closeddoorbutton.nav-button {
     opacity: 1;
 }
 
+a.link-button.alertcriticalbutton.nav-button {
+    padding: 12px 25px;
+    border-width: 2px;
+    border-color: #ba042a;
+    border-top-left-radius: 40px 30px;
+    border-top-right-radius: 40px 30px;
+    border-bottom-right-radius: 40px 30px;
+    border-bottom-left-radius: 40px 30px;
+    background-color: rgba(249, 26, 26, .8);
+    color: #fff;
+    opacity: 1;
+}
+
+a.link-button.alertmajorbutton.nav-button {
+    padding: 12px 25px;
+    border-width: 2px;
+    border-color: #ba042a;
+    border-top-left-radius: 40px 30px;
+    border-top-right-radius: 40px 30px;
+    border-bottom-right-radius: 40px 30px;
+    border-bottom-left-radius: 40px 30px;
+    background-color: rgba(247, 197, 48, .8);
+    color: #fff;
+    opacity: 1;
+}
+
+a.link-button.alertminorbutton.nav-button {
+    padding: 12px 25px;
+    border-width: 2px;
+    border-color: #ba042a;
+    border-top-left-radius: 40px 30px;
+    border-top-right-radius: 40px 30px;
+    border-bottom-right-radius: 40px 30px;
+    border-bottom-left-radius: 40px 30px;
+    background-color: rgba(48, 184, 247, .8);
+    color: #fff;
+    opacity: 1;
+}
 
 a.link-button.programerrorbutton.nav-button {
     padding: 12px 25px;
@@ -338,6 +376,7 @@ a.link-button.programerrorbutton.nav-button {
     color: #fff;
     opacity: 1;
 }
+
 a.link-button.active-nav.nav-button {
     border-top-width: 3px;
     border-top-color: #8e0b27;
@@ -380,21 +419,32 @@ a.link-button.closeddoorbutton.nav-button:hover {
     opacity: 1;
 }
 
+a.link-button.alertcriticalbutton.nav-button:hover {
+    opacity: 1;
+}
+
+a.link-button.alertmajorbutton.nav-button:hover {
+    opacity: 1;
+}
+
+a.link-button.alertminorbutton.nav-button:hover {
+    opacity: 1;
+}
+
 a.link-button.programerrorbutton.nav-button:hover {
     opacity: .3;
 }
 
 /* Layout Elements */
 
-
 body > .row.NavPicture {
-    min-height: 600px;
+    /*min-height: 800px;*/
+    /*z-index:-1;*/
     max-width: none;
-    background-image: url('../images/2016_subaru_impreza_4dr-hatchback_20i-sport-limited-pzev_fq_oem_1_1280.jpg');
     background-position: center center;
-    background-size: cover;
     background-repeat: no-repeat;
-    background-color: #000000;
+    background-size: cover;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url('../images/2016-subaru-impreza-5-door-12 (640x316).jpg');
 }
 
 body > .row.socialrow {
@@ -480,7 +530,7 @@ div.responsive-picture.thumbimage {
 a.social-image.socialicon {
     margin: 28px 1% 35px 0;
     padding-right: 0;
-    max-width: 36px;
+    max-width: 136px;
     border: 1px solid #fffaff;
     border-top-left-radius: 17px 16px;
     border-top-right-radius: 17px 16px;
@@ -779,9 +829,22 @@ a.social-image.socialicon:focus {
         padding: 10px 20px;
     }
 
+    a.link-button.alertcriticalbutton.nav-button {
+        padding: 10px 20px;
+    }
+
+    a.link-button.alertmajorbutton.nav-button {
+        padding: 10px 20px;
+    }
+
+    a.link-button.alertminorbutton.nav-button {
+        padding: 10px 20px;
+    }
+
     a.link-button.programerrorbutton.nav-button {
         padding: 10px 20px;
     }
+
     /* Layout Elements */
     body > .row > [class*='coffee-span-'].call-out {
         text-align: center;

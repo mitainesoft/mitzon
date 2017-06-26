@@ -35,6 +35,7 @@ class GarageDoor():
         self.g_open_time = None
         self.g_close_time = None
         self.g_error_time = None
+        self.g_sensor_error_time = None
         self.g_last_alert_send_time = None
         self.g_last_cmd_sent_time = None
         self.g_last_cmd_trigger_time = None
@@ -44,6 +45,7 @@ class GarageDoor():
         self.g_alert_light_time = None
         self.g_auto_force_ignore_garage_open_close_cmd = False
         self.nbrfault=0
+
         self.g_statusEventList=[]
 
         self.usbConnectHandler=usbConnectHandler
@@ -73,9 +75,8 @@ class GarageDoor():
             status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
             log.error(status_text)
             resp = CommmandQResponse(time.time(), status_text)
-            # sleep(60)
-            # os._exit(6)
 
+            # os._exit(6)
         return resp
 
     def determineGarageDoorOpenClosedStatus(self):
@@ -98,6 +99,7 @@ class GarageDoor():
                             sensordevname = self.g_name + "_" + sensorkey
                             self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname)
                         self.nbrfault=0
+                        self.g_sensor_error_time=None
                 else:
                     self.g_sensor_props[sensor].status = S_ERROR
                     self.g_sensor_props[sensor].s_update_time = time.time()
@@ -106,10 +108,13 @@ class GarageDoor():
 
                     if (S_ERROR not in self.g_statusEventList):
                         self.g_statusEventList.append(S_ERROR)
+                        self.g_sensor_error_time=time.time()
                         #log.warning(logstr)
 
                     self.nbrfault=self.nbrfault+1
-                    if self.nbrfault>float(self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_MANAGER_MAX_FAILURE")):
+                    # if self.nbrfault>float(self.config_handler.getConfigParam("GARAGE_MANAGER", "SENSOR_DEFECT_ASSESSMENT_TIME")):
+                    if self.g_sensor_error_time != None and \
+                                time.time() > (self.g_sensor_error_time + (float(self.config_handler.getConfigParam("GARAGE_MANAGER", "SENSOR_DEFECT_ASSESSMENT_TIME")))):
                         # sensor_status_text = "Garage " + self.g_name + " Sensor " + S_ERROR
                         self.g_sensor_props[sensor].status=S_ERROR
                         self.g_status=G_ERROR
@@ -146,7 +151,7 @@ class GarageDoor():
                 self.g_error_time = time.time()
         else:
             log.debug(self.g_name + "status no change !")
-            if (self.g_status == G_CLOSED \
+            if (self.g_status == G_CLOSED and self.g_error_time!=None \
                         and self.g_auto_force_ignore_garage_open_close_cmd==True \
                         and (time.time() > (self.g_error_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageDoorAssumedClosedTime") ) ) )
                              ):
@@ -164,6 +169,12 @@ class GarageDoor():
                 self.g_update_time=time.time()
                 self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
                 log.info("HW problem ? :"+status_text)
+            if (self.g_status == G_OPEN and self.g_open_time!=None and time.time() > (self.g_open_time+15)):
+                self.alarm_mgr_handler.clearAlertID("GTO01",self.g_name)
+            if (self.g_status == G_CLOSED and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
+                self.alarm_mgr_handler.clearAlertID("GTC01",self.g_name)
+
+
 
         # resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
         return (sensor_status_text)

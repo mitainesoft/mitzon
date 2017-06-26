@@ -42,8 +42,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
     @cherrypy.tools.accept(media='text/plain')
     # s.post('http://127.0.0.1:8080/garage/open/g0')
     def _cp_dispatch(self, vpath):
-        # print ("JLC vpath=", vpath , "len=" , len(vpath))
-        debugstr = ("JLC vpath=%s len=%d" % (vpath, len(vpath)))
+        debugstr = ("Received vpath=%s len=%d" % (vpath, len(vpath)))
         log.debug(debugstr)
         if len(vpath) == 1:
             cherrypy.request.params['mything'] = vpath.pop()  # ex: garage_door
@@ -191,7 +190,7 @@ if __name__ == '__main__':
                             })
 
     log = logging.getLogger('garageCmdProcessor')
-    log.setLevel(logging.DEBUG)
+    log.setLevel(logging.INFO)
     log.info("Starting garage...")
 
     '''Subscriber - Dispatcher '''

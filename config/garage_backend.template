@@ -1,8 +1,8 @@
 [GARAGE_MANAGER]
 GARAGE_MANAGER_LOOP_TIMEOUT = 10
 
-# GARAGE_MANAGER_MAX_FAILURE failures used for sensors.
-GARAGE_MANAGER_MAX_FAILURE = 3
+# SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
+SENSOR_DEFECT_ASSESSMENT_TIME = 15
 GARAGE_NAME_FOR_TEST=GARAGE_0
 
 [THREAD_CONTROL]
@@ -16,10 +16,10 @@ GarageOpenTriggerAlarmElapsedTime = 180
 GarageOpenTriggerCloseDoorElapsedTime = 600
 
 # Time it  takes to consider door closed. Used in context of alarm reset
-GarageDoorAssumedClosedTime = 15
+GarageDoorAssumedClosedTime = 20
 
 TimeToKeepButtonPressedMilliSec = 1000
-TimeBeforeRetryCloseDoor = 60
+TimeBeforeRetryCloseDoor = 20
 
 #Minimum Time between commands. Compare current time vs last cmd sent time
 GarageElapsedTimeForStatusChange=20
@@ -48,7 +48,7 @@ GarageSensorsBoardPin = -1,-1
 TimeBetweenAlerts=1800
 
 [NOTIFICATION_COMMON]
-NotificationEnabled = False
+NotificationEnabled = True
 ########################
 # DEFAULT_LANGUAGE=
 #   Fr = Francais
@@ -85,7 +85,11 @@ RECIPIENTLIST=myReceivers
 
 [NOTIFICATION_MANAGER]
 NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15
-#NOTIFICATION_MANAGER__MAX_FAILURE = 1
+
+#NOTIFICATION_ALERT_SEVERITY_FILTER
+# Show alert of severy 1 & 2 with =1,2
+NOTIFICATION_ALERT_SEVERITY_FILTER=1,2
+#NOTIFICATION_MANAGER_MAX_FAILURE = 1
 
 [INTERNAL]
 CONFIG_FILE_REV=1.0

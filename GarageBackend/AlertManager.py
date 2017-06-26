@@ -104,10 +104,10 @@ class AlertManager(metaclass=SingletonMeta):
     def processDeviceCommand(self, mything, myservice, myid):
         # log.info(str(self.deviceList))
         logbuf = "AlertManager processDeviceCommand cmd Received: %s/%s/%s " % (mything, myservice, myid)
-        log.info(logbuf)
+        log.debug(logbuf)
 
         try:
-            log.info("Calling %s " % (self.__class__.__name__))
+            log.debug("Calling %s " % (self.__class__.__name__))
             thingToCall = getattr(self, myservice)
             resp = thingToCall()
         except AttributeError:
