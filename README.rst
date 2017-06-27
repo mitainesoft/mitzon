@@ -66,15 +66,27 @@
 
     ** Create run dir **
 
-    sudo mkdir -p /opt/mitainesoft/garage/config
+    sudo mkdir -p /opt/mitainesoft/
     sudo mkdir -p /opt/mitainesoft/garage/log
     sudo chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
-    pip3 install -e git@github.com:mitainesoft/garage.git
+    tar -zxvf /git/garage/dist/garage-0.0.0a2.tar.gz
+    ln -s garage-0.0.0a2 garage
 
 
+    ** Change apache2 index.html default link **
 
+        ls -l
+        #IF not done already !
+        cd /var/www
+        sudo rm html
+        sudo ln -s /opt/mitainesoft/garage/GarageFrontend html
 
+    ** Edit crontab **
+        crontab -e
+        #delete nohup file
+        0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
+        0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
 
 
 2. DESIGN ENV SETUP
@@ -206,16 +218,15 @@ a) Raspberry Overheat !
     #  the graphical display is creating overheat.
     # Make sure you ordered the cooling fan kit for the raspberry or it wont survive !
 
-
     watch -n 60 /opt/vc/bin/vcgencmd measure_temp
     # temp below 50C is OK !
 
 5. Packaging
     Ref: https://packaging.python.org/tutorials/distributing-packages
+    cd /git/mitaine/garage
+    python3 setup.py sdist
 
-    ** Install packager. **
+  #Package is under dist
 
-    pip3 install wheel
-    #Should be there already
 
 
