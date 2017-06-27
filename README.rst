@@ -3,7 +3,7 @@
 # HW: garage raspberry-pi arduino                                                 #
 # Code: Python3 with cherrypy, nanpi                                              #
 # Purpose: Supervise garage door opening. Generate Alarms if required.            #
-#          Allow remote openening.                                                #
+#          Allow remote open.                                                     #
 #          Security via certificates and other fireall options TBD...             #
 # SRUM board: https://github.com/mitainesoft/garage/projects                      #
 ###################################################################################
@@ -15,8 +15,7 @@
     \_/\_/ \___/|_|  |_|\_\ |_|_| |_| |_|   |_|  \___/ \__, |_|  \___||___/___/ (_)
                                                        |___/                       
 
-
-1. INSTALLATION INSTUCTIONS
+1. INSTALLATION INSTRUCTIONS
 
     ** Install Arduino Image **
     First of all, you need to build the firmware and upload it on your Arduino, 
@@ -52,6 +51,32 @@
         Install Git with apt-get in one command:
 
         sudo apt-get install git-core
+
+
+    ** Create mitainesoft user **
+        sudo adduser mitainesoft
+        #Answers to questions and passwd not important
+        # Keep in mind that this user will have access to the USB port!
+        # You can change later with  'sudo passwd mitainesoft'
+
+    ** Add mitainesoft to dialout group
+        sudo vi /etc/group
+
+            dialout:x:20:pi,mitainesoft
+
+    ** Create run dir **
+
+    sudo mkdir -p /opt/garage/config
+    sudo mkdir -p /opt/garage/log
+    sudo chown -R mitainesoft:mitainesoft /opt/garage
+
+
+
+
+
+
+
+2. DESIGN ENV SETUP
 
     ** ssh key **
         1. on linux where git will installed.
@@ -89,7 +114,7 @@
             For example the following line will make notepad++ (installed to default location) your global editor of files in git: 
             git config --global core.editor "C:\Program Files (x86)\Notepad++\notepad++.exe"
 
-2. Notofication
+2b. Notification
     
     gmail:
     https://www.google.com/settings/security/lesssecureapps
@@ -100,7 +125,7 @@
             self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
                                     self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
             
-3. Other references
+2c. Other references
 
         Clone
         1.cd /c/git 
@@ -157,7 +182,7 @@
     chmod 777 /dev/ttyUSB0
 
 
-4.  Test
+3.  Test
 Outputs in main Garage Backend console
 
 1.1 Test Status
@@ -171,7 +196,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
 curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
-5. HW
+4. HW
 
 a) Raspberry Overheat !
 
