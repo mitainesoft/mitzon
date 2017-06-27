@@ -1,5 +1,5 @@
 recursive-include doc *
 recursive-include config *
 recursive-include config *.*
-
 recursive-include GarageFrontend *
+exclude test
