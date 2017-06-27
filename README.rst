@@ -66,9 +66,9 @@
 
     ** Create run dir **
 
-    sudo mkdir -p /opt/garage/config
-    sudo mkdir -p /opt/garage/log
-    sudo chown -R mitainesoft:mitainesoft /opt/garage
+    sudo mkdir -p /opt/mitainesoft/garage/config
+    sudo mkdir -p /opt/mitainesoft/garage/log
+    sudo chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
     pip3 install -e git@github.com:mitainesoft/garage.git
 
