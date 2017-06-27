@@ -70,6 +70,7 @@
     sudo mkdir -p /opt/garage/log
     sudo chown -R mitainesoft:mitainesoft /opt/garage
 
+    pip3 install -e git@github.com:mitainesoft/garage.git
 
 
 
@@ -208,3 +209,13 @@ a) Raspberry Overheat !
 
     watch -n 60 /opt/vc/bin/vcgencmd measure_temp
     # temp below 50C is OK !
+
+5. Packaging
+    Ref: https://packaging.python.org/tutorials/distributing-packages
+
+    ** Install packager. **
+
+    pip3 install wheel
+    #Should be there already
+
+
