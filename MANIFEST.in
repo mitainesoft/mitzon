@@ -2,4 +2,6 @@ recursive-include doc *
 recursive-include config *
 recursive-include config *.*
 recursive-include GarageFrontend *
-exclude test
+include *.bash
+include *.txt
+exclude test/*

@@ -15,9 +15,8 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='garage',
-    version='v0.0.0a2',
+    version='v0.0.3',
     packages=find_packages(),
-#    data_files=[('/opt/mitainesoft/garage', ['/git/garage/doc/*'] ) ],
     include_package_data=True,
     install_requires=['nanpy','cherrypy'],
     url='https://github.com/mitainesoft/garage',

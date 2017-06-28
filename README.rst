@@ -64,15 +64,34 @@
 
             dialout:x:20:pi,mitainesoft
 
-    ** Create run dir **
-
+    ** Setup package dir **
+    cd /opt/mitainesoft/
+    #Upload packge to /opt/mitainesoft/
     sudo mkdir -p /opt/mitainesoft/
+
+    if Windows:
+        sudo unzip garage-0.0.3.zip
+    if Linux:
+        sudo tar -zxvf garage-0.0.3.tar.gz
+    sudo rm garage
+    sudo ln -s garage-0.0.3 garage
     sudo mkdir -p /opt/mitainesoft/garage/log
+    sudo chmod 700 /opt/mitainesoft/garage/*.bash
     sudo chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
-    tar -zxvf /git/garage/dist/garage-0.0.0a2.tar.gz
-    ln -s garage-0.0.0a2 garage
 
+    ** Edit config **
+    cd /opt/mitainesoft/garage
+    sudo chmod 777 config
+    cd /opt/mitainesoft/garage/config
+    sudo cp garage_backend.template garage_backend.config
+    cd /opt/mitainesoft/garage
+    sudo chmod 755 config
+
+    cd /opt/mitainesoft
+    sudo chown -R mitainesoft:mitainesoft /opt/mitainesoft
+
+    #Customize config for notif email addresses and accoounts !
 
     ** Change apache2 index.html default link **
 
@@ -88,6 +107,13 @@
         0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
         0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
 
+
+    ** Restart garage **
+    #Check if running
+    su - mitainesoft
+    ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py
+    cd /opt/mitainesoft/garage
+    ./garage.bash
 
 2. DESIGN ENV SETUP
 
