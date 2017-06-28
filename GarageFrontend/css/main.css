@@ -281,7 +281,7 @@ a.link-button.errordoorbutton.nav-button {
     border-top-right-radius: 40px 30px;
     border-bottom-right-radius: 40px 30px;
     border-bottom-left-radius: 40px 30px;
-    background-color: rgba(186, 4, 42, .8);
+    background-color: rgba(255, 0, 0, 1);
     color: #fff;
     opacity: 1;
 }
@@ -294,7 +294,7 @@ a.link-button.unknownstatusdoorbutton.nav-button {
     border-top-right-radius: 40px 30px;
     border-bottom-right-radius: 40px 30px;
     border-bottom-left-radius: 40px 30px;
-    background-color: rgba(128, 128, 128, .8);
+    background-color: rgba(128, 0, 128, .8);
     color: #fff;
     opacity: 1;
 }
@@ -333,7 +333,7 @@ a.link-button.alertcriticalbutton.nav-button {
     border-top-right-radius: 40px 30px;
     border-bottom-right-radius: 40px 30px;
     border-bottom-left-radius: 40px 30px;
-    background-color: rgba(249, 26, 26, .8);
+    background-color: rgba(255, 0, 0, .8);
     color: #fff;
     opacity: 1;
 }

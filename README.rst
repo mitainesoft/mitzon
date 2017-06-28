@@ -65,43 +65,52 @@
             dialout:x:20:pi,mitainesoft
 
     ** Setup package dir **
+
+
+    su root
+    mkdir -p /opt/mitainesoft/
+    chown -R mitainesoft:mitainesoft /opt/mitainesoft
+
     cd /opt/mitainesoft/
-    #Upload packge to /opt/mitainesoft/
-    sudo mkdir -p /opt/mitainesoft/
+    #Upload packge to /opt/mitainesoft as user mitainesoft
 
     if Windows:
-        sudo unzip garage-0.0.3.zip
+        sudo unzip garage-0.0.3.zip  <-- Bad CTRL-M
     if Linux:
         sudo tar -zxvf garage-0.0.3.tar.gz
-    sudo rm garage
-    sudo ln -s garage-0.0.3 garage
-    sudo mkdir -p /opt/mitainesoft/garage/log
-    sudo chmod 700 /opt/mitainesoft/garage/*.bash
-    sudo chown -R mitainesoft:mitainesoft /opt/mitainesoft
+    su - mitainesoft
+    cd /opt/mitainesoft/
+    rm garage
+    ln -s garage-0.0.3 garage
+    mkdir -p /opt/mitainesoft/garage/log
+    chmod 700 /opt/mitainesoft/garage/*.bash
+    chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
 
     ** Edit config **
+    su - mitainesoft
     cd /opt/mitainesoft/garage
-    sudo chmod 777 config
     cd /opt/mitainesoft/garage/config
-    sudo cp garage_backend.template garage_backend.config
+    cp garage_backend.template garage_backend.config
     cd /opt/mitainesoft/garage
-    sudo chmod 755 config
 
     cd /opt/mitainesoft
-    sudo chown -R mitainesoft:mitainesoft /opt/mitainesoft
+    su root
+    chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
     #Customize config for notif email addresses and accoounts !
 
     ** Change apache2 index.html default link **
 
+        su - root
         ls -l
         #IF not done already !
         cd /var/www
-        sudo rm html
-        sudo ln -s /opt/mitainesoft/garage/GarageFrontend html
+        rm html
+        ln -s /opt/mitainesoft/garage/GarageFrontend html
 
-    ** Edit crontab **
+    ** Edit mitainesoft crontab **
+        su - mitainesoft
         crontab -e
         #delete nohup file
         0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
@@ -109,13 +118,20 @@
 
 
     ** Restart garage **
-    #Check if running
-    su - mitainesoft
-    ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py
-    cd /opt/mitainesoft/garage
-    ./garage.bash
+        #Check if running
+        su - mitainesoft
+        ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py
+        cd /opt/mitainesoft/garage
+        ./garage.bash
 
-2. DESIGN ENV SETUP
+2. Packaging
+    Ref: https://packaging.python.org/tutorials/distributing-packages
+    cd /git/mitaine/garage
+    python3 setup.py sdist
+
+  #Package is under dist
+
+3. DESIGN ENV SETUP
 
     ** ssh key **
         1. on linux where git will installed.
@@ -153,61 +169,9 @@
             For example the following line will make notepad++ (installed to default location) your global editor of files in git: 
             git config --global core.editor "C:\Program Files (x86)\Notepad++\notepad++.exe"
 
-2b. Notification
-    
-    gmail:
-    https://www.google.com/settings/security/lesssecureapps
-    
-            self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"), 465)
-            self.email_server.ehlo()
-            log.info("Login with %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"))
-            self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
-                                    self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
+
             
-2c. Other references
 
-        Clone
-        1.cd /c/git 
-        2. git clone ssh://gerrit.ericsson.se:29418/mdn/pids.git 
-
-
-        View bracnhes
-        �git gui 
-        �git log --graph --decorate --oneline --all ?git show ??? 
-
-        �git log --graph --decorate --oneline M026_changes 
-
-        Checkout branch
-
-        git branch -a 
-
-        git checkout cp33 
-
-        git checkout -b ec33 origin/ec33 
-
-
-        Logs
-          git log --decorate=full --pretty=format:'%C(yellow)%H%Creset %C(bold yellow)%d%Creset %C(red)%ad%Creset %s'
-          git branch -a -v
-
-
-
-        Commits
-        reset the author:
-            git commit --amend --reset-author
-
-
-
-
-        Sandbox instructions
-        git checkout master
-        git co -b  sandbox/<userid>/<anyBranchName>
-        .
-        .    changes�K
-        .
-        git   add    .
-        git commit �Va �Vm  ��message�� 
-        git push    --set-upstream   origin     sandbox/<userid>/<anyBranchName>
 
 
     ** debian package **
@@ -217,11 +181,8 @@
     - 
 
 
-    ** Device **
-    chmod 777 /dev/ttyUSB0
 
-
-3.  Test
+4.  Test
 Outputs in main Garage Backend console
 
 1.1 Test Status
@@ -235,7 +196,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
 curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
-4. HW
+5. HW
 
 a) Raspberry Overheat !
 
@@ -247,12 +208,20 @@ a) Raspberry Overheat !
     watch -n 60 /opt/vc/bin/vcgencmd measure_temp
     # temp below 50C is OK !
 
-5. Packaging
-    Ref: https://packaging.python.org/tutorials/distributing-packages
-    cd /git/mitaine/garage
-    python3 setup.py sdist
 
-  #Package is under dist
 
+
+6. Stuff
+
+6a. Notification
+
+    gmail:
+    https://www.google.com/settings/security/lesssecureapps
+
+            self.email_server = smtplib.SMTP_SSL(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","SMTP_SERVER"), 465)
+            self.email_server.ehlo()
+            log.info("Login with %s" % self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"))
+            self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
+                                    self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
 
 
