@@ -49,6 +49,13 @@
             "text": "open denied. current status is ",
             "workaround": "Calm down! Stop trying !"
         },
+        "GTO004": {
+            "deviceType": "Garage",
+            "severity": "3",
+            "category": "GARAGE_COMMAND",
+            "text": "Door Locked, open denied . current status is ",
+            "workaround": "Calm down! Check why door is locked and Unlock!"
+        },
         "GTC01": {
             "deviceType": "Garage",
             "severity": "3",
@@ -135,6 +142,13 @@
             "text": "Ouverture refusée. Le status est ",
             "workaround": "Arrêtez d'essayer, allez voir se qui se passe !"
         },
+        "GTO004": {
+            "deviceType": "Garage",
+            "severity": "3",
+            "category": "GARAGE_COMMAND",
+            "text": "Porte vérouillée, Ouverture refusée. Le status est ",
+            "workaround": "Arrêtez d'essayer, demandez pourquoi la porte a été vérouillée !"
+        },
         "GTC01": {
             "deviceType": "Garage",
             "severity": "3",
@@ -220,6 +234,13 @@
             "category": "GARAGE_COMMAND",
             "text": "Ouverture refusée. Le status est ",
             "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
+        },
+        "GTO004": {
+            "deviceType": "Garage",
+            "severity": "3",
+            "category": "GARAGE_COMMAND",
+            "text": "Ouverture point accordée. Le status est ",
+            "workaround": "Calme toi la fripouille! Arrêstez d'essayer mortecouille, Allez quérir au seigneur pourquoi le portail n'est point passable !"
         },
         "GTC01": {
             "deviceType": "Garage",

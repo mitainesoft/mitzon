@@ -124,79 +124,40 @@
         cd /opt/mitainesoft/garage
         ./garage.bash
 
-2. Packaging
+
+2.  Test
+Outputs in main Garage Backend console
+
+a) Test Status
+$ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+
+b) Test Open Close
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+
+c) Test lock/Unlock
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+
+
+ d)Test Relay
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+
+3. Packaging
     Ref: https://packaging.python.org/tutorials/distributing-packages
     cd /git/mitaine/garage
     python3 setup.py sdist
 
   #Package is under dist
 
-3. DESIGN ENV SETUP
-
-    ** ssh key **
-        1. on linux where git will installed.
-        2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
-        3. Enter your SSH key in https://github.com/mitainesoft in settings.
-        4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
 
 
-    ** git config **  
-        git config --global user.name "<your_signum>" (e.g. lmcpare, exxxxxx)
-        git config --global user.email "<your_email_address>" (as it appears in Outlook, e.g. firstname.lastname@ericsson.com)
-        
-        
-        *** OPTIONAL? ***
-        git config --global core.autocrlf input
-        git config --global color.ui true
-        git config --global gui.encoding utf-8
-        git config --global push.default upstream
-        git config --global core.excludesfile <your-HOME>/.gitignore
-
-        In general, you should merge your branches with the main branch. To configure Git to automatically set up new branches to merge with the remote branch they are tracking, run 
-        git config --global branch.autosetupmerge always
-
-
-        If you like, you can also create aliases for common commands like so: 
-        git config --global alias.co checkout
-        git config --global alias.ci commit
-        git config --global alias.st status
-        git config --global alias.br branch
-        git config --global alias.up "pull --rebase"
-        git config --global alias.lol "log --graph --decorate --oneline"
-        git config --global alias.unadd "reset HEAD --"
-
-        git config --global core.editor "\path\to\editor"
-            For example the following line will make notepad++ (installed to default location) your global editor of files in git: 
-            git config --global core.editor "C:\Program Files (x86)\Notepad++\notepad++.exe"
-
-
-            
-
-
-
-    ** debian package **
-    - python3-pip
-    - git
-    - ssh
-    - 
-
-
-
-4.  Test
-Outputs in main Garage Backend console
-
-1.1 Test Status
-$ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
-
-1.2 Test Open Close
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-
-1.3 Test Relay
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
-
-
-5. HW
+4. HW
 
 a) Raspberry Overheat !
 
@@ -208,6 +169,55 @@ a) Raspberry Overheat !
     watch -n 60 /opt/vc/bin/vcgencmd measure_temp
     # temp below 50C is OK !
 
+
+5. DESIGN ENV SETUP
+
+    ** ssh key **
+        1. on linux where git will installed.
+        2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
+        3. Enter your SSH key in https://github.com/mitainesoft in settings.
+        4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
+
+
+    ** git config **
+        git config --global user.name "<your_signum>" (e.g. lmcpare, exxxxxx)
+        git config --global user.email "<your_email_address>" (as it appears in Outlook, e.g. firstname.lastname@ericsson.com)
+
+
+        *** OPTIONAL? ***
+        git config --global core.autocrlf input
+        git config --global color.ui true
+        git config --global gui.encoding utf-8
+        git config --global push.default upstream
+        git config --global core.excludesfile <your-HOME>/.gitignore
+
+        In general, you should merge your branches with the main branch. To configure Git to automatically set up new branches to merge with the remote branch they are tracking, run
+        git config --global branch.autosetupmerge always
+
+
+        If you like, you can also create aliases for common commands like so:
+        git config --global alias.co checkout
+        git config --global alias.ci commit
+        git config --global alias.st status
+        git config --global alias.br branch
+        git config --global alias.up "pull --rebase"
+        git config --global alias.lol "log --graph --decorate --oneline"
+        git config --global alias.unadd "reset HEAD --"
+
+        git config --global core.editor "\path\to\editor"
+            For example the following line will make notepad++ (installed to default location) your global editor of files in git:
+            git config --global core.editor "C:\Program Files (x86)\Notepad++\notepad++.exe"
+
+
+
+
+
+
+    ** debian package **
+    - python3-pip
+    - git
+    - ssh
+    -
 
 
 

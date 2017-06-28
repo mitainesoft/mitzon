@@ -44,6 +44,8 @@ class GarageDoor():
 
         self.g_alert_light_time = None
         self.g_auto_force_ignore_garage_open_close_cmd = False
+        self.g_manual_force_lock_garage_open_close_cmd = False
+
         self.nbrfault=0
 
         self.g_statusEventList=[]
@@ -84,6 +86,7 @@ class GarageDoor():
         sensorkey0="[UNKNOWN]"
         sensor_status_text=self.g_name+":"+G_UNKNOWN
         logstr=""
+
         for i, sensor in enumerate(self.g_sensor_props):
             logstr="%d Garage %d Sensor %s Status = %s" % (i, self.g_id, sensor, self.g_sensor_props[sensor].status)
 
@@ -126,6 +129,12 @@ class GarageDoor():
                         self.g_auto_force_ignore_garage_open_close_cmd = True
                         status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
                         log.info(status_text)
+
+        #Overide Garage but keep Sensor status upto date
+        if self.g_manual_force_lock_garage_open_close_cmd == True:
+            self.g_status=G_LOCK+self.g_status
+            logstr = "Garage %s Status = %s" % (self.g_id, self.g_status )
+
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):
@@ -146,7 +155,6 @@ class GarageDoor():
                 for sensorkey in self.g_sensor_props:
                     sensordevname=self.g_name+"_"+sensorkey
                     self.alarm_mgr_handler.clearAlertDevice("SENSOR",sensordevname)
-
             elif self.g_status == G_ERROR:
                 self.g_error_time = time.time()
         else:
@@ -174,10 +182,21 @@ class GarageDoor():
             if (self.g_status == G_CLOSED and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
                 self.alarm_mgr_handler.clearAlertID("GTC01",self.g_name)
 
-
-
         # resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
         return (sensor_status_text)
+
+    def lock(self):
+        tmptxt=""
+        if self.g_manual_force_lock_garage_open_close_cmd==False:
+            tmptxt="%s Garage Lock down requested" % (self.g_name)
+            self.g_manual_force_lock_garage_open_close_cmd = True
+        else:
+            self.g_manual_force_lock_garage_open_close_cmd = False
+            tmptxt="%s Garage UnLock requested" % (self.g_name)
+        log.info(tmptxt)
+
+        resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineGarageDoorOpenClosedStatus())
+        return (resp)
 
     def status(self):
         log.debug("GarageDoor status called !")
@@ -212,22 +231,23 @@ class GarageDoor():
     def open(self):
         status_text=""
         self.g_last_cmd_trigger_time=time.time()
-        if (self.g_status  == G_CLOSED):
-            if time.time() > self.g_next_cmd_allowed_time:
-                # status_text+=" open. Trigger garage door !"
-                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
-                self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
-                self.triggerGarageDoor()
-                status_text = self.alarm_mgr_handler.addAlert("GTO01", self.g_name)
-            else:
-                # status_text+="open denied. Too early to retry!"
-                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
-                status_text = self.alarm_mgr_handler.addAlert("GTO02", self.g_name)
+        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+        if self.g_manual_force_lock_garage_open_close_cmd == False:
+            if (self.g_status  == G_CLOSED ):
+                if time.time() > self.g_next_cmd_allowed_time:
+                    # status_text+=" open. Trigger garage door !"
+                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
+                    self.triggerGarageDoor()
+                    status_text = self.alarm_mgr_handler.addAlert("GTO01", self.g_name)
+                else:
+                    # status_text+="open denied. Too early to retry!"
+                    status_text = self.alarm_mgr_handler.addAlert("GTO02", self.g_name)
 
-        else:
-            # status_text += "open denied. current status is " + self.g_status
-            self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
-            status_text = self.alarm_mgr_handler.addAlert("GTO003", self.g_name,self.g_status)
+            else:
+                # status_text += "open denied. current status is " + self.g_status
+                status_text = self.alarm_mgr_handler.addAlert("GTO003", self.g_name,self.g_status)
+        else: #Lock!
+            status_text = self.alarm_mgr_handler.addAlert("GTO004", self.g_name, self.g_status)
 
         resp=CommmandQResponse(0, status_text)
 
@@ -241,7 +261,7 @@ class GarageDoor():
             status_text=self.g_name + " " +  self.alarm_mgr_handler.alertFileListJSON["GDC01"]["text"]+" "
             log.warning(status_text)
         else:
-            if (self.g_status == G_OPEN):
+            if (self.g_status == G_OPEN and self.g_manual_force_lock_garage_open_close_cmd == False):
                 if time.time() > self.g_next_cmd_allowed_time:
                     # status_text += " close. Trigger garage door !"
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)

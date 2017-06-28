@@ -57,11 +57,16 @@
         <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button flaticon-garage" href="#"
            onclick="proceed('trigger','1');">1</a>
 
-        <br></br>
 
+        <br></br>
         <!--<h1 class="MainTitle3">Alertes</h1>-->
         <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
         <a id="alertlist" class="link-button nav-button flaticon-info" href="#" onclick="displayAlert();"></a>
+
+        <br></br>
+        <a id="garagelock" class="link-button nav-button flaticon-lock" href="#"
+           onclick="doorLock();">1</a>
+
 
     </div><!-- /content -->
 
@@ -91,7 +96,7 @@
 
         <div class="coffee-span-12">
             <p class="paragraph Footer">Ile-Bizard<br> +1 514 594 3818 mitainesoft@gmail.com</p>
-            <p class="paragraph FooterCredit"> <a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
+            <p class="paragraph FooterCredit"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
             </a>
             </p>
         </div>
@@ -154,7 +159,6 @@
                         alert("Door will not be triggered denied ! ");
                         return;
                     }
-
                     //Check real door status
                     doorStatus();
                     var status = "UNKNOWN";
@@ -163,8 +167,8 @@
                     } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
                         status = "OPEN";
                     } else {
-                        console.log("proceed::Door will not be triggered due to current status UNKNOWN or ERROR!");
-                        alert("Door will not be triggered due to current status UNKNOWN or ERROR!");
+                        console.log("proceed::Door will not be triggered due to current status UNKNOWN, LOCK or ERROR!");
+                        alert("Door will not be triggered due to current status LOCK, UNKNOWN or ERROR!");
                         return;
                     }
 
@@ -177,7 +181,6 @@
 
                     }
                     break;
-
                 default:
                     console.log("proceed::Invalid command:" + subcmd)
                     break;
@@ -188,6 +191,17 @@
             var posting = $.post(cmd, function (data) {
                 parseResponse(data);
             })
+
+        }
+
+        function doorLock() {
+            for (count = 0; count <= 1; count++) {
+                cmd = 'http://192.168.1.83:8050/GarageDoor/lock/' + count
+                garageid = "garagestatus" + count;
+                posting = $.post(cmd, function (data) {
+                    parseResponse(data, status)
+                }, null, "text")
+            }
 
         }
 
@@ -242,28 +256,32 @@
                         console.log("parseResponse::garagecmdlabel=" + garagecmdlabel);
 //                        $('#' + garagecmdlabel).removeClass('unknownstatusdoorbutton');
                         switch (true) {
-                            case /^CLOSED/.test(parseResponseArray[4]):
+                            case /CLOSED/.test(parseResponseArray[4]):
                                 $('#' + garagecmdlabel).addClass('closeddoorbutton');
                                 break;
-                            case /^OPEN/.test(parseResponseArray[4]):
+                            case /OPEN/.test(parseResponseArray[4]):
                                 $('#' + garagecmdlabel).addClass('opendoorbutton');
                                 break;
-                            case /^ERROR/.test(parseResponseArray[4]):
+                            case /ERROR/.test(parseResponseArray[4]):
                                 $('#' + garagecmdlabel).addClass('errordoorbutton');
                                 break;
-                            case /^UNKNOWN/.test(parseResponseArray[4]):
+                            case /UNKNOWN/.test(parseResponseArray[4]):
                                 $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
                                 break;
                             default:
                                 $('#' + garagecmdlabel).addClass('programerrorbutton');
                                 console.log("parseResponse Unknown status:" + parseResponseArray[4]);
                                 break;
+                        } // sw Garage Status
+
+                        if (/LOCK/.test(parseResponseArray[4])) {
+                            $('#garagelock').addClass('lockstatusdoorbutton');
                         }
                         break;
                     default:
                         console.log("parseResponse::Unknown device command:" + tmpstr);
                         break;
-                }
+                } // sw garage
             } //if device
 
 
@@ -299,6 +317,8 @@
             $('#' + labelid).removeClass('errordoorbutton');
             $('#' + labelid).removeClass('closeddoorbutton');
             $('#' + labelid).removeClass('unknownstatusdoorbutton');
+
+            $('#garagelock').removeClass('lockstatusdoorbutton');
         }
 
         function clearAlerts() {
