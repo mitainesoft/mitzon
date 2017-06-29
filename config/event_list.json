@@ -1,281 +1,302 @@
 {
-    "En": {
-        "GO001": {
-            "deviceType": "Garage",
-            "severity": "1",
-            "category": "GARAGE_OPEN",
-            "text": "Open Time Expired",
-            "workaround": "Close the garage door!"
-        },
-        "GO002": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_OPEN",
-            "text": "Open Warning",
-            "workaround": "Close the garage door!"
-        },
-        "GCD01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_LOCK",
-            "text": "Auto close disabled due to recent alerts!",
-            "workaround": "Check garage door!"
-        },
-        "GS001": {
-            "deviceType": "Garage Sensor",
-            "severity": "1",
-            "category": "SENSOR",
-            "text": "Garage Sensor Error",
-            "workaround": "Fix Sensor or garage door alignment to sensor!"
-        },
-        "GTO01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "open. Trigger garage door !",
-            "workaround": "Get out of the way!"
-        },
-        "GTO02": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "open denied. Too early to retry!",
-            "workaround": "Calm down! Wait before trying again!"
-        },
-        "GTO003": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "open denied. current status is ",
-            "workaround": "Calm down! Stop trying !"
-        },
-        "GTO004": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Door Locked, open denied . current status is ",
-            "workaround": "Calm down! Check why door is locked and Unlock!"
-        },
-        "GTC01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "close. Trigger garage door !",
-            "workaround": "Get out of the way!"
-        },
-        "GTC02": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "close denied. Too early to retry!",
-            "workaround": "Calm down! Wait before trying again!"
-        },
-        "GTC03": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "close denied. current status is ",
-            "workaround": "Calm down! Stop trying !"
-        },
-        "HW001": {
-            "deviceType": "Sensor",
-            "severity": "1",
-            "category": "HARDWARE",
-            "text": "USB Commuucation error",
-            "workaround": "Calm down! Stop trying !"
-        },
-        "HW002": {
-            "deviceType": "Garage",
-            "severity": "1",
-            "category": "HARDWARE",
-            "text": "Command sent but nothing happened!",
-            "workaround": "Check the door !"
-        }
+  "En": {
+    "GO001": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "GARAGE_OPEN",
+      "text": "Open Time Expired",
+      "workaround": "Close the garage door!"
     },
-    "Fr": {
-        "GO001": {
-            "deviceType": "Garage",
-            "severity": "1",
-            "category": "GARAGE_OPEN",
-            "text": "Temps d'ouverture de la porte expirée!",
-            "workaround": "Fermez la porte si elle ne se ferme pas toute seule!"
-        },
-        "GO002": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_OPEN",
-            "text": "Attention, porte ouverte!",
-            "workaround": "Fermez la porte!"
-        },
-        "GCD01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_LOCK",
-            "text": "Fermeture automatique déactivé temporairement à cause de problème récent!",
-            "workaround": "Verifiez la porte !"
-        },
-        "GS001": {
-            "deviceType": "Garage Sensor",
-            "severity": "1",
-            "category": "SENSOR",
-            "text": "problème avec un senseur sur la porte",
-            "workaround": "La fermeture est peut-être bloquée par de la neige ou un des senseurs ne fonctionne plus!"
-        },
-        "GTO01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture de la porte !",
-            "workaround": "Eloignez vous de la portes!"
-        },
-        "GTO02": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture refusée. Déclenchement trop récent!",
-            "workaround": "Attendre un peu avant de re-ouvrir!"
-        },
-        "GTO003": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture refusée. Le status est ",
-            "workaround": "Arrêtez d'essayer, allez voir se qui se passe !"
-        },
-        "GTO004": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Porte vérouillée, Ouverture refusée. Le status est ",
-            "workaround": "Arrêtez d'essayer, demandez pourquoi la porte a été vérouillée !"
-        },
-        "GTC01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Fermeture demandée.",
-            "workaround": "Enlevez tout obstacle qui nuirait à la fermeture!"
-        },
-        "GTC02": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Fermeture refusée. Déclenchement trop récent!",
-            "workaround": "Attendre un peu avant de refermer!"
-        },
-        "GTC03": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "Fermeture refusée. Le status est ",
-            "workaround": "Arrêtez d'essayer !"
-        },
-        "HW001": {
-            "deviceType": "Sensor",
-            "severity": "1",
-            "category": "HARDWARE",
-            "text": "USB Commuucation error",
-            "workaround": "Appelez le service technique au 1-800-PLAINTE!"
-        },
-        "HW002": {
-            "deviceType": "Garage",
-            "severity": "1",
-            "category": "HARDWARE",
-            "text": "Command sent but nothing happened!",
-            "workaround": "Check the door !"
-        }
+    "GO002": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_OPEN",
+      "text": "Open Warning",
+      "workaround": "Close the garage door!"
     },
-    "FrMule": {
-        "GO001": {
-            "deviceType": "Garage",
-            "severity": "1",
-            "category": "GARAGE_OPEN",
-            "text": "Temps d'ouverture de la porte expirée mule!",
-            "workaround": "Ferme la porte mule si elle ne se ferme pas toute seule!"
-        },
-        "GO002": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_OPEN",
-            "text": "Attention, porte ouverte mule!",
-            "workaround": "Grouille toi de fermer la porte mule!"
-        },
-        "GCD01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_LOCK",
-            "text": "Fermeture automatique déactivé pour les mules qui savent pas se servir d'une porte!",
-            "workaround": "Verifies la porte tête de veau !"
-        },
-        "GS001": {
-            "deviceType": "Garage Sensor",
-            "severity": "1",
-            "category": "SENSOR",
-            "text": "problème avec un senseur sur la porte de mule",
-            "workaround": "La fermeture est peut-être bloquée par de la neige à cause d'une mule ou un des senseurs ne fonctionne plus!"
-        },
-        "GTO01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture de la porte mule!",
-            "workaround": "Sauves-toi en courrant mule!"
-        },
-        "GTO02": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture refusée mule. Déclenchement trop récent!",
-            "workaround": "Calme toi tête de veau! Attendre un peu avant de re-ouvrir!"
-        },
-        "GTO003": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture refusée. Le status est ",
-            "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
-        },
-        "GTO004": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Ouverture point accordée. Le status est ",
-            "workaround": "Calme toi la fripouille! Arrêstez d'essayer mortecouille, Allez quérir au seigneur pourquoi le portail n'est point passable !"
-        },
-        "GTC01": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Fermeture demandée par une mule!",
-            "workaround": "Enlève ce qu'il y a dans le chemin de la porte tête de veau"
-        },
-        "GTC02": {
-            "deviceType": "Garage",
-            "severity": "3",
-            "category": "GARAGE_COMMAND",
-            "text": "Fermeture refusée mule. Déclenchement trop récent!",
-            "workaround": "Calme toi tête de veau! Attendre un peu avant de refermer!"
-        },
-        "GTC03": {
-            "deviceType": "Garage",
-            "severity": "2",
-            "category": "GARAGE_COMMAND",
-            "text": "Fermeture refusée. Le status est ",
-            "workaround": "Calme toi tête de veau! Arrêtes d'essayer !"
-        },
-        "HW001": {
-            "deviceType": "Sensor",
-            "severity": "1",
-            "category": "HARDWARE",
-            "text": "USB Commuucation error",
-            "workaround": "Appelez le service technique pour tête de veau au 1-800-VEAU"
-        },
-        "HW002": {
-            "deviceType": "Garage",
-            "severity": "1",
-            "category": "HARDWARE",
-            "text": "Command sent but nothing happened!",
-            "workaround": "Check the door !"
-        }
+    "GLO01": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "GARAGE_LOCK",
+      "text": "Door Open with Manual Lock expired !",
+      "workaround": "Remove Lock and close the door!"
+    },
+    "GCD01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_LOCK",
+      "text": "Auto close disabled due to recent alerts!",
+      "workaround": "Check garage door!"
+    },
+    "GS001": {
+      "deviceType": "Garage Sensor",
+      "severity": "1",
+      "category": "SENSOR",
+      "text": "Garage Sensor Error",
+      "workaround": "Fix Sensor or garage door alignment to sensor!"
+    },
+    "GTO01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "open. Trigger garage door !",
+      "workaround": "Get out of the way!"
+    },
+    "GTO02": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "open denied. Too early to retry!",
+      "workaround": "Calm down! Wait before trying again!"
+    },
+    "GTO003": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "open denied. current status is ",
+      "workaround": "Calm down! Stop trying !"
+    },
+    "GTO004": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Door Locked, open denied . current status is ",
+      "workaround": "Calm down! Check why door is locked and Unlock!"
+    },
+    "GTC01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "close. Trigger garage door !",
+      "workaround": "Get out of the way!"
+    },
+    "GTC02": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "close denied. Too early to retry!",
+      "workaround": "Calm down! Wait before trying again!"
+    },
+    "GTC03": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "close denied. current status is ",
+      "workaround": "Calm down! Stop trying !"
+    },
+    "HW001": {
+      "deviceType": "Sensor",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "USB Commuucation error",
+      "workaround": "Calm down! Stop trying !"
+    },
+    "HW002": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "Command sent but nothing happened!",
+      "workaround": "Check the door !"
     }
+  },
+  "Fr": {
+    "GO001": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "GARAGE_OPEN",
+      "text": "Temps d'ouverture de la porte expirée!",
+      "workaround": "Fermez la porte si elle ne se ferme pas toute seule!"
+    },
+    "GO002": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_OPEN",
+      "text": "Attention, porte ouverte!",
+      "workaround": "Fermez la porte!"
+    },
+    "GLO01": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "GARAGE_LOCK",
+      "text": "Temps expiré porte ouverte avec verouillage manuel !",
+      "workaround": "Enlevez l'option vérouillage et fermez la porte !"
+    },
+    "GCD01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_LOCK",
+      "text": "Fermeture automatique déactivé temporairement à cause de problème récent!",
+      "workaround": "Verifiez la porte !"
+    },
+    "GS001": {
+      "deviceType": "Garage Sensor",
+      "severity": "1",
+      "category": "SENSOR",
+      "text": "problème avec un senseur sur la porte",
+      "workaround": "La fermeture est peut-être bloquée par de la neige ou un des senseurs ne fonctionne plus!"
+    },
+    "GTO01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture de la porte !",
+      "workaround": "Eloignez vous de la portes!"
+    },
+    "GTO02": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture refusée. Déclenchement trop récent!",
+      "workaround": "Attendre un peu avant de re-ouvrir!"
+    },
+    "GTO003": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture refusée. Le status est ",
+      "workaround": "Arrêtez d'essayer, allez voir se qui se passe !"
+    },
+    "GTO004": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Porte vérouillée, Ouverture refusée. Le status est ",
+      "workaround": "Arrêtez d'essayer, demandez pourquoi la porte a été vérouillée !"
+    },
+    "GTC01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Fermeture demandée.",
+      "workaround": "Enlevez tout obstacle qui nuirait à la fermeture!"
+    },
+    "GTC02": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Fermeture refusée. Déclenchement trop récent!",
+      "workaround": "Attendre un peu avant de refermer!"
+    },
+    "GTC03": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "Fermeture refusée. Le status est ",
+      "workaround": "Arrêtez d'essayer !"
+    },
+    "HW001": {
+      "deviceType": "Sensor",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "USB Commuucation error",
+      "workaround": "Appelez le service technique au 1-800-PLAINTE!"
+    },
+    "HW002": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "Command sent but nothing happened!",
+      "workaround": "Check the door !"
+    }
+  },
+  "FrMule": {
+    "GO001": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "GARAGE_OPEN",
+      "text": "Temps d'ouverture de la porte expirée mule!",
+      "workaround": "Ferme la porte mule si elle ne se ferme pas toute seule!"
+    },
+    "GO002": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_OPEN",
+      "text": "Attention, porte ouverte mule!",
+      "workaround": "Grouille toi de fermer la porte mule!"
+    },
+    "GLO01": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "GARAGE_LOCK",
+      "text": "Portail du chateau ouverte perdu dans les couloirs va laisser entrer les huttes !",
+      "workaround": "Enlevez l'option cadenas dans la boite a troubadour et fermez le portail ou soyez maudit !"
+    },
+    "GCD01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_LOCK",
+      "text": "Fermeture automatique déactivé pour les mules qui savent pas se servir d'une porte!",
+      "workaround": "Verifies la porte tête de veau !"
+    },
+    "GS001": {
+      "deviceType": "Garage Sensor",
+      "severity": "1",
+      "category": "SENSOR",
+      "text": "problème avec un senseur sur la porte de mule",
+      "workaround": "La fermeture est peut-être bloquée par de la neige à cause d'une mule ou un des senseurs ne fonctionne plus!"
+    },
+    "GTO01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture de la porte mule!",
+      "workaround": "Sauves-toi en courrant mule!"
+    },
+    "GTO02": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture refusée mule. Déclenchement trop récent!",
+      "workaround": "Calme toi tête de veau! Attendre un peu avant de re-ouvrir!"
+    },
+    "GTO003": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture refusée. Le status est ",
+      "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
+    },
+    "GTO004": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Ouverture point accordée. Le status est ",
+      "workaround": "Calme toi la fripouille! Arrêstez d'essayer mortecouille, Allez quérir au seigneur pourquoi le portail n'est point passable !"
+    },
+    "GTC01": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Fermeture demandée par une mule!",
+      "workaround": "Enlève ce qu'il y a dans le chemin de la porte tête de veau"
+    },
+    "GTC02": {
+      "deviceType": "Garage",
+      "severity": "3",
+      "category": "GARAGE_COMMAND",
+      "text": "Fermeture refusée mule. Déclenchement trop récent!",
+      "workaround": "Calme toi tête de veau! Attendre un peu avant de refermer!"
+    },
+    "GTC03": {
+      "deviceType": "Garage",
+      "severity": "2",
+      "category": "GARAGE_COMMAND",
+      "text": "Fermeture refusée. Le status est ",
+      "workaround": "Calme toi tête de veau! Arrêtes d'essayer !"
+    },
+    "HW001": {
+      "deviceType": "Sensor",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "USB Commuucation error",
+      "workaround": "Appelez le service technique pour tête de veau au 1-800-VEAU"
+    },
+    "HW002": {
+      "deviceType": "Garage",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "Command sent but nothing happened!",
+      "workaround": "Check the door !"
+    }
+  }
 }

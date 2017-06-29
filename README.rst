@@ -153,6 +153,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     cd /git/mitaine/garage
     python3 setup.py sdist
 
+    https://docs.python.org/3.4/distutils/builtdist.html
+    python setup.py bdist --format=ztar
+    
   #Package is under dist
 
 

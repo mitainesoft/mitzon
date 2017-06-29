@@ -40,6 +40,7 @@ class GarageDoor():
         self.g_last_cmd_sent_time = None
         self.g_last_cmd_trigger_time = None
         self.g_next_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeRetryCloseDoor"))
+        self.g_lock_time=None
 
 
         self.g_alert_light_time = None
@@ -146,12 +147,12 @@ class GarageDoor():
             self.g_prevstatus = self.g_status
             if self.g_status == G_OPEN:
                 self.g_open_time = time.time()
-            elif self.g_status == G_CLOSED:
+            elif self.g_status == G_CLOSED or self.g_status == G_LOCKCLOSED:
                 # self.g_auto_force_ignore_garage_open_close_cmd = False
-
                 self.g_close_time = time.time()
                 # Clear all alarms when all sensors are OK since garage is closed.
                 self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
+                self.alarm_mgr_handler.clearAlertID("GLO01", self.g_name)
                 for sensorkey in self.g_sensor_props:
                     sensordevname=self.g_name+"_"+sensorkey
                     self.alarm_mgr_handler.clearAlertDevice("SENSOR",sensordevname)
@@ -190,9 +191,11 @@ class GarageDoor():
         if self.g_manual_force_lock_garage_open_close_cmd==False:
             tmptxt="%s Garage Lock down requested" % (self.g_name)
             self.g_manual_force_lock_garage_open_close_cmd = True
+            self.g_lock_time=time.time()
         else:
             self.g_manual_force_lock_garage_open_close_cmd = False
             tmptxt="%s Garage UnLock requested" % (self.g_name)
+            # self.g_lock_time=None
         log.info(tmptxt)
 
         resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineGarageDoorOpenClosedStatus())
@@ -279,7 +282,17 @@ class GarageDoor():
         resp=CommmandQResponse(0, status_text)
         return resp
 
+    '''
+    return True if OK, False if problem.
+    OS exit if fatal !
+    '''
     def triggerGarageDoor(self):
+
+        #GarageManager Check Policy will not call this because status os LOCKOPEN and OPEN in this mode !
+        if (self.g_manual_force_lock_garage_open_close_cmd):
+            logtxt="Trigger garage Door refused because of Manual Override"
+            log.error(logtxt)
+            return False;
 
         try:
             self.usbConnectHandler.digitalWrite(self.g_board_pin_relay, self.usbConnectHandler.HIGH)
@@ -294,6 +307,8 @@ class GarageDoor():
             log.error("triggerGarageDoor Open or Close problem !")
             traceback.print_exc()
             os._exit(-1)
+
+        return True
 
     def test(self):
         self.initBoardPinModeOutput(self.g_board_pin_relay)

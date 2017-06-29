@@ -15,6 +15,9 @@ GarageOpenTriggerAlarmElapsedTime = 180
 #nbr seconds before door will attempt to close
 GarageOpenTriggerCloseDoorElapsedTime = 600
 
+#Nbr seconds to trigger an alarm when door is LOCK OPEN
+GarageLockOpenTriggerAlarmElapsedTime=3600
+
 # Time it  takes to consider door closed. Used in context of alarm reset
 GarageDoorAssumedClosedTime = 20
 
@@ -47,8 +50,15 @@ GarageSensorsBoardPin = -1,-1
 [ALERT]
 TimeBetweenAlerts=1800
 
+
+########################
+## Notification ########
+########################
 [NOTIFICATION_COMMON]
-NotificationEnabled = True
+
+#Set to True to enable notif to email configured below
+NotificationEnabled = False
+
 ########################
 # DEFAULT_LANGUAGE=
 #   Fr = Francais
