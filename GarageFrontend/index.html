@@ -195,12 +195,27 @@
         }
 
         function doorLock() {
+            $('#garagelock').removeClass('errordoorbutton');
+            if ($('#garagelock').hasClass('lockstatusdoorbutton')){
+                $('#garagelock').removeClass('lockstatusdoorbutton');
+            } else {
+                $('#garagelock').addClass('lockstatusdoorbutton');
+            }
+
             for (count = 0; count <= 1; count++) {
-                cmd = 'http://192.168.1.83:8050/GarageDoor/lock/' + count
-                garageid = "garagestatus" + count;
-                posting = $.post(cmd, function (data) {
-                    parseResponse(data, status)
-                }, null, "text")
+
+                // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
+                if ( ($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) &&
+                     !($('#garagelock').hasClass('lockstatusdoorbutton')&& $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                    console.log("Lock button Desync garagecmd"+ count +" ! so resync!");
+                } else {
+                    console.log("Lock button In Sync garagecmd"+ count +" !  ")
+                    cmd = 'http://192.168.1.83:8050/GarageDoor/lock/' + count
+                    garageid = "garagestatus" + count;
+                    posting = $.post(cmd, function (data) {
+                        parseResponse(data, status)
+                    }, null, "text")
+                }
             }
 
         }
@@ -254,7 +269,6 @@
                         garagecmdlabel = "garagecmd" + deviceArray[1];
                         clearClassGarage(garagecmdlabel);
                         console.log("parseResponse::garagecmdlabel=" + garagecmdlabel);
-//                        $('#' + garagecmdlabel).removeClass('unknownstatusdoorbutton');
                         switch (true) {
                             case /CLOSED/.test(parseResponseArray[4]):
                                 $('#' + garagecmdlabel).addClass('closeddoorbutton');
@@ -275,7 +289,12 @@
                         } // sw Garage Status
 
                         if (/LOCK/.test(parseResponseArray[4])) {
+                            $('#' + garagecmdlabel).addClass('lockstatusdoorbutton');
                             $('#garagelock').addClass('lockstatusdoorbutton');
+                        } else {
+                            if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
+                                $('#garagelock').addClass('errordoorbutton');
+                            }
                         }
                         break;
                     default:
@@ -317,8 +336,7 @@
             $('#' + labelid).removeClass('errordoorbutton');
             $('#' + labelid).removeClass('closeddoorbutton');
             $('#' + labelid).removeClass('unknownstatusdoorbutton');
-
-            $('#garagelock').removeClass('lockstatusdoorbutton');
+            $('#' + labelid).removeClass('lockstatusdoorbutton');
         }
 
         function clearAlerts() {
