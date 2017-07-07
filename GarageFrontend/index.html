@@ -18,9 +18,9 @@
     <link rel="stylesheet" href="../css/flaticon.css">
 
 
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
     <!--<script>document.createElement("picture");</script>-->
     <!--<script src="../js/picturefill.min.js" class="picturefill" async="async"></script>-->
@@ -57,16 +57,14 @@
         <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button flaticon-garage" href="#"
            onclick="proceed('trigger','1');">1</a>
 
-
-        <br></br>
-        <!--<h1 class="MainTitle3">Alertes</h1>-->
-        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
-        <a id="alertlist" class="link-button nav-button flaticon-info" href="#" onclick="displayAlert();"></a>
-
         <br></br>
         <a id="garagelock" class="link-button nav-button flaticon-lock" href="#"
            onclick="doorLock();">1</a>
 
+        <br></br>
+        <!--<h1 class="MainTitle3">Alertes</h1>-->
+        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
+        <a id="alertlist" class="link-button nav-button flaticon-safebox" href="#" onclick="displayAlert();"></a>
 
     </div><!-- /content -->
 
@@ -95,8 +93,8 @@
 
 
         <div class="coffee-span-12">
-            <p class="paragraph Footer">Ile-Bizard<br> +1 514 594 3818 mitainesoft@gmail.com</p>
-            <p class="paragraph FooterCredit"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
+            <!--<p class="paragraph Footer">Ile-Bizard<br> +1 514 594 3818 mitainesoft@gmail.com</p>-->
+            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft 2017
             </a>
             </p>
         </div>
@@ -187,7 +185,7 @@
 
             } //switch
 
-            var cmd = 'http://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
+            var cmd = 'https://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
             var posting = $.post(cmd, function (data) {
                 parseResponse(data);
             })
@@ -210,7 +208,7 @@
                     console.log("Lock button Desync garagecmd"+ count +" ! so resync!");
                 } else {
                     console.log("Lock button In Sync garagecmd"+ count +" !  ")
-                    cmd = 'http://192.168.1.83:8050/GarageDoor/lock/' + count
+                    cmd = 'https://192.168.1.83:8050/GarageDoor/lock/' + count
                     garageid = "garagestatus" + count;
                     posting = $.post(cmd, function (data) {
                         parseResponse(data, status)
@@ -222,7 +220,7 @@
 
         function doorStatus() {
             for (count = 0; count <= 1; count++) {
-                cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
+                cmd = 'https://192.168.1.83:8050/GarageDoor/status/' + count
                 garageid = "garagestatus" + count;
                 posting = $.post(cmd, function (data) {
                     parseResponse(data, status)

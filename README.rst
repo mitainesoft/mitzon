@@ -29,8 +29,26 @@
 
         load and upload nanpy.ino
         
+    ** Linux **
+    # In linux Debian or in Oracle VirtualBox,
 
-    In linux Debian in Oracle VirtualBox
+    # Install raspbian Jessy v8.
+
+        root@nomiberry:/etc# cat os-release
+            PRETTY_NAME="Raspbian GNU/Linux 8 (jessie)"
+            NAME="Raspbian GNU/Linux"
+            VERSION_ID="8"
+            VERSION="8 (jessie)"
+            ID=raspbian
+            ID_LIKE=debian
+            HOME_URL="http://www.raspbian.org/"
+            SUPPORT_URL="http://www.raspbian.org/RaspbianForums"
+            BUG_REPORT_URL="http://www.raspbian.org/RaspbianBugs"
+
+
+    ** Passwords **
+
+    Immediatly change raspberry default passwords !
 
     ** install cherrypy for python3 **
 
@@ -147,6 +165,395 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
 
  d)Test Relay
 curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+
+
+3.  Enable Security on Raspberry PI Raspbian
+
+    reference: https://robpol86.com/root_certificate_authority.html
+
+
+    This guide will go over setting up an offline root certificate 
+    authority for your home network. It is based on what I’ve learned from 
+    https://jamielinux.com/docs/openssl-certificate-authority/index.html with a few differences:
+
+    We will not be creating an intermediate pair here. Since my intentions are 
+    just setting up SSL certs on a handful of internal web interfaces and maybe 
+    even WPA2 Enterprise one day, I didn’t think it was worth setting this up. 
+    It might make revoking certs not as quick, but I don’t see myself signing 
+    very many certs after my initial run.
+    I’ll include steps on how to bridge the air gap. For maximum paranoid-tier 
+    security we will not be plugging in any USB flash drives (or USB anything 
+    excluding keyboards) or network cables. WiFi adapters are also obviously forbidden. 
+    or this we’ll be using qrencode.
+    I’ll be assuming the Linux computer you’re using has a GUI (desktop environment).
+    This is to reduce the number of QR codes needed since you’ll have more resolution 
+    with a GUI than with a frame buffer so you can fit more data in each QR code.
+    For additional paranoid-tier security we’ll generate a 8192-bit long RSA key for 
+    our root CA. 4096-bit keys are fine too but I’m crazy. We’ll also be creating 
+    4096-bit SSL keys instead of the usual 2048-bit. If you’re using OS X and you 
+    get an error trying to install the root certificate, 
+    read: https://apple.stackexchange.com/questions/110261/mac-os-x-10-9-and-8192-bit-certificates-error-67762/
+    While this guide should work fine with any Linux computer I’ll be focusing on 
+    Debian-based distributions. This guide has been tested on Debian Jessie on an 
+    old T60 Thinkpad and 2017-01-11-raspbian-jessie.zip on a Raspberry Pi.
+
+    The goal here is to setup an offline root CA. It will be online at first to 
+    get updates but right before generating the root pair we will remove any network 
+    connectivity from the host and never EVER connect it to any networks or USB devices. 
+    This will be an offline and air gapped root CA.
+
+    
+ ** Setting up a Mitainesoft Garage (MG) Embedded Certificate Authority **
+
+    This section will go over preparing a newly-installed Debian/Raspbian system. 
+    For machines without a real time clock (e.g. Raspberry Pis) we’ll setup a script that runs during boot that prompts you for the current time.
+
+    Perform a clean install of Debian (or install the latest Raspbian PIXEL 
+    image on the Raspberry Pi) and boot up the host. It’s ok to have network access for now. 
+    For my Raspberry Pi I followed Raspbian Setup (Raspberry Pi) (you don’t need to install 
+    any of those packages in that link, just upgrade).
+    If you’re using Debian be sure to create an encrypted LVM or partition.
+    On a Raspberry Pi you can follow my guide to encrypt the main partition: 
+    aspberry Pi LUKS Root Encryption
+    Upgrade all of your packages since this will be the last time the system will 
+    have internet access: sudo apt-get update && sudo apt-get upgrade.
+    sudo reboot in case a new kernel was installed.
+    Finally install these required packages: sudo apt-get install qrencode acl
+    Boot Date Prompt on Raspberry Pi
+    Raspberry Pis don’t have real time clocks so they don’t keep track of the time 
+    when powered off. Usually they handle this by getting the current time from the 
+    internet after booting up. However since our root CA will never have internet 
+    access again we need to always set the current time every time it boots up.
+
+    
+    ** Time NTP Raspberry **
+    Since time is very important for signing certificates we’ll want to avoid 
+    forgetting this. You can install this systemd file to have it prompt you for the 
+    current time before the Raspberry Pi finishes booting up, guaranteeing you won’t forget:
+
+    # Prompt for current date during boot.
+    #
+    # https://github.com/Robpol86/robpol86.com/blob/master/docs/_static/date-prompt.service
+    #
+    # Stops the system from booting up to 2 minutes or until user enters the
+    # current time in the console. Useful for Raspberry Pis and other systems
+    # with no real time clocks.
+    #
+    # Save as: /etc/systemd/system/date-prompt.service
+    # Enable with: systemctl enable date-prompt.service
+
+    [Unit]
+    After=fake-hwclock.service
+    After=systemd-fsck-root.service systemd-fsck@dev-mmcblk0p1.service
+    Before=sysinit.target plymouth-start.service
+    DefaultDependencies=no
+    Description=Prompt for current date during boot
+
+    [Service]
+    Environment="P=Enter the current date (e.g. Feb 11 5:17 PM): "
+    ExecStartPre=-/bin/plymouth deactivate
+    ExecStart=/bin/bash -c 'until read -ep "$P" R; [ ! -z "$R" ] && date -s "$R"; do :; done'
+    ExecStartPost=-/bin/plymouth reactivate
+    ExecStopPost=-/bin/plymouth reactivate
+    RemainAfterExit=yes
+    StandardError=inherit
+    StandardInput=tty
+    StandardOutput=inherit
+    TimeoutSec=120
+    Type=oneshot
+
+    [Install]
+    WantedBy=sysinit.target
+
+
+
+    ** Backup **
+    su - root
+    cd /etc/ssl
+    cp openssl.cnf openssl.orig
+    chmod 644 openssl*
+
+    ** Generate security certificates **
+
+    
+    Based on a few articles I’ve found while considering which domain 
+    to use at home, I thought I would mention it here even though it’s more 
+    of a network-related topic rather than an SSL/Certificate topic. I highly encourage 
+    you to either purchase a dedicated domain name for your home network or at least use a 
+    dedicated subdomain on a domain you already own.
+
+    In the table below I’ll use myhome.net as an example. Org Name is just a name 
+    so in this case the value would be “MyHome.net”. If you used home.mycooldomain.com 
+    then the Org Name equivalent may be “Home.MyCoolDomain.com”. It can actually 
+    be set to anything but this is what I’ve done for my home network.
+    The first step is to configure OpenSSL. You’ll need to replace some values in 
+    the configuration file I’ll be providing to you. Refer to the table below for 
+    what you’ll be replacing.
+
+    To Replace	Replace With	Example
+    SUB_COUNTRY_NAME	Two-letter ISO abbreviation for your country.	US
+    SUB_STATE_NAME	State or province where you live. No abbreviations.	California
+    SUB_LOCALITY	City where you are located.	San Francisco
+    SUB_ORG_NAME	Name of your organization.	MyHome.net
+    SUB_UNIT_NAME	Section of the organization.	Home
+    SUB_EMAIL	Your contact email.	xx@yy.zz
+    Overwrite all of /etc/ssl/openssl.cnf with the following (it’s still ok to have network access for this part). Be sure to replace SUB_ strings.
+
+    # /etc/ssl/openssl.cnf
+
+    CN = ""  # Leave blank.
+
+    [ ca ]
+    default_ca = CA_default
+
+    [ CA_default ]
+    # Directory and file locations.
+    dir               = /root/ca
+    certs             = $dir/certs
+    crl_dir           = $dir/crl
+    new_certs_dir     = $dir/newcerts
+    database          = $dir/index.txt
+    serial            = $dir/serial
+    RANDFILE          = $dir/private/.rand
+
+    # The root key and root certificate.
+    private_key       = $dir/private/ca.key.pem
+    certificate       = $dir/certs/ca.cert.pem
+
+    # For certificate revocation lists.
+    crlnumber         = $dir/crlnumber
+    crl               = $dir/crl/ca.crl.pem
+    crl_extensions    = crl_ext
+    default_crl_days  = 30
+
+    default_md        = sha256
+    name_opt          = ca_default
+    cert_opt          = ca_default
+    default_days      = 375
+    preserve          = no
+    policy            = policy_loose
+
+    [ policy_loose ]
+    # See the POLICY FORMAT section of the `ca` man page.
+    countryName             = optional
+    stateOrProvinceName     = optional
+    localityName            = optional
+    organizationName        = optional
+    organizationalUnitName  = optional
+    commonName              = supplied
+    emailAddress            = optional
+
+    [ req ]
+    # Options for the `req` tool (`man req`).
+    default_bits        = 4096
+    distinguished_name  = req_distinguished_name
+    string_mask         = utf8only
+
+    # Extension to add when the -x509 option is used.
+    x509_extensions     = v3_ca
+
+    [ req_distinguished_name ]
+    # See <https://en.wikipedia.org/wiki/Certificate_signing_request>.
+    countryName                     = Country Name (2 letter code)
+    stateOrProvinceName             = State or Province Name
+    localityName                    = Locality Name
+    0.organizationName              = Organization Name
+    organizationalUnitName          = Organizational Unit Name
+    commonName                      = Common Name
+    emailAddress                    = Email Address
+
+    # Optionally, specify some defaults.
+    countryName_default             = SUB_COUNTRY_NAME
+    stateOrProvinceName_default     = SUB_STATE_NAME
+    localityName_default            = SUB_LOCALITY
+    0.organizationName_default      = SUB_ORG_NAME
+    organizationalUnitName_default  = SUB_UNIT_NAME
+    commonName_default              = $ENV::CN
+    emailAddress_default            = SUB_EMAIL
+
+    [ v3_ca ]
+    # Extensions for a typical CA (`man x509v3_config`).
+    subjectAltName = DNS:$ENV::CN
+    subjectKeyIdentifier = hash
+    authorityKeyIdentifier = keyid:always,issuer
+    basicConstraints = critical, CA:true, pathlen:0
+    keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+    [ usr_cert ]
+    # Extensions for client certificates (`man x509v3_config`).
+    basicConstraints = CA:FALSE
+    nsCertType = client, email
+    nsComment = "OpenSSL Generated Client Certificate"
+    subjectKeyIdentifier = hash
+    authorityKeyIdentifier = keyid,issuer
+    keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+    extendedKeyUsage = clientAuth, emailProtection
+
+    [ server_cert ]
+    # Extensions for server certificates (`man x509v3_config`).
+    basicConstraints = CA:FALSE
+    nsCertType = server
+    nsComment = "OpenSSL Generated Server Certificate"
+    subjectAltName = DNS:$ENV::CN
+    subjectKeyIdentifier = hash
+    authorityKeyIdentifier = keyid,issuer:always
+    keyUsage = critical, digitalSignature, keyEncipherment
+    extendedKeyUsage = serverAuth
+
+    [ crl_ext ]
+    # Extension for CRLs (`man x509v3_config`).
+    authorityKeyIdentifier=keyid:always
+
+    [ ocsp ]
+    # Extension for OCSP signing certificates (`man ocsp`).
+    basicConstraints = CA:FALSE
+    subjectKeyIdentifier = hash
+    authorityKeyIdentifier = keyid,issuer
+    keyUsage = critical, digitalSignature
+    extendedKeyUsage = critical, OCSPSigning
+
+    
+    
+    ** OpenSSL Directory Structure **
+    
+    Everything will live in /root/ca. It will also all be owned by root. 
+    Remember this computer is a dedicated CA so it won’t be doing anything 
+    else at all except hosting your very important root certificate private 
+    key and the root certificate itself.
+
+    *** setup directories and permissions ***
+
+    sudo mkdir -p /root/ca/{certs,crl,csr,newcerts,private}
+    sudo setfacl -d -m u::rx -m g::- -m o::- /root/ca/private
+    sudo setfacl -d -m u::rx -m g::rx -m o::rx /root/ca/certs
+    sudo chmod 700 /root/ca/private
+    sudo touch /root/ca/index.txt
+    sudo tee /root/ca/serial <<< 1000
+
+    Those setfacl commands set filesystem ACLs which enforce default 
+    maximum file permissions for new files/directories. A brief description for these directories:
+
+        Directory	Description
+        /root/ca/certs	Certificates are dumped here.
+        /root/ca/crl	Certificate revocation lists.
+        /root/ca/csr	Certificate signing request.
+        /root/ca/newcerts	Not used in this guide.
+        /root/ca/private	Private keys. VERY SENSITIVE. 
+    
+    
+    This is where we actually generate the root key and certificate. 
+    The root key is used to sign additional certificate pairs for specific 
+    devices/servers, and the root certificate is what you’ll export to 
+    clients that should trust any of these additional certificates.
+
+    *** Warning ***
+
+    The root key ca.key.pem you’ll be generating is the most sensitive file on this 
+    dedicated computer. Keep it as secure as possible. When openssl genrsa asks you 
+    for a password enter a unique and very secure password. Make sure setfacl worked a
+    nd the permissions are: -r-------- 1 root root 1.8K Aug 15 12:21 private/ca.key.pem
+    Note
+
+    
+    ** Generate root certificate and private key **
+    The openssl req command will prompt you for some information. The defaults you’ve 
+    specified in openssl.cnf will be fine. However double check that the Common Name
+    is the fully qualified domain name of this certificate authority.
+    
+    sudo su -  # Become root.
+    cd /root/ca
+    export CN=$(hostname --fqdn)
+    openssl genrsa -aes256 -out private/ca.key.pem 8192
+    openssl req -key private/ca.key.pem -new -x509 -days 1827 -extensions v3_ca -out certs/ca.cert.pem
+    openssl x509 -noout -text -in certs/ca.cert.pem |more  # Confirm everything looks good.
+    
+    
+    You’re done generating your root certificate and private key. You’re technically 
+    “done”. However you’ll probably want to do these two steps:
+
+    
+    
+    ** Combine the private key and the certificate **
+    /export/repo/certificates
+    cat ./certs/ca.cert.pem  ./private/ca.key.pem > ./certs/garageclient.pem
+
+    
+    
+    ** Install the public root certificate **
+    Install the public root certificate on client computers so they can trust your servers 
+    instead of getting SSL errors.
+    Creating an SSL certificate to install on your web servers (router admin pages, IPMI 
+    interfaces, etc.). For more info see: Issuing Server Certificates
+    For the former you’ll want to export the certs/ca.cert.pem file and install it on client 
+    computers/devices. For example:
+
+    OS X: The Keychain Access app can install that file in the System keychain 
+    (not System Roots), an you’ll need to manually set the trust to “Always Trust” 
+    (ou may also have to restart web browsers or just reboot to get rid of SSL errors).
+    Fedora/CentOS/RHEL: Copy that file to /etc/pki/ca-trust/source/anchors/ and then run 
+    sudo update-ca-trust.
+    
+    
+    
+    ** Issuing Server Certificates ** 
+    
+    ???
+    
+    This section covers issuing SSL certificates for web servers such as router admin 
+    pages. We will generate an SSL certificate and its private key. You’ll need to 
+    install both files on the web server. Keep in mind the private key is very sensitive 
+    and is used to sign SSL sessions to keep it secure as you transfer it to the web server!
+
+    Note
+
+    When asked for a Common Name you’ll need to enter the web server’s FQDN. 
+    So instead of accessing your router admin page using http://192.168.0.1 you’ll instead 
+    be using https://router.myhome.net for example. Common Name here will be router.myhome.net.
+    On the root CA host run these commands. Substitute router.myhome.net 
+    with whatever FQDN your target web server will use.
+
+    date  # Verify the date is correct. If not: sudo date -s "Aug 15 18:10"
+    
+    sudo su -
+    cd /root/ca
+    export CN=router.myhome.net
+    openssl genrsa -out private/$CN.key.pem 4096
+    openssl req -key private/$CN.key.pem -new -out csr/$CN.csr.pem  # CN is FQDN.
+    openssl ca -extensions server_cert -notext -in csr/$CN.csr.pem -out certs/$CN.cert.pem
+    rm csr/$CN.csr.pem
+    openssl x509 -noout -text -in certs/$CN.cert.pem |more  # Confirm everything looks good.
+    cat index.txt  # Verify new cert is present.
+    Verify that the Issuer is the root CA and the Subject is the certificate itself. You will 
+    need to install both certs/router.myhome.net.cert.pem and private/router.myhome.net.key.pem 
+    on the web server. Read Bridging the Air Gap for instructions on how to do this securely.
+        
+** Install security certificates on my PC **
+
+** security certificates on mobile devices **
+
+** Install security certificates in Apache2
+
+    vi 000-default.conf
+    
+    #Modify
+        <VirtualHost *:443>
+
+        Add:
+        SSLEngine on
+        SSLCertificateFile /opt/mitainesoft/security/garageclient.pem
+        SSLCertificateKeyFile /opt/mitainesoft/security/garageclient.key.pem
+
+
+        
+** Install certificates in web server **
+    http://docs.cherrypy.org/en/latest/deploy.html?highlight=certificate
+
+    Add the following lines in your CherryPy config to point to your certificate files:
+    
+        'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/garageclient.pem",
+        'cherrypy.server.ssl_private_key': "/opt/mitainesoft/security/garageclient.key.pem",
+
+
 
 3. Packaging
     Ref: https://packaging.python.org/tutorials/distributing-packages

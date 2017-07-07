@@ -187,6 +187,8 @@ if __name__ == '__main__':
                             'log.screen': False,
                             'tools.sessions.on': True,
                             'engine.autoreload_on': False,
+                            'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/garageclient.pem",
+                            'cherrypy.server.ssl_private_key': "/opt/mitainesoft/security/garageclient.key.pem",
                             })
 
     log = logging.getLogger('garageCmdProcessor')
