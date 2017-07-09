@@ -143,13 +143,31 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
                 pass
         next = dispatch.get()
 
+# #
+# # IMPORTANT: an extra server instance also routes app through HTTP port; this extra
+# # server was used only as a quick way to basically serve /index through port 80;
+# # following "filter" redirects anything that comes from HTTP port to HTTPS one,
+# # rendering any clear-text route not reachable externally (including/*specially*
+# # /index); e.g., authentication can't happen in clear-text;
+# #
+# def force_tls():
+#     if cherrypy.request.scheme == "http":
+#         # see https://support.google.com/webmasters/answer/6073543?hl=en
+#         raise cherrypy.HTTPRedirect(cherrypy.url().replace("http:", "https:"),
+#                                     status=301)
+#
+# cherrypy.tools.force_tls = cherrypy.Tool("before_handler", force_tls)
+#
+# def load_http_server():
+#     # extra server instance to dispatch HTTP
+#     server = cherrypy._cpserver.Server()
+#     server.socket_host = "0.0.0.0"
+#     server.socket_port = 8060
+#     server.subscribe()
+#
+# load_http_server()
 
 
-
-# class Device():
-#     @cherrypy.expose
-#     def index(self):
-#         return 'About (%s) %s by %s...' % (mything, myid, myservice )
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
@@ -163,21 +181,18 @@ if __name__ == '__main__':
             'tools.sessions.on': True,
             'tools.response_headers.on': False,
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
-            # 'server.socket_host': '0.0.0.0',
-            # 'server.socket_port': 8050,
-            # 'tools.staticdir.on': True,
-            # 'tools.request_headers.on': False,
-            # 'tools.staticdir.dir': "log",
-            # 'log.access_file': "log/garage_cherrypy_access.log",
-            # 'log.error_file': "log/garage_cherrypy_error.log",
-            # 'log.screen': False,
-            # 'engine.autoreload_on': False,
         }
     }
 
     # cherrypy.config.update(garage_backend_conf)
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',
+    cherrypy.config.update({'server.socket_host': '127.0.0.1',
                             'server.socket_port': 8050,
+                            'server.ssl_module': 'pyopenssl',
+                            'server.server.ssl_certificate': "/opt/mitainesoft/security/garageclient.pem",
+                            'server.server.ssl_private_key': "/opt/mitainesoft/security/garageclient.key.pem",
+                            # 'tools.secureheaders.on' : True,
+                            # 'tools.sessions.secure' : True,
+                            # 'tools.sessions.httponly': True,
                             'tools.staticdir.on': True,
                             'tools.response_headers.on': False,
                             'tools.request_headers.on': False,
@@ -187,8 +202,6 @@ if __name__ == '__main__':
                             'log.screen': False,
                             'tools.sessions.on': True,
                             'engine.autoreload_on': False,
-                            'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/garageclient.pem",
-                            'cherrypy.server.ssl_private_key': "/opt/mitainesoft/security/garageclient.key.pem",
                             })
 
     log = logging.getLogger('garageCmdProcessor')

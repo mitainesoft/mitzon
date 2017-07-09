@@ -185,7 +185,7 @@
 
             } //switch
 
-            var cmd = 'https://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
+            var cmd = 'http://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
             var posting = $.post(cmd, function (data) {
                 parseResponse(data);
             })
@@ -208,7 +208,7 @@
                     console.log("Lock button Desync garagecmd"+ count +" ! so resync!");
                 } else {
                     console.log("Lock button In Sync garagecmd"+ count +" !  ")
-                    cmd = 'https://192.168.1.83:8050/GarageDoor/lock/' + count
+                    cmd = 'http://192.168.1.83:8050/GarageDoor/lock/' + count
                     garageid = "garagestatus" + count;
                     posting = $.post(cmd, function (data) {
                         parseResponse(data, status)
@@ -220,7 +220,7 @@
 
         function doorStatus() {
             for (count = 0; count <= 1; count++) {
-                cmd = 'https://192.168.1.83:8050/GarageDoor/status/' + count
+                cmd = 'http://192.168.1.83:8050/GarageDoor/status/' + count
                 garageid = "garagestatus" + count;
                 posting = $.post(cmd, function (data) {
                     parseResponse(data, status)

@@ -54,7 +54,9 @@
 
         Download & extract cherrypy tar gz i.e. CherryPy-8.1.2.tar.gz
         cd cherrypy
-        $ python3 setup.py install
+        python3 setup.py install
+        
+        pip3 install cheroot
 
     ** install nanpy for raspberry pi arduino
         # https://pypi.python.org/pypi/nanpy
@@ -147,7 +149,7 @@
 Outputs in main Garage Backend console
 
 a) Test Status
-$ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
 
 b) Test Open Close
 curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
@@ -168,6 +170,8 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 3.  Enable Security on Raspberry PI Raspbian
+
+
 
     reference: https://robpol86.com/root_certificate_authority.html
 
@@ -472,10 +476,34 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     “done”. However you’ll probably want to do these two steps:
 
     
+    ** Remove Paraphrase from Key **
+    When restarting apache, apache asks for a pass-phrase each time you execute a restart.
+    To avoid these requests, execute the following step.
+
+    cd /root/ca/private
+    cp  ca.key.pem  ca.key.pem.with_p
+    openssl rsa -in  ca.key.pem.with_p -out  ca.key.pem
+                Enter pass phrase for  ca.key.pem.with_p:<MY PARAPHRASE>
+                writing RSA key
+
+    Expected Result: 
+      ca.key.pem now contains a pass-phrase.
+     Verify as follows:
+    # openssl rsa -in  ca.key.pem.with_p -noout -text  (will require pass-phrase)
+    # openssl rsa -in  ca.key.pem -noout -text   (will NOT require pass-phrase)
     
-    ** Combine the private key and the certificate **
-    /export/repo/certificates
-    cat ./certs/ca.cert.pem  ./private/ca.key.pem > ./certs/garageclient.pem
+
+    ** Copy certificates and key to mitainesoft **
+    cd /root/ca
+    cp certs/ca.cert.pem /opt/mitainesoft/security/garageclient.pem
+    cp private/ca.key.pem /opt/mitainesoft/security/garageclient.key.pem
+    cd  /opt/mitainesoft/security/
+    #Make certificates readeable by others
+    chmod 444 *.pem
+    
+    ** ?!?!??  Combine the private key and the certificate **
+    cd /root/ca
+    cat ./certs/ca.cert.pem  ./private/ca.key.pem > ./certs/garagemobile.pem
 
     
     
@@ -527,12 +555,19 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     need to install both certs/router.myhome.net.cert.pem and private/router.myhome.net.key.pem 
     on the web server. Read Bridging the Air Gap for instructions on how to do this securely.
         
+        
+        
+
+
+        
+        
 ** Install security certificates on my PC **
 
 ** security certificates on mobile devices **
 
 ** Install security certificates in Apache2
 
+    cd /etc/apache2/sites-available
     vi 000-default.conf
     
     #Modify
@@ -545,7 +580,16 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
         
-** Install certificates in web server **
+** Install certificates in cherrypy web server **
+
+    #Install cython, takes 20mins without any indication that it is running. `ls -ltr /tmp` to monitor...
+    pip3 install cython
+    
+    # already installed my pi
+    pip3 install pyOpenSSL
+
+    http://www.fcollyer.com/posts/cherrypy-only-http-and-https-app-serving/
+
     http://docs.cherrypy.org/en/latest/deploy.html?highlight=certificate
 
     Add the following lines in your CherryPy config to point to your certificate files:
