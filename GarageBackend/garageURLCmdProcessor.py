@@ -1,6 +1,11 @@
 import logging
 import sys, traceback
 import cherrypy
+# try:
+from cheroot.wsgi import Server as WSGIServer
+# except ImportError:
+#from cherrypy.wsgiserver import CherryPyWSGIServer as WSGIServer
+
 from GarageBackend.Sensor import Sensor
 from GarageBackend.Constants import *
 from GarageBackend.CommandQResponse import *
@@ -14,7 +19,6 @@ from queue import *
 from threading import Thread
 from GarageBackend.SingletonMeta import SingletonMeta
 import types
-from cherrypy.lib import httputil, file_generator
 from time import sleep
 import time
 import datetime
@@ -25,7 +29,7 @@ log = logging.getLogger('garageCmdProcessor')
 garage_manager_handler = None #GarageManager()
 notification_manager_handler = None
 
-@cherrypy.expose
+# @cherrypy.expose
 class garageURLCmdProcessor(metaclass=SingletonMeta):
     def __init__(self, dispatch: Queue):
         log.info("init garageURLCmdProcessor...")
@@ -42,27 +46,32 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
     @cherrypy.tools.accept(media='text/plain')
     # s.post('http://127.0.0.1:8080/garage/open/g0')
     def _cp_dispatch(self, vpath):
-        debugstr = ("Received vpath=%s len=%d" % (vpath, len(vpath)))
-        log.debug(debugstr)
-        if len(vpath) == 1:
-            cherrypy.request.params['mything'] = vpath.pop()  # ex: garage_door
-            return self
+        try:
+            debugstr = ("Received vpath=%s len=%d" % (vpath, len(vpath)))
+            log.debug(debugstr)
+            if len(vpath) == 1:
+                cherrypy.request.params['mything'] = vpath.pop()  # ex: garage_door
+                return self
 
-        if len(vpath) == 3:
-            cherrypy.request.params['mything'] = vpath.pop(0)  # /myid/
-            cherrypy.request.params['myservice'] = vpath.pop(0)  # ex: open close
-            cherrypy.request.params['myid'] = vpath.pop(0)  # which one 0, 1, 2...
-            return self
-
+            if len(vpath) == 3:
+                cherrypy.request.params['mything'] = vpath.pop(0)  # /myid/
+                cherrypy.request.params['myservice'] = vpath.pop(0)  # ex: open close
+                cherrypy.request.params['myid'] = vpath.pop(0)  # which one 0, 1, 2...
+                return self
+        except Exception:
+            log.error("_cp_dispatch error in garageURL...")
+            traceback.print_exc()
+            os._exit(-1)
         return vpath
 
-
+    @cherrypy.expose
     def GET(self):
         log.info("Garage Request Received GET")
         return cherrypy.session['mything']
 
     @cherrypy.popargs('myservice')
     @cherrypy.popargs('myid')
+    @cherrypy.expose
     def POST(self, mything, myservice=None, myid=None):
         cherrypy.session['mything'] = mything
         cherrypy.session['myservice'] = myservice
@@ -93,22 +102,23 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
             self.dev_manager_handler.listDevices()
         return resp_str
 
-
+    @cherrypy.expose
     def PUT(self):
         cherrypy.session['myservice'] = self.myservice
         logbuf = "Garage Request Received PUT:"
         log.info(logbuf)
         DeviceManager.listDevices(self.deviceList)
 
-
+    @cherrypy.expose
     def DELETE(self):
         cherrypy.session.pop('myservice', None)
+
 
 
 ''' Outside Class'''
 
 
-
+# @cherrypy.expose
 def command_queue_fn(q: Queue, r: Queue):
     next = q.get()
     while next is not None:
@@ -126,7 +136,7 @@ def command_queue_fn(q: Queue, r: Queue):
         #     r.put(resp)
         next = q.get()
 
-
+# @cherrypy.expose
 def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
     next = dispatch.get()
     while next is not None:
@@ -143,7 +153,7 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
                 pass
         next = dispatch.get()
 
-# #
+
 # # IMPORTANT: an extra server instance also routes app through HTTP port; this extra
 # # server was used only as a quick way to basically serve /index through port 80;
 # # following "filter" redirects anything that comes from HTTP port to HTTPS one,
@@ -162,7 +172,7 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
 #     # extra server instance to dispatch HTTP
 #     server = cherrypy._cpserver.Server()
 #     server.socket_host = "0.0.0.0"
-#     server.socket_port = 8060
+#     server.socket_port = 8080
 #     server.subscribe()
 #
 # load_http_server()
@@ -175,34 +185,54 @@ if __name__ == '__main__':
                         handlers=[logging.FileHandler("log/garage.log"),
                                   logging.StreamHandler()])
 
-    garage_backend_conf = {
-        '/': {
-            'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
-            'tools.sessions.on': True,
-            'tools.response_headers.on': False,
-            'tools.response_headers.headers': [('Content-Type', 'text/plain')],
-        }
+    server_config1 = {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 8050,
+        'server.ssl_module': 'builtin',
+        'server.ssl_certificate': '/opt/mitainesoft/security/garageclient.pem',
+        'server.ssl_private_key': '/opt/mitainesoft/security/garageclient.key.pem',
+        'tools.response_headers.on': False,
+        'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+        'tools.request_headers.on': False,
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': "log",
+        'log.access_file': 'log/garage_cherrypy_access.log',
+        'log.error_file': 'log/garage_cherrypy_error.log',
+        'log.screen': True,
+        'tools.sessions.on': True,
+        'engine.autoreload_on':False,
     }
 
-    # cherrypy.config.update(garage_backend_conf)
-    cherrypy.config.update({'server.socket_host': '127.0.0.1',
-                            'server.socket_port': 8050,
-                            'server.ssl_module': 'pyopenssl',
-                            'server.server.ssl_certificate': "/opt/mitainesoft/security/garageclient.pem",
-                            'server.server.ssl_private_key': "/opt/mitainesoft/security/garageclient.key.pem",
-                            # 'tools.secureheaders.on' : True,
-                            # 'tools.sessions.secure' : True,
-                            # 'tools.sessions.httponly': True,
-                            'tools.staticdir.on': True,
-                            'tools.response_headers.on': False,
-                            'tools.request_headers.on': False,
-                            'tools.staticdir.dir': "log",
-                            'log.access_file': "log/garage_cherrypy_access.log",
-                            'log.error_file': "log/garage_cherrypy_error.log",
-                            'log.screen': False,
-                            'tools.sessions.on': True,
-                            'engine.autoreload_on': False,
-                            })
+    # server_config2={
+    #     'server.socket_host': '0.0.0.0',
+    #     'server.socket_port':8050,
+    #
+    #     'server.ssl_module':'builtin',
+    #     'server.ssl_certificate':'/opt/mitainesoft/security/garageclient.pem',
+    #     'server.ssl_private_key':'/opt/mitainesoft/security/garageclient.key.pem',
+    #     # 'server.ssl_certificate_chain':'/home/ubuntu/gd_bundle.crt'
+    # }
+    #
+    # server_config3 = {
+    #     'server.socket_host': '0.0.0.0',
+    #     'server.socket_port': 8050,
+    #
+    #     'server.ssl_module': 'builtin',
+    #     'server.ssl_certificate': '/opt/mitainesoft/security/garageclient.pem',
+    #     'server.ssl_private_key': '/opt/mitainesoft/security/garageclient.key.pem',
+    #     # 'server.ssl_certificate_chain':'/home/ubuntu/gd_bundle.crt'
+    #
+    #     'tools.response_headers.on': False,
+    #     'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+    #     'tools.request_headers.on': False,
+    #     'tools.staticdir.on': True,
+    #     'tools.staticdir.dir':'log',
+    #     'log.access_file':'log/garage_cherrypy_access.log',
+    #     'log.error_file':'log/garage_cherrypy_error.log',
+    #     'log.screen': True,
+    #     'tools.sessions.on': True,
+    #     'engine.autoreload_on': False,
+    # }
 
     log = logging.getLogger('garageCmdProcessor')
     log.setLevel(logging.INFO)
@@ -237,8 +267,20 @@ if __name__ == '__main__':
     thread_dispatcher.start()
     thread_garage_manager.start()
     thread_notification_manager.start()
+    try:
+        cherrypy.config.update(server_config1)
+        # cherrypy.config.update(garage_backend_conf)
 
-    cherrypy.quickstart(my_garageURLCmdProcessor, '/', garage_backend_conf)
+        cherrypy.quickstart(my_garageURLCmdProcessor)
+    except Exception:
+        log.error("Cherrypy quickstart fail !")
+        traceback.print_exc()
+        os._exit(-1)
+        #cherrypy.quickstart(garageURLCmdProcessor(dispatch_queue))
+        # cherrypy.quickstart(my_garageURLCmdProcessor,'/',garage_backend_conf)
+        #cherrypy.quickstart(RootServer())
+
+
     # cherrypy.tree.mount(my_garageURLCmdProcessor, '/backend', garage_backend_conf)
     # cherrypy.engine.start()
     # cherrypy.engine.block()

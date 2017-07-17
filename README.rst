@@ -52,10 +52,11 @@
 
     ** install cherrypy for python3 **
 
-        Download & extract cherrypy tar gz i.e. CherryPy-8.1.2.tar.gz
-        cd cherrypy
-        python3 setup.py install
+        #Download & extract cherrypy tar gz i.e. CherryPy-.1.2.tar.gz
+        #cd cherrypy
+        #python3 setup.py install
         
+        pip3 install cherrypy --upgrade
         pip3 install cheroot
 
     ** install nanpy for raspberry pi arduino
