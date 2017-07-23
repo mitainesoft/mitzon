@@ -51,11 +51,7 @@
     Immediatly change raspberry default passwords !
 
     ** install cherrypy for python3 **
-
-        #Download & extract cherrypy tar gz i.e. CherryPy-.1.2.tar.gz
-        #cd cherrypy
-        #python3 setup.py install
-        
+      
         pip3 install cherrypy --upgrade
         pip3 install cheroot
 
@@ -149,25 +145,40 @@
 2.  Test
 Outputs in main Garage Backend console
 
-a) Test Status
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+    a) Test Status 
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
 
-b) Test Open Close
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    b) Test Open Close
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
 
-c) Test lock/Unlock
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    c) Test lock/Unlock
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/lock/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
 
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+
+
+    f) Test Status 
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+
+    g) Test Open Close
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+
+    h) Test lock/Unlock
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
 
 
  d)Test Relay
 curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+
 
 
 3.  Enable Security on Raspberry PI Raspbian
@@ -675,7 +686,11 @@ a) Raspberry Overheat !
     -
 
 
-
+6.  Design Env 
+    su - pi
+    mkdir -p /home/pi/garage/log/
+    
+    
 6. Stuff
 
 6a. Notification
