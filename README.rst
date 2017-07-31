@@ -976,6 +976,58 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
     
     
+    *** Test for Verify return code: 0 (ok) ***
+    openssl s_client -connect 192.168.1.83:443
+        CONNECTED(00000003)
+        depth=1 C = CA, ST = QUEBEC, O = mitainesoft.net, OU = Mitaine, CN = MitainesoftCA, emailAddress = mitainesoft@gmail.com
+        verify return:1
+        depth=0 C = CA, ST = QUEBEC, L = ILE-BIZARD, O = mitainesoft.net, OU = Mitaine, CN = 192.168.1.83, emailAddress = mitainesoft@gmail.com
+        verify return:1
+        ---
+        Certificate chain
+         0 s:/C=CA/ST=QUEBEC/L=ILE-BIZARD/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+           i:/C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
+        ---
+        Server certificate
+        -----BEGIN CERTIFICATE-----
+        MIIEADCCAuigAwIBAgIJAJKOjasGaQVJMA0GCSqGSIb3DQEBCwUAMIGIMQswCQYD
+        ...
+        ...
+        8HjlRnurxh3rfAPUD/u/O5q6KGo=
+        -----END CERTIFICATE-----
+        subject=/C=CA/ST=QUEBEC/L=ILE-BIZARD/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        issuer=/C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
+        ---
+        No client certificate CA names sent
+        ---
+        SSL handshake has read 1719 bytes and written 415 bytes
+        ---
+        New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+        Server public key is 2048 bit
+        Secure Renegotiation IS supported
+        Compression: NONE
+        Expansion: NONE
+        SSL-Session:
+            Protocol  : TLSv1.2
+            Cipher    : ECDHE-RSA-AES256-GCM-SHA384
+            Session-ID: 738D74319744690A526FDE060A8A8E87BC616E8C0635DF47415FCA93FE708D47
+            Session-ID-ctx:
+            Master-Key: 6942DFC5D88CDA54956A20C476134CDEF8FB1A353F9F89F817EA391083B807C9337460FE6A057016D81874D35F2C3AC6
+            Key-Arg   : None
+            PSK identity: None
+            PSK identity hint: None
+            SRP username: None
+            TLS session ticket lifetime hint: 300 (seconds)
+            TLS session ticket:
+            0000 - e4 ec c9 0e c6 7a ab f5-39 5c 5b 72 7f f0 d8 80   .....z..9\[r....
+            00b0 - 82 b8 ab 14 8b 04 dd e4-ff d8 69 94 86 36 c5 80   ..........i..6..
+
+            Start Time: 1501539768
+            Timeout   : 300 (sec)
+            Verify return code: 0 (ok)
+
+    
+    
 ** Post activity After creating Embedded Certificates ?!? **
 
     The Original openssl.cnf must be restored after creating the embedded certificates. 

@@ -32,7 +32,7 @@ notification_manager_handler = None
 @cherrypy.expose
 class garageURLCmdProcessor(metaclass=SingletonMeta):
     def __init__(self, dispatch: Queue):
-        log.info("init garageURLCmdProcessor...")
+        log.debug("init garageURLCmdProcessor...")
         #self.deviceList = {}
         self.dispatch = dispatch
         # Read Building Config
@@ -48,7 +48,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
     def _cp_dispatch(self, vpath):
         try:
             debugstr = ("Received vpath=%s len=%d" % (vpath, len(vpath)))
-            log.info(debugstr)
+            log.debug(debugstr)
             if len(vpath) == 1:
                 cherrypy.request.params['mything'] = vpath.pop()  # ex: garage_door
                 return self
@@ -81,7 +81,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
         cherrypy.response.headers["Allow"] = "POST, GET, OPTIONS, DELETE, PUT, PATCH"
         logbuf = "GarageBackend Request Received POST: %s %s %s " % (mything, myservice, myid)
-        log.info(logbuf)
+        log.debug(logbuf)
 
         ## Test Arduino Device
         # self.dispatch.put(('testConnection',"msg Hard coded pin"))

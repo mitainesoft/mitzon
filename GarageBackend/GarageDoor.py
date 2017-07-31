@@ -174,10 +174,10 @@ class GarageDoor():
             if self.g_update_time != None and self.g_last_cmd_sent_time != None and self.g_last_cmd_trigger_time !=None \
                 and time.time() > (self.g_last_cmd_sent_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange")))\
                 and self.g_last_cmd_trigger_time > (self.g_update_time+float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange"))):
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
                 status_text = self.alarm_mgr_handler.addAlert("HW002", self.g_name)
                 self.g_update_time=time.time()
-                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
-                log.info("HW problem ? :"+status_text)
+                log.error("HW problem ? :"+status_text)
             if (self.g_status == G_OPEN and self.g_open_time!=None and time.time() > (self.g_open_time+15)):
                 self.alarm_mgr_handler.clearAlertID("GTO01",self.g_name)
             if (self.g_status == G_CLOSED and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
