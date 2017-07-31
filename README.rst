@@ -335,6 +335,8 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     Overwrite all of /etc/ssl/openssl.cnf with the following (it’s still ok to have network access for this part). Be sure to replace SUB_ strings.
 
     # /etc/ssl/openssl.cnf
+    root@nomiberry:/etc/ssl# cat openssl.cnf
+    # /etc/ssl/openssl.cnf
 
     CN = ""  # Leave blank.
 
@@ -352,8 +354,11 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     RANDFILE          = $dir/private/.rand
 
     # The root key and root certificate.
-    private_key       = $dir/private/ca.key.pem
-    certificate       = $dir/certs/ca.cert.pem
+    #private_key       = $dir/private/ca.key.pem
+    #certificate       = $dir/certs/ca.cert.pem
+    private_key       = $dir/private/cakey.pem
+    certificate       = $dir/cacert.pem
+
 
     # For certificate revocation lists.
     crlnumber         = $dir/crlnumber
@@ -383,6 +388,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     default_bits        = 4096
     distinguished_name  = req_distinguished_name
     string_mask         = utf8only
+    req_extensions = v3_req
 
     # Extension to add when the -x509 option is used.
     x509_extensions     = v3_ca
@@ -398,17 +404,17 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     emailAddress                    = Email Address
 
     # Optionally, specify some defaults.
-    countryName_default             = SUB_COUNTRY_NAME
-    stateOrProvinceName_default     = SUB_STATE_NAME
-    localityName_default            = SUB_LOCALITY
-    0.organizationName_default      = SUB_ORG_NAME
-    organizationalUnitName_default  = SUB_UNIT_NAME
+    countryName_default             = CA
+    stateOrProvinceName_default     = QUEBEC
+    localityName_default            = ILE-BIZARD
+    0.organizationName_default      = mitainesoft.net
+    organizationalUnitName_default  = mitaine
     commonName_default              = $ENV::CN
-    emailAddress_default            = SUB_EMAIL
+    emailAddress_default            = mitainesoft@gmail.com
 
     [ v3_ca ]
     # Extensions for a typical CA (`man x509v3_config`).
-    subjectAltName = DNS:$ENV::CN
+    subjectAltName = DNS:nomiberry.mitainesoft.net
     subjectKeyIdentifier = hash
     authorityKeyIdentifier = keyid:always,issuer
     basicConstraints = critical, CA:true, pathlen:0
@@ -446,6 +452,125 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     authorityKeyIdentifier = keyid,issuer
     keyUsage = critical, digitalSignature
     extendedKeyUsage = critical, OCSPSigning
+
+    [ v3_req ]
+    basicConstraints = CA:FALSE
+    subjectKeyIdentifier = hash
+
+    
+    
+    * OLD *
+
+                CN = ""  # Leave blank.
+
+                [ ca ]
+                default_ca = CA_default
+
+                [ CA_default ]
+                # Directory and file locations.
+                dir               = /root/ca
+                certs             = $dir/certs
+                crl_dir           = $dir/crl
+                new_certs_dir     = $dir/newcerts
+                database          = $dir/index.txt
+                serial            = $dir/serial
+                RANDFILE          = $dir/private/.rand
+
+                # The root key and root certificate.
+                private_key       = $dir/private/ca.key.pem
+                certificate       = $dir/certs/ca.cert.pem
+
+                # For certificate revocation lists.
+                crlnumber         = $dir/crlnumber
+                crl               = $dir/crl/ca.crl.pem
+                crl_extensions    = crl_ext
+                default_crl_days  = 30
+
+                default_md        = sha256
+                name_opt          = ca_default
+                cert_opt          = ca_default
+                default_days      = 375
+                preserve          = no
+                policy            = policy_loose
+
+                [ policy_loose ]
+                # See the POLICY FORMAT section of the `ca` man page.
+                countryName             = optional
+                stateOrProvinceName     = optional
+                localityName            = optional
+                organizationName        = optional
+                organizationalUnitName  = optional
+                commonName              = supplied
+                emailAddress            = optional
+
+                [ req ]
+                # Options for the `req` tool (`man req`).
+                default_bits        = 4096
+                distinguished_name  = req_distinguished_name
+                string_mask         = utf8only
+
+                # Extension to add when the -x509 option is used.
+                x509_extensions     = v3_ca
+
+                [ req_distinguished_name ]
+                # See <https://en.wikipedia.org/wiki/Certificate_signing_request>.
+                countryName                     = Country Name (2 letter code)
+                stateOrProvinceName             = State or Province Name
+                localityName                    = Locality Name
+                0.organizationName              = Organization Name
+                organizationalUnitName          = Organizational Unit Name
+                commonName                      = Common Name
+                emailAddress                    = Email Address
+
+                # Optionally, specify some defaults.
+                countryName_default             = SUB_COUNTRY_NAME
+                stateOrProvinceName_default     = SUB_STATE_NAME
+                localityName_default            = SUB_LOCALITY
+                0.organizationName_default      = SUB_ORG_NAME
+                organizationalUnitName_default  = SUB_UNIT_NAME
+                commonName_default              = $ENV::CN
+                emailAddress_default            = SUB_EMAIL
+
+                [ v3_ca ]
+                # Extensions for a typical CA (`man x509v3_config`).
+                subjectAltName = DNS:$ENV::CN
+                subjectKeyIdentifier = hash
+                authorityKeyIdentifier = keyid:always,issuer
+                basicConstraints = critical, CA:true, pathlen:0
+                keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+                [ usr_cert ]
+                # Extensions for client certificates (`man x509v3_config`).
+                basicConstraints = CA:FALSE
+                nsCertType = client, email
+                nsComment = "OpenSSL Generated Client Certificate"
+                subjectKeyIdentifier = hash
+                authorityKeyIdentifier = keyid,issuer
+                keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+                extendedKeyUsage = clientAuth, emailProtection
+
+                [ server_cert ]
+                # Extensions for server certificates (`man x509v3_config`).
+                basicConstraints = CA:FALSE
+                nsCertType = server
+                nsComment = "OpenSSL Generated Server Certificate"
+                subjectAltName = DNS:$ENV::CN
+                subjectKeyIdentifier = hash
+                authorityKeyIdentifier = keyid,issuer:always
+                keyUsage = critical, digitalSignature, keyEncipherment
+                extendedKeyUsage = serverAuth
+
+                [ crl_ext ]
+                # Extension for CRLs (`man x509v3_config`).
+                authorityKeyIdentifier=keyid:always
+
+                [ ocsp ]
+                # Extension for OCSP signing certificates (`man ocsp`).
+                basicConstraints = CA:FALSE
+                subjectKeyIdentifier = hash
+                authorityKeyIdentifier = keyid,issuer
+                keyUsage = critical, digitalSignature
+                extendedKeyUsage = critical, OCSPSigning
 
     
     
