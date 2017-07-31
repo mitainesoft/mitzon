@@ -288,7 +288,26 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     cd /etc/ssl
     cp openssl.cnf openssl.orig
     chmod 644 openssl*
+    touch /root/ca/index.txt
 
+    
+    ** Fix CA.pl script for Method#2 **
+    su - root
+    cd /usr/lib/ssl/misc
+    cp CA.pl CA_mitainesoft.pl
+    vi CA_mitainesoft.pl
+    
+	Locate -sign|-signreq and add –extensions v3_req after policy_anything in CA_mitainesoft.pl
+
+        Before:
+        $CA -policy policy_anything -out newcert.pem -infiles newreq.pem
+        After:
+        $CA -policy policy_anything -extensions v3_req -out newcert.pem -infiles newreq.pem
+        
+        policy_loose
+
+    :wq
+    
     ** Generate security certificates **
 
     
@@ -471,24 +490,230 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     Note
 
     
-    ** Generate root certificate and private key **
-    The openssl req command will prompt you for some information. The defaults you’ve 
-    specified in openssl.cnf will be fine. However double check that the Common Name
-    is the fully qualified domain name of this certificate authority.
-    
-    sudo su -  # Become root.
-    cd /root/ca
-    export CN=$(hostname --fqdn)
-    openssl genrsa -aes256 -out private/ca.key.pem 8192
-    openssl req -key private/ca.key.pem -new -x509 -days 1827 -extensions v3_ca -out certs/ca.cert.pem
-    openssl x509 -noout -text -in certs/ca.cert.pem |more  # Confirm everything looks good.
-    
-    
-    You’re done generating your root certificate and private key. You’re technically 
-    “done”. However you’ll probably want to do these two steps:
+    ** #1-Generate root certificate and private key METHOD#1 **
+        The openssl req command will prompt you for some information. The defaults you’ve 
+        specified in openssl.cnf will be fine. However double check that the Common Name
+        is the fully qualified domain name of this certificate authority.
+        
+        sudo su -  # Become root.
+        cd /root/ca
+        export CN=$(hostname --fqdn)
+        openssl genrsa -aes256 -out private/ca.key.pem 8192
+        openssl req -key private/ca.key.pem -new -x509 -days 1827 -extensions v3_ca -out certs/ca.cert.pem
+        openssl x509 -noout -text -in certs/ca.cert.pem |more  # Confirm everything looks good.
+        
+        
+        You’re done generating your root certificate and private key. You’re technically 
+        “done”. However you’ll probably want to do these two steps:
 
     
-    ** Remove Paraphrase from Key **
+     ** #2-Generate root certificate and private key METHOD#2 **
+     rm  ./index.txt ; rm ./cacert.pem ; rm private/*  rm certs/*
+     ./CA_mitainesoft.pl -newca
+
+        [OUTPUT...]
+        root@nomiberry:/usr/lib/ssl/misc# ./CA_mitainesoft.pl -newca
+        CA certificate filename (or enter to create)
+
+        Making CA certificate ...
+        Generating a 4096 bit RSA private key
+        ..................................................................................................................................................................++
+        ..............++
+        writing new private key to '/root/ca/private/cakey.pem'
+        Enter PEM pass phrase:
+        Verifying - Enter PEM pass phrase:
+        -----
+        You are about to be asked to enter information that will be incorporated
+        into your certificate request.
+        What you are about to enter is what is called a Distinguished Name or a DN.
+        There are quite a few fields but you can leave some blank
+        For some fields there will be a default value,
+        If you enter '.', the field will be left blank.
+        -----
+        Country Name (2 letter code) [CA]:
+        State or Province Name [QUEBEC]:
+        Locality Name [ILE-BIZARD]:
+        Organization Name [mitainesoft.net]:
+        Organizational Unit Name [mitaine]:
+        Common Name []:nomiberry
+        Email Address [mitainesoft@gmail.com]:
+        Using configuration from /usr/lib/ssl/openssl.cnf
+        Enter pass phrase for /root/ca/private/cakey.pem:
+        Check that the request matches the signature
+        Signature ok
+        Certificate Details:
+                Serial Number: 4096 (0x1000)
+                Validity
+                    Not Before: Jul 31 12:47:27 2017 GMT
+                    Not After : Jul 30 12:47:27 2020 GMT
+                Subject:
+                    countryName               = CA
+                    stateOrProvinceName       = QUEBEC
+                    localityName              = ILE-BIZARD
+                    organizationName          = mitainesoft.net
+                    organizationalUnitName    = mitaine
+                    commonName                = nomiberry
+                    emailAddress              = mitainesoft@gmail.com
+                X509v3 extensions:
+                    X509v3 Subject Alternative Name:
+                        DNS:nomiberry.mitainesoft.net
+                    X509v3 Subject Key Identifier:
+                        EB:80:8D:B9:70:7E:4F:2C:41:24:63:63:32:75:56:D7:09:03:83:1A
+                    X509v3 Authority Key Identifier:
+                        keyid:EB:80:8D:B9:70:7E:4F:2C:41:24:63:63:32:75:56:D7:09:03:83:1A
+
+                    X509v3 Basic Constraints: critical
+                        CA:TRUE, pathlen:0
+                    X509v3 Key Usage: critical
+                        Digital Signature, Certificate Sign, CRL Sign
+        Certificate is to be certified until Jul 30 12:47:27 2020 GMT (1095 days)
+
+        Write out database with 1 new entries
+        Data Base Updated
+
+    ** #2-Verify for Method#2 **
+    cd /root/ca
+    openssl x509 -noout -text -in cacert.pem
+        Certificate:
+        Data:
+            Version: 3 (0x2)
+            Serial Number: 4096 (0x1000)
+        Signature Algorithm: sha256WithRSAEncryption
+            Issuer: C=CA, ST=QUEBEC, L=ILE-BIZARD, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
+            Validity
+                Not Before: Jul 31 12:47:27 2017 GMT
+                Not After : Jul 30 12:47:27 2020 GMT
+            Subject: C=CA, ST=QUEBEC, L=ILE-BIZARD, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
+            Subject Public Key Info:
+                Public Key Algorithm: rsaEncryption
+                    Public-Key: (4096 bit)
+                    Modulus:
+                        00:d9:8e:3d:3f:45:4a:49:6a:cf:08:c9:0f:aa:e7:
+                        ...
+                        ...
+                        79:c4:2b:ba:9b:0b:23:12:bf:d3:2a:3c:05:c0:11:
+                        41:b1:11
+                    Exponent: 65537 (0x10001)
+            X509v3 extensions:
+                X509v3 Subject Alternative Name:
+                    DNS:nomiberry.mitainesoft.net
+                X509v3 Subject Key Identifier:
+                    EB:80:8D:B9:70:7E:4F:2C:41:24:63:63:32:75:56:D7:09:03:83:1A
+                X509v3 Authority Key Identifier:
+                    keyid:EB:80:8D:B9:70:7E:4F:2C:41:24:63:63:32:75:56:D7:09:03:83:1A
+
+                X509v3 Basic Constraints: critical
+                    CA:TRUE, pathlen:0
+                X509v3 Key Usage: critical
+                    Digital Signature, Certificate Sign, CRL Sign
+        Signature Algorithm: sha256WithRSAEncryption
+             d5:bc:de:3e:45:fb:9b:94:bc:dc:99:34:94:f5:21:19:bb:c6:
+             ...
+             ...
+             b7:67:ca:b7:fd:fc:0d:88:7b:22:d6:87:c4:4f:32:92:35:31:
+ 
+ 
+ 
+    ** #2-Generate the mitainesoft server/component key pair and CSR Method#2 **
+   
+    This is stored under /usr/lib/ssl/misc and generates files with 
+    generic name such as newkey.pem  and newreq.pem
+    
+    Common Name should be diffferent!  use *.mitainesoft.net
+    
+    
+     ./CA_mitainesoft.pl -newreq
+        Generating a 4096 bit RSA private key
+        ....................................................................++
+        .....................................................................++
+        writing new private key to 'newkey.pem'
+        Enter PEM pass phrase:
+        Verifying - Enter PEM pass phrase:
+        -----
+        You are about to be asked to enter information that will be incorporated
+        into your certificate request.
+        What you are about to enter is what is called a Distinguished Name or a DN.
+        There are quite a few fields but you can leave some blank
+        For some fields there will be a default value,
+        If you enter '.', the field will be left blank.
+        -----
+        Country Name (2 letter code) [CA]:
+        State or Province Name [QUEBEC]:
+        Locality Name [ILE-BIZARD]:
+        Organization Name [mitainesoft.net]:
+        Organizational Unit Name [mitaine]:
+        Common Name []: [ USE A DIFFRENT NAME from -newca step!!! ]
+        Email Address [mitainesoft@gmail.com]:
+        Request is in newreq.pem, private key is in newkey.pem
+
+        
+     ** #2-mitainesoft embedded CA signing the CSR Method#2**
+     
+    At this stage, the server/component private key is generated (newkey.pem) 
+    and the associated certificate signing request (newreq.pem). The next 
+    step is for the MDN embedded CA to sign the certificate signing request, 
+    and it is accomplished through the below procedure.
+        
+   
+    su - root
+    cd /usr/lib/ssl/misc
+    cp CA.pl CA_mitainesoft.pl
+    vi CA_mitainesoft.pl
+    
+	Locate -sign|-signreq and add –extensions v3_req after policy_anything in CA_mitainesoft.pl
+
+        Before:
+        $CA -policy policy_anything -out newcert.pem -infiles newreq.pem
+        After:
+        $CA -policy policy_loose -extensions v3_req -out newcert.pem -infiles newreq.pem
+        
+        
+
+    :wq
+    ./CA_mitainesoft.pl -sign
+        Using configuration from /usr/lib/ssl/openssl.cnf
+        Enter pass phrase for /root/ca/private/cakey.pem:
+        Check that the request matches the signature
+        Signature ok
+        Certificate Details:
+                Serial Number: 4097 (0x1001)
+                Validity
+                    Not Before: Jul 31 13:28:51 2017 GMT
+                    Not After : Aug 10 13:28:51 2018 GMT
+                Subject:
+                    countryName               = CA
+                    stateOrProvinceName       = QUEBEC
+                    localityName              = ILE-BIZARD
+                    organizationName          = mitainesoft.net
+                    organizationalUnitName    = mitaine
+                    commonName                = *.mitainesoft.net
+                    emailAddress              = mitainesoft@gmail.com
+                X509v3 extensions:
+                    X509v3 Basic Constraints:
+                        CA:FALSE
+                    X509v3 Subject Key Identifier:
+                        69:7C:23:81:5A:4A:C5:40:23:76:A7:DF:21:33:5A:16:DF:87:EF:7F
+        Certificate is to be certified until Aug 10 13:28:51 2018 GMT (375 days)
+        Sign the certificate? [y/n]:y
+
+
+        1 out of 1 certificate requests certified, commit? [y/n]y
+        Write out database with 1 new entries
+        Data Base Updated
+        Signed certificate is in newcert.pem
+
+        
+    
+    *** failed to update database TXT_DB error number 2 ? ***
+
+        Problem:
+        Because you have generated your own self signed certificate with the same CN (Common Name) information that the CA certificate that you’ve generated before.
+
+        Enter another Common Name.
+    
+
+
+   ** Remove Paraphrase from Key **
     When restarting apache, apache asks for a pass-phrase each time you execute a restart.
     To avoid these requests, execute the following step.
 
@@ -535,44 +760,39 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     
     
     
-    ** Issuing Server Certificates ** 
+    ** Issuing Server Certificates ???!? ** 
     
-    ???
+        ???
+        
+        This section covers issuing SSL certificates for web servers such as router admin 
+        pages. We will generate an SSL certificate and its private key. You’ll need to 
+        install both files on the web server. Keep in mind the private key is very sensitive 
+        and is used to sign SSL sessions to keep it secure as you transfer it to the web server!
+
+        Note
+
+        When asked for a Common Name you’ll need to enter the web server’s FQDN. 
+        So instead of accessing your router admin page using http://192.168.0.1 you’ll instead 
+        be using https://router.myhome.net for example. Common Name here will be router.myhome.net.
+        On the root CA host run these commands. Substitute router.myhome.net 
+        with whatever FQDN your target web server will use.
+
+        date  # Verify the date is correct. If not: sudo date -s "Aug 15 18:10"
+        
+        sudo su -
+        cd /root/ca
+        export CN=router.myhome.net
+        openssl genrsa -out private/$CN.key.pem 4096
+        openssl req -key private/$CN.key.pem -new -out csr/$CN.csr.pem  # CN is FQDN.
+        openssl ca -extensions server_cert -notext -in csr/$CN.csr.pem -out certs/$CN.cert.pem
+        rm csr/$CN.csr.pem
+        openssl x509 -noout -text -in certs/$CN.cert.pem |more  # Confirm everything looks good.
+        cat index.txt  # Verify new cert is present.
+        Verify that the Issuer is the root CA and the Subject is the certificate itself. You will 
+        need to install both certs/router.myhome.net.cert.pem and private/router.myhome.net.key.pem 
+        on the web server. Read Bridging the Air Gap for instructions on how to do this securely.
+            
     
-    This section covers issuing SSL certificates for web servers such as router admin 
-    pages. We will generate an SSL certificate and its private key. You’ll need to 
-    install both files on the web server. Keep in mind the private key is very sensitive 
-    and is used to sign SSL sessions to keep it secure as you transfer it to the web server!
-
-    Note
-
-    When asked for a Common Name you’ll need to enter the web server’s FQDN. 
-    So instead of accessing your router admin page using http://192.168.0.1 you’ll instead 
-    be using https://router.myhome.net for example. Common Name here will be router.myhome.net.
-    On the root CA host run these commands. Substitute router.myhome.net 
-    with whatever FQDN your target web server will use.
-
-    date  # Verify the date is correct. If not: sudo date -s "Aug 15 18:10"
-    
-    sudo su -
-    cd /root/ca
-    export CN=router.myhome.net
-    openssl genrsa -out private/$CN.key.pem 4096
-    openssl req -key private/$CN.key.pem -new -out csr/$CN.csr.pem  # CN is FQDN.
-    openssl ca -extensions server_cert -notext -in csr/$CN.csr.pem -out certs/$CN.cert.pem
-    rm csr/$CN.csr.pem
-    openssl x509 -noout -text -in certs/$CN.cert.pem |more  # Confirm everything looks good.
-    cat index.txt  # Verify new cert is present.
-    Verify that the Issuer is the root CA and the Subject is the certificate itself. You will 
-    need to install both certs/router.myhome.net.cert.pem and private/router.myhome.net.key.pem 
-    on the web server. Read Bridging the Air Gap for instructions on how to do this securely.
-        
-        
-        
-
-
-        
-        
 ** Install security certificates on my PC **
 
 ** security certificates on mobile devices **
@@ -582,13 +802,53 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     cd /etc/apache2/sites-available
     vi 000-default.conf
     
-    #Modify
-        <VirtualHost *:443>
+    root@nomiberry:/etc/apache2/sites-available# cat 000-default.conf
+    <VirtualHost *:80>
 
-        Add:
-        SSLEngine on
-        SSLCertificateFile /opt/mitainesoft/security/garageclient.pem
-        SSLCertificateKeyFile /opt/mitainesoft/security/garageclient.key.pem
+            ServerName www.example.com
+            ServerAdmin admin@example.com
+
+            # Redirect Requests to SSL
+            Redirect permanent / https://192.168.1.83
+
+            ErrorLog ${APACHE_LOG_DIR}/example.com.error.log
+            CustomLog ${APACHE_LOG_DIR}/example.com.access.log combined
+
+    </VirtualHost>
+    <VirtualHost *:443>
+            # The ServerName directive sets the request scheme, hostname and port that
+            # the server uses to identify itself. This is used when creating
+            # redirection URLs. In the context of virtual hosts, the ServerName
+            # specifies what hostname must appear in the request's Host: header to
+            # match this virtual host. For the default virtual host (this file) this
+            # value is not decisive as it is used as a last resort host regardless.
+            # However, you must set it for any further virtual host explicitly.
+            #ServerName www.example.com
+
+            ServerAdmin webmaster@localhost
+            DocumentRoot /var/www/html
+
+            # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+            # error, crit, alert, emerg.
+            # It is also possible to configure the loglevel for particular
+            # modules, e.g.
+            #LogLevel info ssl:warn
+            LogLevel info ssl:info
+
+            ErrorLog ${APACHE_LOG_DIR}/error.log
+            CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+            # For most configuration files from conf-available/, which are
+            # enabled or disabled at a global level, it is possible to
+            # include a line for only one particular virtual host. For example the
+            # following line enables the CGI configuration for this host only
+            # after it has been globally disabled with "a2disconf".
+            #Include conf-available/serve-cgi-bin.conf
+            SSLEngine on
+            SSLCertificateFile /opt/mitainesoft/security/garageclient.pem
+            SSLCertificateKeyFile /opt/mitainesoft/security/garageclient.key.pem
+    </VirtualHost>
+
 
 
         
