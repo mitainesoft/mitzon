@@ -384,7 +384,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     # Optionally, specify some defaults.
     countryName_default             = CA
     stateOrProvinceName_default     = QUEBEC
-    localityName_default            = ILE-BIZARD
+    localityName_default            = ILE-BIZ
     0.organizationName_default      = mitainesoft.net
     organizationalUnitName_default  = Mitaine
     commonName_default              = $ENV::CN
@@ -641,7 +641,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         -----
         Country Name (2 letter code) [CA]:
         State or Province Name [QUEBEC]:
-        Locality Name [ILE-BIZARD]:
+        Locality Name [ILE-BIZ]:
         Organization Name [mitainesoft.net]:
         Organizational Unit Name [mitaine]:
         Common Name []:mitainesoftCA
@@ -658,7 +658,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
                 Subject:
                     countryName               = CA
                     stateOrProvinceName       = QUEBEC
-                    localityName              = ILE-BIZARD
+                    localityName              = ILE-BIZ
                     organizationName          = mitainesoft.net
                     organizationalUnitName    = mitaine
                     commonName                = nomiberry
@@ -689,11 +689,11 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
             Version: 3 (0x2)
             Serial Number: 4096 (0x1000)
         Signature Algorithm: sha256WithRSAEncryption
-            Issuer: C=CA, ST=QUEBEC, L=ILE-BIZARD, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
+            Issuer: C=CA, ST=QUEBEC, L=ILE-BIZ, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
             Validity
                 Not Before: Jul 31 12:47:27 2017 GMT
                 Not After : Jul 30 12:47:27 2020 GMT
-            Subject: C=CA, ST=QUEBEC, L=ILE-BIZARD, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
+            Subject: C=CA, ST=QUEBEC, L=ILE-BIZ, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
             Subject Public Key Info:
                 Public Key Algorithm: rsaEncryption
                     Public-Key: (4096 bit)
@@ -749,7 +749,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         -----
         Country Name (2 letter code) [CA]:
         State or Province Name [QUEBEC]:
-        Locality Name [ILE-BIZARD]:
+        Locality Name [ILE-BIZ]:
         Organization Name [mitainesoft.net]:
         Organizational Unit Name [mitaine]:
         Common Name []: [ USE A DIFFRENT NAME from -newca step!!! ]
@@ -804,7 +804,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
                 Subject:
                     countryName               = CA
                     stateOrProvinceName       = QUEBEC
-                    localityName              = ILE-BIZARD
+                    localityName              = ILE-BIZ
                     organizationName          = mitainesoft.net
                     organizationalUnitName    = mitaine
                     commonName                = *.mitainesoft.net
@@ -880,7 +880,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
     root@nomiberry:~/ca# cat index.txt
         V       270729194601Z           928E8DAB06690548        unknown /C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
-        V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=QUEBEC/L=ILE-BIZARD/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
 
     
     
@@ -981,11 +981,11 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         CONNECTED(00000003)
         depth=1 C = CA, ST = QUEBEC, O = mitainesoft.net, OU = Mitaine, CN = MitainesoftCA, emailAddress = mitainesoft@gmail.com
         verify return:1
-        depth=0 C = CA, ST = QUEBEC, L = ILE-BIZARD, O = mitainesoft.net, OU = Mitaine, CN = 192.168.1.83, emailAddress = mitainesoft@gmail.com
+        depth=0 C = CA, ST = QUEBEC, L = ILE-BIZ, O = mitainesoft.net, OU = Mitaine, CN = 192.168.1.83, emailAddress = mitainesoft@gmail.com
         verify return:1
         ---
         Certificate chain
-         0 s:/C=CA/ST=QUEBEC/L=ILE-BIZARD/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+         0 s:/C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
            i:/C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         ---
         Server certificate
@@ -995,7 +995,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         ...
         8HjlRnurxh3rfAPUD/u/O5q6KGo=
         -----END CERTIFICATE-----
-        subject=/C=CA/ST=QUEBEC/L=ILE-BIZARD/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        subject=/C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
         issuer=/C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         ---
         No client certificate CA names sent
@@ -1099,9 +1099,6 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
             SSLCertificateKeyFile /opt/mitainesoft/security/mitainesoftsvr.key.pem
     </VirtualHost>
 
-** Install security certificates on my PC **
-
-** security certificates on mobile devices **
 
         
 ** Install certificates in cherrypy web server **
@@ -1121,6 +1118,63 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/mitainesoftsvr.cert.pem",
         'cherrypy.server.ssl_private_key': "/opt/mitainesoft/security/mitainesoftsvr.key.pem",
 
+
+** PREVENT OTHER DEVICES TO ACCESS THE RASPBERRY, PERIOD ! **
+
+    #Copy/Paste lines as required.
+    vi /etc/iptables-garage.rule
+
+        :INPUT ACCEPT [0:0]
+        :FORWARD ACCEPT [0:0]
+        :OUTPUT ACCEPT [818:146333]
+        # Admin rule with ssh port 22
+        -A INPUT -p tcp -m mac --mac-source XX:XX:XX:XX:XX:XX -m multiport --dports 22,8050,80,443 -j ACCEPT
+        
+        #User
+        -A INPUT -p tcp -m mac --mac-source YY:YY:YY:YY:YY:YY -m multiport --dports 8050,80,443 -j ACCEPT
+
+        -A INPUT -p tcp -j DROP
+        -A INPUT -p udp -j DROP
+        COMMIT
+      
+    #Check and delete old rules list
+    iptables --list
+    iptables --flush
+    
+    #Put new list
+    iptables-restore  </etc/iptables-garage.rule
+    #Check new rules list
+    iptables --list
+    iptables --flush
+    
+    
+    #Edit script to be loaded a boot time
+    cd /etc/network/if-pre-up.d
+    vi mitainesoft_iptables
+        #!/bin/sh
+        iptables-restore  </etc/iptables-garage.rule
+
+    #Check if it works !
+    init 6
+    
+    #relogin
+    #
+    iptables --list
+        root@nomiberry:~# iptables --list
+        Chain INPUT (policy ACCEPT)
+        target     prot opt source               destination
+        ACCEPT     tcp  --  anywhere             anywhere             MAC XX:XX:XX:XX:XX:XX multiport dports ssh,8050,http,https
+        ACCEPT     tcp  --  anywhere             anywhere             MAC YY:YY:YY:YY:YY:YY multiport dports 8050,http,https
+        ACCEPT     tcp  --  anywhere             anywhere             MAC ZZ:ZZ:ZZ:ZZ:ZZ:ZZ multiport dports 8050,http,https
+        ACCEPT     tcp  --  anywhere             anywhere             MAC Z1:Z1:Z1:Z1:Z1:Z1 multiport dports 8050,http,https
+        DROP       tcp  --  anywhere             anywhere
+        DROP       udp  --  anywhere             anywhere
+
+        Chain FORWARD (policy ACCEPT)
+        target     prot opt source               destination
+
+        Chain OUTPUT (policy ACCEPT)
+        target     prot opt source               destination
 
 
 3. Packaging

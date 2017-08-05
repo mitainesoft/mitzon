@@ -80,6 +80,9 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         cherrypy.session['myid'] = myid
         cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
         cherrypy.response.headers["Allow"] = "POST, GET, OPTIONS, DELETE, PUT, PATCH"
+
+        caller = cherrypy.request.remote.ip
+
         logbuf = "GarageBackend Request Received POST: %s %s %s " % (mything, myservice, myid)
         log.debug(logbuf)
 

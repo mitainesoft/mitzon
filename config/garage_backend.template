@@ -101,6 +101,20 @@ NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15
 NOTIFICATION_ALERT_SEVERITY_FILTER=1,2
 #NOTIFICATION_MANAGER_MAX_FAILURE = 1
 
+###########################################
+#Users Admin to generate iptables entries
+###########################################
+# @TODO !  2017-08-05 Not implemented yet
+[USERS]
+#Admin: -A INPUT -p tcp -m mac --mac-source XX:XX:XX:XX:XX:XX  -m multiport --dports 22,8050,80,443 -j ACCEPT
+GARAGE_ADMIN=Add MAC Addresses here separated by colun ','
+#Users: -A INPUT -p tcp -m mac --mac-source XX:XX:XX:XX:XX:XX -m multiport --dports 8050,80,443 -j ACCEPT
+GARAGE_USERS=Add MAC Addresses here separated by colun ','
+#
+
+###########################################
+
 [INTERNAL]
 CONFIG_FILE_REV=1.0
 ALERT_DEFINITION_FILE=config/event_list.json
+
