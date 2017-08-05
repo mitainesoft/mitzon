@@ -263,7 +263,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 ** Backup ssl file **
     su - root
     cd /etc/ssl
-    cp openssl.cnf openssl.orig
+    mv openssl.cnf openssl.orig
+    cp openssl.cnf openssl.cnf.mgsCA
+    cp openssl.cnf openssl.cnf.4ServerCerts
     chmod 644 openssl*
 
     
@@ -271,7 +273,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     su - root
     cd /usr/lib/ssl/misc
     cp CA.pl CA_mitainesoft.pl
-    
+    cp CA.pl CA.pl.orig
     
     vi CA_mitainesoft.pl
     
@@ -282,285 +284,154 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         After:
         $CA -policy policy_anything -extensions v3_req -out newcert.pem -infiles newreq.pem
         
-        policy_loose
 
     :wq
     
-** Generate security certificates **
+** Prepare SSL Files **
 
+    #sftp openssl.cnf.mgsCA & openssl.cnf.4ServerCerts from this package to /etc/ssl
     
-    Based on a few articles I’ve found while considering which domain 
-    to use at home, I thought I would mention it here even though it’s more 
-    of a network-related topic rather than an SSL/Certificate topic. I highly encourage 
-    you to either purchase a dedicated domain name for your home network or at least use a 
-    dedicated subdomain on a domain you already own.
+    root@nomiberry:/etc/ssl# diff  openssl.orig  openssl.cnf.4ServerCerts
+        < dir           = ./demoCA              # Where everything is kept
+        ---
+        > dir           = /root/ca              # Where everything is kept
+        50c50
+        < certificate   = $dir/cacert.pem       # The CA certificate
+        ---
+        > certificate   = $certs/ca.cert.pem    # The CA certificate
+        55c55
+        < private_key   = $dir/private/cakey.pem# The private key
+        ---
+        > private_key   = $dir/private/ca.key.pem       # The private key
+        73c73
+        < default_days  = 365                   # how long to certify for
+        ---
+        > default_days  = 3650                  # how long to certify for
+        75c75
+        < default_md    = default               # use public key default MD
+        ---
+        > default_md    = sha256                # use public key default MD
+        107a108
+        > default_md            = sha256
+        109c110
+        < attributes            = req_attributes
+        ---
+        > #attributes           = req_attributes
+        125c126
+        < # req_extensions = v3_req # The extensions to add to a certificate request
+        ---
+        > req_extensions = v3_req # The extensions to add to a certificate request
+        129c130
+        < countryName_default           = AU
+        ---
+        > countryName_default           = CA
+        134c135
+        < stateOrProvinceName_default   = Some-State
+        ---
+        > stateOrProvinceName_default   = QUEBEC
+        136a138,139
+        > localityName_default            = ILE-BIZARD
+        >
+        139c142,143
+        < 0.organizationName_default    = Internet Widgits Pty Ltd
+        ---
+        > 0.organizationName_default      = mitainesoft.net
+        >
+        146c150
+        < #organizationalUnitName_default       =
+        ---
+        > organizationalUnitName_default        = Mitaine
+        150a155
+        >
+        152a158,159
+        > emailAddress_default            = mitainesoft@gmail.com
+        >
+        191c198
+        < nsComment                     = "OpenSSL Generated Certificate"
+        ---
+        > #nsComment                    = "OpenSSL Generated Certificate"
+        222a230,231
+        > extendedKeyUsage = serverAuth, clientAuth
+        > subjectAltName = @alt_names
+        350a360,363
+        >
+        >
+        > [ alt_names ]
+        > DNS.1 = *.mitainesoft.net
 
-    In the table below I’ll use myhome.net as an example. Org Name is just a name 
-    so in this case the value would be “MyHome.net”. If you used home.mycooldomain.com 
-    then the Org Name equivalent may be “Home.MyCoolDomain.com”. It can actually 
-    be set to anything but this is what I’ve done for my home network.
-    The first step is to configure OpenSSL. You’ll need to replace some values in 
-    the configuration file I’ll be providing to you. Refer to the table below for 
-    what you’ll be replacing.
-
-    To Replace	Replace With	Example
-    SUB_COUNTRY_NAME	Two-letter ISO abbreviation for your country.	US
-    SUB_STATE_NAME	State or province where you live. No abbreviations.	California
-    SUB_LOCALITY	City where you are located.	San Francisco
-    SUB_ORG_NAME	Name of your organization.	MyHome.net
-    SUB_UNIT_NAME	Section of the organization.	Home
-    SUB_EMAIL	Your contact email.	xx@yy.zz
-    Overwrite all of /etc/ssl/openssl.cnf with the following (it’s still ok to have network access for this part). Be sure to replace SUB_ strings.
-
-    # /etc/ssl/openssl.cnf
-    root@nomiberry:/etc/ssl# cat openssl.cnf
-    # /etc/ssl/openssl.cnf
-
-    CN = ""  # Leave blank.
-
-    [ ca ]
-    default_ca = CA_default
-
-    [ CA_default ]
-    # Directory and file locations.
-    dir               = /root/ca
-    certs             = $dir/certs
-    crl_dir           = $dir/crl
-    new_certs_dir     = $dir/newcerts
-    database          = $dir/index.txt
-    serial            = $dir/serial
-    RANDFILE          = $dir/private/.rand
-
-    # The root key and root certificate.
-    #private_key       = $dir/private/ca.key.pem
-    #certificate       = $dir/certs/ca.cert.pem
-    private_key       = $dir/private/cakey.pem
-    certificate       = $dir/cacert.pem
 
 
-    # For certificate revocation lists.
-    crlnumber         = $dir/crlnumber
-    crl               = $dir/crl/ca.crl.pem
-    crl_extensions    = crl_ext
-    default_crl_days  = 30
+    root@nomiberry:/etc/ssl# diff  openssl.orig  openssl.cnf.mgsCA
+        < dir           = ./demoCA              # Where everything is kept
+        ---
+        > dir           = /root/ca              # Where everything is kept
+        50c50
+        < certificate   = $dir/cacert.pem       # The CA certificate
+        ---
+        > certificate   = $certs/ca.cert.pem    # The CA certificate
+        55c55
+        < private_key   = $dir/private/cakey.pem# The private key
+        ---
+        > private_key   = $dir/private/ca.key.pem# The private key
+        73c73
+        < default_days  = 365                   # how long to certify for
+        ---
+        > default_days  = 3650                  # how long to certify for
+        75c75
+        < default_md    = default               # use public key default MD
+        ---
+        > default_md    = sha256                # use public key default MD
+        107a108
+        > default_md            = sha256
+        109c110
+        < attributes            = req_attributes
+        ---
+        > #attributes           = req_attributes
+        125c126,127
+        < # req_extensions = v3_req # The extensions to add to a certificate request
+        ---
+        > req_extensions = v3_req
+        > # The extensions to add to a certificate request
+        129c131
+        < countryName_default           = AU
+        ---
+        > countryName_default           = CA
+        134c136
+        < stateOrProvinceName_default   = Some-State
+        ---
+        > stateOrProvinceName_default   = QUEBEC
+        136a139
+        > localityName_default            = ILE-BIZARD
+        139c142
+        < 0.organizationName_default    = Internet Widgits Pty Ltd
+        ---
+        > 0.organizationName_default      = mitainesoft.net
+        146c149
+        < #organizationalUnitName_default       =
+        ---
+        > organizationalUnitName_default        = Mitaine
+        149a153
+        > commonName_default              = MitainesoftCA
+        152a157
+        > emailAddress_default            = mitainesoft@gmail.com
+        240c245
+        < basicConstraints = CA:true
+        ---
+        > basicConstraints = CA:true, pathlen:0
+        245a251
+        > keyUsage = cRLSign, keyCertSign
 
-    default_md        = sha256
-    name_opt          = ca_default
-    cert_opt          = ca_default
-    default_days      = 375
-    preserve          = no
-    policy            = policy_loose
+  
 
-    [ policy_loose ]
-    # See the POLICY FORMAT section of the `ca` man page.
-    countryName             = optional
-    stateOrProvinceName     = optional
-    localityName            = optional
-    organizationName        = optional
-    organizationalUnitName  = optional
-    commonName              = supplied
-    emailAddress            = optional
-
-    [ req ]
-    # Options for the `req` tool (`man req`).
-    default_bits        = 4096
-    distinguished_name  = req_distinguished_name
-    string_mask         = utf8only
-    req_extensions = v3_req
-
-    # Extension to add when the -x509 option is used.
-    x509_extensions     = v3_ca
-
-    [ req_distinguished_name ]
-    # See <https://en.wikipedia.org/wiki/Certificate_signing_request>.
-    countryName                     = Country Name (2 letter code)
-    stateOrProvinceName             = State or Province Name
-    localityName                    = Locality Name
-    0.organizationName              = Organization Name
-    organizationalUnitName          = Organizational Unit Name
-    commonName                      = Common Name
-    emailAddress                    = Email Address
-
-    # Optionally, specify some defaults.
-    countryName_default             = CA
-    stateOrProvinceName_default     = QUEBEC
-    localityName_default            = ILE-BIZ
-    0.organizationName_default      = mitainesoft.net
-    organizationalUnitName_default  = Mitaine
-    commonName_default              = $ENV::CN
-    emailAddress_default            = mitainesoft@gmail.com
-
-    [ v3_ca ]
-    # Extensions for a typical CA (`man x509v3_config`).
-    subjectAltName = DNS:nomiberry.mitainesoft.net
-    subjectKeyIdentifier = hash
-    authorityKeyIdentifier = keyid:always,issuer
-    basicConstraints = critical, CA:true, pathlen:0
-    keyUsage = critical, digitalSignature, cRLSign, keyCertSign
-
-    [ usr_cert ]
-    # Extensions for client certificates (`man x509v3_config`).
-    basicConstraints = CA:FALSE
-    nsCertType = client, email
-    nsComment = "OpenSSL Generated Client Certificate"
-    subjectKeyIdentifier = hash
-    authorityKeyIdentifier = keyid,issuer
-    keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
-    extendedKeyUsage = clientAuth, emailProtection
-
-    [ server_cert ]
-    # Extensions for server certificates (`man x509v3_config`).
-    basicConstraints = CA:FALSE
-    nsCertType = server
-    nsComment = "OpenSSL Generated Server Certificate"
-    subjectAltName = DNS:$ENV::CN
-    subjectKeyIdentifier = hash
-    authorityKeyIdentifier = keyid,issuer:always
-    keyUsage = critical, digitalSignature, keyEncipherment
-    extendedKeyUsage = serverAuth
-
-    [ crl_ext ]
-    # Extension for CRLs (`man x509v3_config`).
-    authorityKeyIdentifier=keyid:always
-
-    [ ocsp ]
-    # Extension for OCSP signing certificates (`man ocsp`).
-    basicConstraints = CA:FALSE
-    subjectKeyIdentifier = hash
-    authorityKeyIdentifier = keyid,issuer
-    keyUsage = critical, digitalSignature
-    extendedKeyUsage = critical, OCSPSigning
-
-    [ v3_req ]
-    basicConstraints = CA:FALSE
-    subjectKeyIdentifier = hash
-
-    
-    
-    * OLD *
-
-                CN = ""  # Leave blank.
-
-                [ ca ]
-                default_ca = CA_default
-
-                [ CA_default ]
-                # Directory and file locations.
-                dir               = /root/ca
-                certs             = $dir/certs
-                crl_dir           = $dir/crl
-                new_certs_dir     = $dir/newcerts
-                database          = $dir/index.txt
-                serial            = $dir/serial
-                RANDFILE          = $dir/private/.rand
-
-                # The root key and root certificate.
-                private_key       = $dir/private/ca.key.pem
-                certificate       = $dir/certs/ca.cert.pem
-
-                # For certificate revocation lists.
-                crlnumber         = $dir/crlnumber
-                crl               = $dir/crl/ca.crl.pem
-                crl_extensions    = crl_ext
-                default_crl_days  = 30
-
-                default_md        = sha256
-                name_opt          = ca_default
-                cert_opt          = ca_default
-                default_days      = 375
-                preserve          = no
-                policy            = policy_loose
-
-                [ policy_loose ]
-                # See the POLICY FORMAT section of the `ca` man page.
-                countryName             = optional
-                stateOrProvinceName     = optional
-                localityName            = optional
-                organizationName        = optional
-                organizationalUnitName  = optional
-                commonName              = supplied
-                emailAddress            = optional
-
-                [ req ]
-                # Options for the `req` tool (`man req`).
-                default_bits        = 4096
-                distinguished_name  = req_distinguished_name
-                string_mask         = utf8only
-
-                # Extension to add when the -x509 option is used.
-                x509_extensions     = v3_ca
-
-                [ req_distinguished_name ]
-                # See <https://en.wikipedia.org/wiki/Certificate_signing_request>.
-                countryName                     = Country Name (2 letter code)
-                stateOrProvinceName             = State or Province Name
-                localityName                    = Locality Name
-                0.organizationName              = Organization Name
-                organizationalUnitName          = Organizational Unit Name
-                commonName                      = Common Name
-                emailAddress                    = Email Address
-
-                # Optionally, specify some defaults.
-                countryName_default             = SUB_COUNTRY_NAME
-                stateOrProvinceName_default     = SUB_STATE_NAME
-                localityName_default            = SUB_LOCALITY
-                0.organizationName_default      = SUB_ORG_NAME
-                organizationalUnitName_default  = SUB_UNIT_NAME
-                commonName_default              = $ENV::CN
-                emailAddress_default            = SUB_EMAIL
-
-                [ v3_ca ]
-                # Extensions for a typical CA (`man x509v3_config`).
-                subjectAltName = DNS:$ENV::CN
-                subjectKeyIdentifier = hash
-                authorityKeyIdentifier = keyid:always,issuer
-                basicConstraints = critical, CA:true, pathlen:0
-                keyUsage = critical, digitalSignature, cRLSign, keyCertSign
-
-                [ usr_cert ]
-                # Extensions for client certificates (`man x509v3_config`).
-                basicConstraints = CA:FALSE
-                nsCertType = client, email
-                nsComment = "OpenSSL Generated Client Certificate"
-                subjectKeyIdentifier = hash
-                authorityKeyIdentifier = keyid,issuer
-                keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
-                extendedKeyUsage = clientAuth, emailProtection
-
-                [ server_cert ]
-                # Extensions for server certificates (`man x509v3_config`).
-                basicConstraints = CA:FALSE
-                nsCertType = server
-                nsComment = "OpenSSL Generated Server Certificate"
-                subjectAltName = DNS:$ENV::CN
-                subjectKeyIdentifier = hash
-                authorityKeyIdentifier = keyid,issuer:always
-                keyUsage = critical, digitalSignature, keyEncipherment
-                extendedKeyUsage = serverAuth
-
-                [ crl_ext ]
-                # Extension for CRLs (`man x509v3_config`).
-                authorityKeyIdentifier=keyid:always
-
-                [ ocsp ]
-                # Extension for OCSP signing certificates (`man ocsp`).
-                basicConstraints = CA:FALSE
-                subjectKeyIdentifier = hash
-                authorityKeyIdentifier = keyid,issuer
-                keyUsage = critical, digitalSignature
-                extendedKeyUsage = critical, OCSPSigning
-
-    
+ 
     
     
     
 ** OpenSSL Directory Structure **
     
     Everything will live in /root/ca. It will also all be owned by root. 
-    Remember this computer is a dedicated CA so it won’t be doing anything 
-    else at all except hosting your very important root certificate private 
-    key and the root certificate itself.
-
+    Remember this computer is a dedicated CA
+    
 *** setup directories and permissions ***
 
      mkdir -p /root/ca/{certs,crl,csr,newcerts,private}
@@ -594,30 +465,34 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     nd the permissions are: -r-------- 1 root root 1.8K Aug 15 12:21 private/ca.key.pem
     Note
 
-    
-** #1-Generate root certificate and private key METHOD#1 **
-        The openssl req command will prompt you for some information. The defaults you’ve 
-        specified in openssl.cnf will be fine. However double check that the Common Name
-        is the fully qualified domain name of this certificate authority.
-        
-        sudo su -  # Become root.
-        cd /root/ca
-        export CN=$(hostname --fqdn)
-        openssl genrsa -aes256 -out private/ca.key.pem 8192
-        openssl req -key private/ca.key.pem -new -x509 -days 1827 -extensions v3_ca -out certs/ca.cert.pem
-        openssl x509 -noout -text -in certs/ca.cert.pem |more  # Confirm everything looks good.
-        
-        
-        You’re done generating your root certificate and private key. You’re technically 
-        “done”. However you’ll probably want to do these two steps:
+
+
 
     
- ** #2-Generate root certificate and private key METHOD#2 **
+    
+ ** Generate root certificate and private key for embedded Certificate Authority (CA) **
+ 
+    This section provides the procedure to create the private embedded MGS Certificate 
+    Authority that is used to sign (issue) the MGS server certificates.  
+    These certificates are only utilized for internal MGS communication, and are 
+    not be propagated externally from MGS (i.e. the Internet); therefore, they do not 
+    require a commercial trust anchor.  Instead, this embedded MGS CA acts as a trust 
+    anchor (i.e. Trusted Certificate Authority) for MGS servers and clients 
+    requiring certificates.  
+    
+    
+    
  
      rm  ./index.txt ; rm ./cacert.pem ; rm private/*  rm certs/*
      
      #Note: Common Name = mitainesoftCA
      
+     #Use openssl made for CA anchor
+     cd /etc/ssl
+     mv openssl.cnf openssl.cnf.orig2  #Just in case!
+     ln -s openssl.cnf.mgsCA openssl.cnf
+     
+     cd /usr/lib/ssl/misc
      ./CA_mitainesoft.pl -newca
 
         [OUTPUT...]
@@ -661,15 +536,15 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
                     localityName              = ILE-BIZ
                     organizationName          = mitainesoft.net
                     organizationalUnitName    = mitaine
-                    commonName                = nomiberry
+                    commonName                = mitainesoftCA
                     emailAddress              = mitainesoft@gmail.com
                 X509v3 extensions:
                     X509v3 Subject Alternative Name:
                         DNS:nomiberry.mitainesoft.net
                     X509v3 Subject Key Identifier:
-                        EB:80:8D:B9:70:7E:4F:2C:41:24:63:63:32:75:56:D7:09:03:83:1A
+                        EB:80:8D:B9:70:7E:4F:2C:4:83:1A
                     X509v3 Authority Key Identifier:
-                        keyid:EB:80:8D:B9:70:7E:4F:2C:41:24:63:63:32:75:56:D7:09:03:83:1A
+                        keyid:EB:80:8D:B9:70:7E7:09:03:83:1A
 
                     X509v3 Basic Constraints: critical
                         CA:TRUE, pathlen:0
@@ -680,7 +555,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         Write out database with 1 new entries
         Data Base Updated
 
-** #2-Verify for Method#2 **
+** Verify CA CERT **
     cd /root/ca
     openssl x509 -noout -text -in /root/ca/certs/ca.cert.pem
 
@@ -724,13 +599,18 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
  
  
  
-** #2-Generate the mitainesoft server/component key pair and CSR Method#2 **
+** Generate the mitainesoft server/component key pair and CSR **
    
     This is stored under /usr/lib/ssl/misc and generates files with 
     generic name such as newkey.pem  and newreq.pem
     
     Common Name should be diffferent!  use *.mitainesoft.net
     
+     cd /etc/ssl
+     rm openssl.cnf #Delete symbollic link created prior
+     ln -s  openssl.cnf.4ServerCerts openssl.cnf
+     
+     cd /usr/lib/ssl/misc
     
      ./CA_mitainesoft.pl -newreq
         Generating a 4096 bit RSA private key
@@ -764,33 +644,17 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
             -rw-r----- 1 root root 1228 Jan  3 15:04 newreq.pem
 
         
- ** #2-mitainesoft embedded CA signing the CSR Method#2**
+ ** mitainesoft embedded CA signing the CSR Method#2**
      
     At this stage, the server/component private key is generated (newkey.pem) 
     and the associated certificate signing request (newreq.pem). The next 
-    step is for the MDN embedded CA to sign the certificate signing request, 
+    step is for the MGS embedded CA to sign the certificate signing request, 
     and it is accomplished through the below procedure.
         
    
     su - root
     cd /usr/lib/ssl/misc
-    cp CA.pl CA_mitainesoft.pl
-    vi CA_mitainesoft.pl
-    
-	Locate -sign|-signreq and add –extensions v3_req after policy_anything in CA_mitainesoft.pl
 
-        Before:
-        $CA -policy policy_anything -out newcert.pem -infiles newreq.pem
-        After:
-
-
-        ???$CA -policy policy_loose -extensions v3_req -out newcert.pem -infiles newreq.pem
-        
-        $CA -policy policy_anything -extensions v3_req -out newcert.pem -infiles newreq.pem
-
-        
-
-    :wq
     ./CA_mitainesoft.pl -sign
         Using configuration from /usr/lib/ssl/openssl.cnf
         Enter pass phrase for /root/ca/private/cakey.pem:
@@ -849,7 +713,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
  
     The following command verifies that the certificate newcert.pem has been 
     signed by a Trusted Certificate Authority.  In this case, the Trusted CA 
-    is the mitainesoft embedded CA, and the –verify option uses the MDN embedded 
+    is the mitainesoft embedded CA, and the –verify option uses the MGS embedded 
     CA certificate (cacert.pem) located in the /root/ca directory. 
     
     openssl verify -CAfile /root/ca/certs/ca.cert.pem newcert.pem
@@ -865,7 +729,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     
 ** Rename the generated Files **    
     
-    The MDN solution uses a specific naming convention for the certificate and private key files, to rename the file appropriately, refer to the following example.
+    The MGS solution uses a specific naming convention for the certificate and private key files, to rename the file appropriately, refer to the following example.
     For example:
 
     The file newkey.pem would become mitainesoftsvr.key.pem
@@ -1040,9 +904,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
     Restore back original openssl 
 
-    1)	[root@utility tls]# cd /etc/ssl
-    2)	[root@utility tls]# rm -f openssl.cnf
-    3)	[root@utility tls]# cp openssl.orig openssl.cnf
+    cd /etc/ssl
+    rm -f openssl.cnf
+    cp openssl.orig openssl.cnf
 
   
 
@@ -1193,7 +1057,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 a) Raspberry Temperature Overheat !
 
-    #Check the raspberry temperature.  The mdn dashboard will turn off the screen
+    #Check the raspberry temperature.  The MGS dashboard will turn off the screen
     #  if temperature exceed a certain value (check in scipts!)
     #  the graphical display is creating overheat.
     # Make sure you ordered the cooling fan kit for the raspberry or it wont survive !
