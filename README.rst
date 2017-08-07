@@ -4,8 +4,8 @@
 # Code: Python3 with cherrypy, nanpi                                              #
 # Purpose: Supervise garage door opening. Generate Alarms if required.            #
 #          Allow remote open.                                                     #
-#          Security via certificates and other fireall options TBD...             #
-# SRUM board: https://github.com/mitainesoft/garage/projects                      #
+#          Security via certificates and other fireall options                    #
+# SCRUM board: https://github.com/mitainesoft/garage/projects                     #
 ###################################################################################
 
  __        __         _      _         ____                                      _ 
@@ -1042,6 +1042,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 3. Packaging
+
+    
+
     Ref: https://packaging.python.org/tutorials/distributing-packages
     cd /git/mitaine/garage
     python3 setup.py sdist
