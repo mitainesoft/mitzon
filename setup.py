@@ -46,9 +46,9 @@ patch=int(buildinfo['BUILDINFO']['mgs.patch'])+1
 #print ("Garage next version %s.%s.%s" %(major,minor,patch))
 
 buildinfo['BUILDINFO']['build.date'] = nowstr
-buildinfo['BUILDINFO']['mgs.major'] = "%02d" % major
-buildinfo['BUILDINFO']['mgs.minor'] = "%02d" % minor
-buildinfo['BUILDINFO']['mgs.patch'] = "%04d" % patch
+buildinfo['BUILDINFO']['mgs.major'] = "%d" % major
+buildinfo['BUILDINFO']['mgs.minor'] = "%d" % minor
+buildinfo['BUILDINFO']['mgs.patch'] = "%d" % patch
 print ("Garage next version = %s.%s.%s" %(buildinfo['BUILDINFO']['mgs.major'],buildinfo['BUILDINFO']['mgs.minor'],buildinfo['BUILDINFO']['mgs.patch']))
 
 with open(buildfilename, 'w') as buildinfofile:

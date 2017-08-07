@@ -1042,15 +1042,25 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 3. Packaging
+    ** Reference **
+    - https://packaging.python.org/tutorials/distributing-packages
+    - https://docs.python.org/3.4/distutils/builtdist.html
+
+    ** pre-requisite **
+    - Linux terminal (raspberry Jessie, forget Windows !)
+    - git installed
+    - Need checkin permissions to mitainesoft, or comment subprocess.call (vcscmd_array[i]) in setup.py
+    - python3 installed 
+
+    
+    #open Linux terminal on garage raspberry pi 
+    iptables --list
+    iptables --flush
+    cd /git/garage
+    python3 setup.py sdist
 
     
 
-    Ref: https://packaging.python.org/tutorials/distributing-packages
-    cd /git/mitaine/garage
-    python3 setup.py sdist
-
-    https://docs.python.org/3.4/distutils/builtdist.html
-    python setup.py bdist --format=ztar
     
   #Package is under dist
 
