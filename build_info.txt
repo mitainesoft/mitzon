@@ -1,6 +1,6 @@
 [BUILDINFO]
-build.date = 2017-08-09 17:48:11
+build.date = 2017-08-09 17:51:30
 mgs.major = 1
 mgs.minor = 0
-mgs.patch = 9
+mgs.patch = 10
 
