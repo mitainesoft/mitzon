@@ -11,6 +11,8 @@ from GarageBackend.AlertManager import AlertManager
 from time import sleep
 import time
 import datetime
+import cherrypy
+import os, sys, traceback
 
 log = logging.getLogger('GarageManager')
 
@@ -22,12 +24,30 @@ class GarageManager():
         self.alarm_mgr_handler = AlertManager()
         self.GarageOpenTriggerAlarmElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerAlarmElapsedTime"))
         self.GarageOpenTriggerCloseDoorElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerCloseDoorElapsedTime"))
+        self.cherryweb_server_last_run_time = time.time()
 
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
         self.deviceList=self.dev_manager_handler.deviceList
         i=0
+
+
+
         while (True):
+            if cherrypy.engine.state == cherrypy.engine.states.STARTED:
+                log.debug("Cherrypy Web Server Thread Running")
+                self.cherryweb_server_last_run_time = time.time()
+            else:
+                log.error("Cherrypy Web Server Thread Dead")
+                if (time.time() > (self.cherryweb_server_last_run_time + 120) ):
+                    log.error("Cherrypy Web server thread not running, force exit of garage processes !")
+                    os._exit(-1)
+                elif (time.time() > (self.cherryweb_server_last_run_time + 30) ):
+                    # 15sec to allow for cherry pi web server to start
+                    log.error("Cherrypy Web server thread not running, sending alert SW001 !")
+                    status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
+                    log.error(status_text)
+
             for key in self.deviceList:
                 sensor_status_str = ""
                 obj = self.deviceList[key]
@@ -35,7 +55,6 @@ class GarageManager():
                     obj.updateSensor()
                     obj.determineGarageDoorOpenClosedStatus()
                     self.checkGaragePolicy(obj)
-                    pass
                 else:
                     log.info("typedef not found!")
 

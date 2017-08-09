@@ -89,19 +89,21 @@
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
     cd /opt/mitainesoft/
-    #Upload packge to /opt/mitainesoft as user mitainesoft
+    
+    #Upload package to /opt/mitainesoft as user mitainesoft
+    
 
-    if Windows:
-        sudo unzip garage-0.0.3.zip  <-- Bad CTRL-M
-    if Linux:
-        sudo tar -zxvf garage-0.0.3.tar.gz
+    tar -zxvf  mitainesoft_garage-1.0.7.tar.gz
     su - mitainesoft
     cd /opt/mitainesoft/
     rm garage
-    ln -s garage-0.0.3 garage
+    ln -s mitainesoft_garage-1.0.7 garage
     mkdir -p /opt/mitainesoft/garage/log
     chmod 700 /opt/mitainesoft/garage/*.bash
-    chown -R mitainesoft:mitainesoft /opt/mitainesoft
+    
+    #if untar with other user 
+    # su - root
+    #chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
 
     ** Edit config **
@@ -967,6 +969,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         
 ** Install certificates in cherrypy web server **
 
+    Review section !
+    pyOpenSSL not working
+    
     #Install cython, takes 20mins without any indication that it is running. `ls -ltr /tmp` to monitor...
     pip3 install cython
     
@@ -997,6 +1002,18 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         #User
         -A INPUT -p tcp -m mac --mac-source YY:YY:YY:YY:YY:YY -m multiport --dports 8050,80,443 -j ACCEPT
 
+        #Raspberry itself
+        #gmail
+        -A OUTPUT -p tcp -m multiport --dports 465,587,993 -j ACCEPT
+        -A INPUT  -p tcp -m multiport --sports 465,587,993 -j ACCEPT
+ 
+        #DNS Raspberry
+        -A OUTPUT -p udp -m multiport --dports 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+        -A INPUT  -p udp -m multiport --dports 53 -m state --state ESTABLISHED -j ACCEPT
+        -A OUTPUT -p udp -m multiport --sports 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+        -A INPUT  -p udp -m multiport --sports 53 -m state --state ESTABLISHED -j ACCEPT
+
+        #Drop everything else
         -A INPUT -p tcp -j DROP
         -A INPUT -p udp -j DROP
         COMMIT
@@ -1054,8 +1071,10 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
     
     #open Linux terminal on garage raspberry pi 
+    su - root
     iptables --list
     iptables --flush
+    su - [git user]
     cd /git/garage
     python3 setup.py sdist
 

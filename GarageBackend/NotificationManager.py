@@ -25,6 +25,7 @@ import json
 log = logging.getLogger('NotificationManager')
 
 
+
 class NotificationManager(metaclass=SingletonMeta):
     def __init__(self):
         self.Notif = collections.namedtuple('Notif', ['sender', 'receipients', 'text', 'time'])
@@ -81,6 +82,7 @@ class NotificationManager(metaclass=SingletonMeta):
             COMMASPACE = ', '
             mmrecipients = recipients.split(',')
             log.info("Connecting to SMTP %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            # TODO make 465 configurable
             self.email_server = smtplib.SMTP_SSL(self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"), 465)
             self.email_server.ehlo()
 
@@ -108,7 +110,7 @@ class NotificationManager(metaclass=SingletonMeta):
         except Exception:
 
             traceback.print_exc()
-            log.error("Unable to send email notification !")
+            log.error("Unable to send email notification ! open ports for DNS and emails on firewall ? Check README.rst  ")
             self.email_server.close()
             os._exit(10)
 

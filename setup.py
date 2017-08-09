@@ -73,7 +73,7 @@ for i in range (len(vcscmd_array)):
 #os._exit(-1)
 
 setup(
-    name='mitainesoft_garage',
+    name='garage',
     version=version_str,
     packages=find_packages(),
     include_package_data=True,

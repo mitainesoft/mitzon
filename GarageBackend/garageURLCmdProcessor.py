@@ -162,6 +162,20 @@ def dispatcher_fn(dispatch: Queue, command: Queue, subscribers: list):
 
 
 if __name__ == '__main__':
+
+    """
+    References:
+    [LUH] https://www.owasp.org/index.php/List_of_useful_HTTP_headers
+    [XFO] https://www.owasp.org/index.php/Clickjacking_Defense_Cheat_Sheet
+    [CSP] https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#Bonus_Rule_.232:_Implement_Content_Security_Policy
+    """
+    _csp_sources = ['default', 'script', 'style', 'img', 'connect', 'font', 'object', 'media', 'frame']
+    _csp_default_source = "'self'"
+    _csp_rules = list()
+    for c in _csp_sources:
+        _csp_rules.append('{:s}-src {:s}'.format(c, _csp_default_source))
+    _csp = '; '.join(_csp_rules)
+
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         handlers=[logging.FileHandler("log/garage.log"),
@@ -171,10 +185,20 @@ if __name__ == '__main__':
             'server.socket_host': '0.0.0.0',
             'server.socket_port': 8050,
             'server.ssl_module': 'builtin',
+            #'server.ssl_module': 'pyopenssl',
             'server.ssl_certificate': '/opt/mitainesoft/security/mitainesoftsvr.cert.pem',
             'server.ssl_private_key': '/opt/mitainesoft/security/mitainesoftsvr.key.pem',
             'tools.response_headers.on': False,
-            'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+            'tools.response_headers.headers': [('Content-Type', 'text/plain'),
+                                               ('Strict-Transport-Security', 'max-age=31536000'),
+                                               ('X-Frame-Options', 'DENY'),  # [XFO]
+                                               ('X-XSS-Protection', '1; mode=block'),  # [LUH]
+                                               ('Content-Security-Policy', _csp),  # [CSP]
+                                               ('X-Content-Security-Policy', _csp),  # [CSP]
+                                               ('X-Webkit-CSP', _csp),  # [CSP]
+                                               ('X-Content-Type-Options', 'nosniff')  # [LUH]
+                                               ],
+            'tools.sessions.secure': True,
             'tools.request_headers.on': False,
             'tools.staticdir.on': True,
             'tools.staticdir.dir': "log",

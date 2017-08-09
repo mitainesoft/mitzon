@@ -97,6 +97,13 @@
       "category": "HARDWARE",
       "text": "Command sent but nothing happened!",
       "workaround": "Check the door !"
+    },
+    "SW001": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Software Fault detected",
+      "workaround": "Check garage.log !"
     }
   },
   "Fr": {
@@ -197,6 +204,13 @@
       "category": "HARDWARE",
       "text": "Command sent but nothing happened!",
       "workaround": "Check the door !"
+    },
+    "SW001": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Erreur Logicielle detectée",
+      "workaround": "Inspectez garage.log !"
     }
   },
   "FrMule": {
@@ -297,6 +311,13 @@
       "category": "HARDWARE",
       "text": "Command sent but nothing happened!",
       "workaround": "Check the door !"
+    },
+     "SW001": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Erreur Logicielle de mule detectée",
+      "workaround": "Inspectez garage.log !"
     }
   }
 }
