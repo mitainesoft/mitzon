@@ -96,14 +96,12 @@
 2.  Install or Upgrade garage packages
     #Upload package to /opt/mitainesoft as user mitainesoft
     
-
-    tar -zxvf  garage-1.0.11.tar.gz
     su - mitainesoft
     cd /opt/mitainesoft/
-    rm garage
-    ln -s garage-1.0.11 garage
-    mkdir -p /opt/mitainesoft/garage/log
-    chmod 700 /opt/mitainesoft/garage/*.bash
+    tar -zxvf  garage-1.0.14.tar.gz
+ 
+    mkdir -p /opt/mitainesoft/garage-1.0.14/log
+    chmod 700 /opt/mitainesoft/garage-1.0.14/*.bash
     
     #if untar with other user 
     # su - root
@@ -112,16 +110,17 @@
 
     ** Edit config **
     su - mitainesoft
-    cd /opt/mitainesoft/garage
-    cd /opt/mitainesoft/garage/config
+    cd /opt/mitainesoft/garage-1.0.14/config
     cp garage_backend.template garage_backend.config
-    cd /opt/mitainesoft/garage
+    # cp ../../garage/config/garage_backend.config .
+    cd /opt/mitainesoft/garage-1.0.14
 
     #3 steps below may not be required
     su - root
     cd /opt/mitainesoft
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
-
+    exit
+    
     #Customize config for notif email addresses and accoounts !
 
     ** Change apache2 index.html default link **
@@ -146,6 +145,12 @@
         0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
         0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
 
+    
+    ** Change active version of garage **
+    su - mitainesoft
+    cd /opt/mitainesoft/
+    rm garage
+    ln -s garage-1.0.14 garage
 
     ** Restart garage **
         #Check if running
@@ -1018,11 +1023,12 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         -A OUTPUT -p tcp -m multiport --dports 465,587,993 -j ACCEPT
         -A INPUT  -p tcp -m multiport --sports 465,587,993 -j ACCEPT
  
-        #DNS Raspberry
-        -A OUTPUT -p udp -m multiport --dports 53 -m state --state NEW,ESTABLISHED -j ACCEPT
-        -A INPUT  -p udp -m multiport --dports 53 -m state --state ESTABLISHED -j ACCEPT
-        -A OUTPUT -p udp -m multiport --sports 53 -m state --state NEW,ESTABLISHED -j ACCEPT
-        -A INPUT  -p udp -m multiport --sports 53 -m state --state ESTABLISHED -j ACCEPT
+        
+        #DNS & NTP Raspberry
+        -A OUTPUT -p udp -m multiport --dports 53,123 -m state --state NEW,ESTABLISHED -j ACCEPT
+        -A INPUT  -p udp -m multiport --dports 53,123 -m state --state ESTABLISHED -j ACCEPT
+        -A OUTPUT -p udp -m multiport --sports 53,123 -m state --state NEW,ESTABLISHED -j ACCEPT
+        -A INPUT  -p udp -m multiport --sports 53,123 -m state --state ESTABLISHED -j ACCEPT
 
         #Drop everything else
         -A INPUT -p tcp -j DROP
