@@ -26,7 +26,7 @@ print ("current build time=%s\n" % nowstr)
 pre_vcscmd_array =  [["git" ,"status"],["git" ,"pull"]]
 for j in range (len(pre_vcscmd_array)):
     print ("%d) Pre-Build VCS cmd=%s" % (j,pre_vcscmd_array[j]))
-    outstr=subprocess.call (pre_vcscmd_array[j])
+    subprocess.call (pre_vcscmd_array[j])
 
 buildfilename       = current_dir + "/build_info.txt"
 print("Build info filename:%s" % (buildfilename))
@@ -82,8 +82,6 @@ setup(
     version=version_str,
     packages=find_packages(),
     include_package_data=True,
-#    package_dir=package_outfiles,
-#    script_args='dist-dir=allo',
     install_requires=['nanpy','cherrypy'],
     url='https://github.com/mitainesoft/garage',
     license='Mitainesoft Garage 2017',
@@ -94,4 +92,6 @@ setup(
     long_description='Supervise garage door opening. Generate Alarms if required.  Allow remote open. Security via certificates and other fireall options. SCRUM board: https://github.com/mitainesoft/garage/projects',
     platforms='Raspberry PI armv7l GNU/Linux 4.9.28-v7+',
 )
+
+
 
