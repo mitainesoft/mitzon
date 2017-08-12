@@ -23,6 +23,11 @@ nowstr=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
 print ("current build time=%s\n" % nowstr)
 
 
+pre_vcscmd_array =  [["git" ,"status"],["git" ,"pull"]]
+for j in range (len(pre_vcscmd_array)):
+    print ("%d) Pre-Build VCS cmd=%s" % (j,pre_vcscmd_array[j]))
+    outstr=subprocess.call (pre_vcscmd_array[j])
+
 buildfilename       = current_dir + "/build_info.txt"
 print("Build info filename:%s" % (buildfilename))
 

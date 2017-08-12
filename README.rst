@@ -15,6 +15,9 @@
     \_/\_/ \___/|_|  |_|\_\ |_|_| |_| |_|   |_|  \___/ \__, |_|  \___||___/___/ (_)
                                                        |___/                       
 
+                                                       
+                                                                                                             
+                                                       
 1. INSTALLATION INSTRUCTIONS
 
     ** Install Arduino Image **
@@ -90,14 +93,15 @@
 
     cd /opt/mitainesoft/
     
+2.  Install or Upgrade garage packages
     #Upload package to /opt/mitainesoft as user mitainesoft
     
 
-    tar -zxvf  mitainesoft_garage-1.0.7.tar.gz
+    tar -zxvf  garage-1.0.11.tar.gz
     su - mitainesoft
     cd /opt/mitainesoft/
     rm garage
-    ln -s mitainesoft_garage-1.0.7 garage
+    ln -s garage-1.0.11 garage
     mkdir -p /opt/mitainesoft/garage/log
     chmod 700 /opt/mitainesoft/garage/*.bash
     
@@ -113,8 +117,9 @@
     cp garage_backend.template garage_backend.config
     cd /opt/mitainesoft/garage
 
+    #3 steps below may not be required
+    su - root
     cd /opt/mitainesoft
-    su root
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
     #Customize config for notif email addresses and accoounts !
@@ -127,6 +132,12 @@
         cd /var/www
         rm html
         ln -s /opt/mitainesoft/garage/GarageFrontend html
+        
+        cd /etc/init.d
+        cp /opt/mitainesoft/garage/scripts/garage.sh /etc/init.d
+        chmod 755 /opt/mitainesoft/garage/scripts/garage.sh 
+        cd /etc/rc3.d
+        ln -s ../init.d/garage.sh S99garage
 
     ** Edit mitainesoft crontab **
         su - mitainesoft
@@ -139,12 +150,12 @@
     ** Restart garage **
         #Check if running
         su - mitainesoft
-        ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py
+        ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v grep
         cd /opt/mitainesoft/garage
         ./garage.bash
 
 
-2.  Test
+3.  Test
 Outputs in main Garage Backend console
 
 
@@ -188,7 +199,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 
-3.  Enable Security on Raspberry PI Raspbian
+4.  Enable Security on Raspberry PI Raspbian
 
     
  ** Setting up a Mitainesoft Garage (MG) Embedded Certificate Authority **
@@ -988,7 +999,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         'cherrypy.server.ssl_private_key': "/opt/mitainesoft/security/mitainesoftsvr.key.pem",
 
 
-** PREVENT OTHER DEVICES TO ACCESS THE RASPBERRY, PERIOD ! **
+5.  PREVENT OTHER DEVICES TO ACCESS THE RASPBERRY, PERIOD !
 
     #Copy/Paste lines as required.
     vi /etc/iptables-garage.rule
@@ -1058,7 +1069,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         target     prot opt source               destination
 
 
-3. Packaging
+6. Packaging
     ** Reference **
     - https://packaging.python.org/tutorials/distributing-packages
     - https://docs.python.org/3.4/distutils/builtdist.html
@@ -1074,6 +1085,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     su - root
     iptables --list
     iptables --flush
+    #Push code from development PC!
     su - [git user]
     cd /git/garage
     python3 setup.py sdist
@@ -1085,7 +1097,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 
-4. HW
+7. HW
 
 a) Raspberry Temperature Overheat !
 
@@ -1148,14 +1160,14 @@ a) Raspberry Temperature Overheat !
     -
 
 
-6.  Design Env 
+8.  Design Env 
     su - pi
     mkdir -p /home/pi/garage/log/
     
     
-6. Stuff
+9. Stuff
 
-6a. Notification
+10. Notification
 
     gmail:
     https://www.google.com/settings/security/lesssecureapps

@@ -5,9 +5,10 @@ MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageU
 
 if [ -n "$MITAINE_GARAGE_PROC" ]
 then
-   echo "garageURLCmdProcessor PID='$MITAINE_GARAGE_PROC'"
+   echo "garageURLCmdProcessor already running PID='$MITAINE_GARAGE_PROC'"
 else
    echo "launch_dashboard.bash not running($MITAINE_GARAGE_PROC)"
+   echo "Starting garage..."
    $MITAINEGARAGEHOME/garage.bash
 fi
 
