@@ -5,8 +5,7 @@
 # Short-Description: Starts mitainesoft garage
 # Description:       Starts mitainesoft garage
 ### END INIT INFO
-#Master
-
+# v1
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 . /lib/init/vars.sh
 
