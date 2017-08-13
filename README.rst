@@ -96,31 +96,30 @@
 2.  Install or Upgrade garage packages
     #Upload package to /opt/mitainesoft as user mitainesoft
     
-
-    tar -zxvf  garage-1.0.11.tar.gz
     su - mitainesoft
     cd /opt/mitainesoft/
-    rm garage
-    ln -s garage-1.0.11 garage
-    mkdir -p /opt/mitainesoft/garage/log
-    chmod 700 /opt/mitainesoft/garage/*.bash
-    
-    #if untar with other user 
+    tar -zxvf  garage-1.0.14.tar.gz
+
+    mkdir -p /opt/mitainesoft/garage-1.0.14/log
+    chmod 700 /opt/mitainesoft/garage-1.0.14/*.bash
+
+    #if untar with other user
     # su - root
     #chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
 
     ** Edit config **
     su - mitainesoft
-    cd /opt/mitainesoft/garage
-    cd /opt/mitainesoft/garage/config
+    cd /opt/mitainesoft/garage-1.0.14/config
     cp garage_backend.template garage_backend.config
-    cd /opt/mitainesoft/garage
+    # cp ../../garage/config/garage_backend.config .
+    cd /opt/mitainesoft/garage-1.0.14
 
     #3 steps below may not be required
     su - root
     cd /opt/mitainesoft
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
+    exit
 
     #Customize config for notif email addresses and accoounts !
 
@@ -132,10 +131,11 @@
         cd /var/www
         rm html
         ln -s /opt/mitainesoft/garage/GarageFrontend html
-        
+
+     ** Fix garage start boot script
         cd /etc/init.d
         cp /opt/mitainesoft/garage/scripts/garage.sh /etc/init.d
-        chmod 755 /opt/mitainesoft/garage/scripts/garage.sh 
+        chmod 755 /opt/mitainesoft/garage/scripts/garage.sh
         cd /etc/rc3.d
         ln -s ../init.d/garage.sh S99garage
 
@@ -146,6 +146,12 @@
         0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
         0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
 
+
+    ** Change active version of garage **
+    su - mitainesoft
+    cd /opt/mitainesoft/
+    rm garage
+    ln -s garage-1.0.14 garage
 
     ** Restart garage **
         #Check if running
@@ -163,7 +169,7 @@ Outputs in main Garage Backend console
 
 
 
-    a) Test Status 
+    a) Test Status
     curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
 
     b) Test Open Close
@@ -177,7 +183,7 @@ Outputs in main Garage Backend console
 
 
 
-    f) Test Status 
+    f) Test Status
     curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
 
     g) Test Open Close
@@ -201,40 +207,40 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 4.  Enable Security on Raspberry PI Raspbian
 
-    
+
  ** Setting up a Mitainesoft Garage (MG) Embedded Certificate Authority **
 
-    This appendix describes the procedure for implementing an embedded 
-    Certificate Authority (CA) in the mitainesoft garage solution (MGS), 
-    then utilize this CA to generate a server key pair and certificate 
-    signing request (CSR), and finally have the Rasp+ embedded CA sign the 
-    CSR. The signing of the CSR allows the server or component certificate 
-    to be used in the MGS solution by the various MGS components 
-    communicating on the OAM network using secure protocols such as 
-    REST over HTTPS, HTTPS and FTPS.  
-     
-    Perform a clean install of Debian (or install the latest Raspbian PIXEL 
-    image on the Raspberry Pi) and boot up the host. It’s ok to have network access for now. 
-    For my Raspberry Pi I followed Raspbian Setup (Raspberry Pi) (you don’t need to install 
+    This appendix describes the procedure for implementing an embedded
+    Certificate Authority (CA) in the mitainesoft garage solution (MGS),
+    then utilize this CA to generate a server key pair and certificate
+    signing request (CSR), and finally have the Rasp+ embedded CA sign the
+    CSR. The signing of the CSR allows the server or component certificate
+    to be used in the MGS solution by the various MGS components
+    communicating on the OAM network using secure protocols such as
+    REST over HTTPS, HTTPS and FTPS.
+
+    Perform a clean install of Debian (or install the latest Raspbian PIXEL
+    image on the Raspberry Pi) and boot up the host. It’s ok to have network access for now.
+    For my Raspberry Pi I followed Raspbian Setup (Raspberry Pi) (you don’t need to install
     any of those packages in that link, just upgrade).
     If you’re using Debian be sure to create an encrypted LVM or partition.
-    On a Raspberry Pi you can follow my guide to encrypt the main partition: 
+    On a Raspberry Pi you can follow my guide to encrypt the main partition:
     aspberry Pi LUKS Root Encryption
-    Upgrade all of your packages since this will be the last time the system will 
+    Upgrade all of your packages since this will be the last time the system will
     have internet access: sudo apt-get update && sudo apt-get upgrade.
     sudo reboot in case a new kernel was installed.
-    
+
     Finally install these required packages: sudo apt-get install qrencode acl
     Boot Date Prompt on Raspberry Pi
-    Raspberry Pis don’t have real time clocks so they don’t keep track of the time 
-    when powered off. Usually they handle this by getting the current time from the 
-    internet after booting up. However since our root CA will never have internet 
+    Raspberry Pis don’t have real time clocks so they don’t keep track of the time
+    when powered off. Usually they handle this by getting the current time from the
+    internet after booting up. However since our root CA will never have internet
     access again we need to always set the current time every time it boots up.
 
-    
+
 ** Time NTP Raspberry **
-    Since time is very important for signing certificates we’ll want to avoid 
-    forgetting this. You can install this systemd file to have it prompt you for the 
+    Since time is very important for signing certificates we’ll want to avoid
+    forgetting this. You can install this systemd file to have it prompt you for the
     current time before the Raspberry Pi finishes booting up, guaranteeing you won’t forget:
 
     # Prompt for current date during boot.
@@ -281,29 +287,29 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     cp openssl.cnf openssl.cnf.4ServerCerts
     chmod 644 openssl*
 
-    
+
 ** Fix CA.pl script for Method#2 **
     su - root
     cd /usr/lib/ssl/misc
     cp CA.pl CA_mitainesoft.pl
     cp CA.pl CA.pl.orig
-    
+
     vi CA_mitainesoft.pl
-    
+
 	Locate -sign|-signreq and add –extensions v3_req after policy_anything in CA_mitainesoft.pl
 
         Before:
         $CA -policy policy_anything -out newcert.pem -infiles newreq.pem
         After:
         $CA -policy policy_anything -extensions v3_req -out newcert.pem -infiles newreq.pem
-        
+
 
     :wq
-    
+
 ** Prepare SSL Files **
 
     #sftp openssl.cnf.mgsCA & openssl.cnf.4ServerCerts from this package to /etc/ssl
-    
+
     root@nomiberry:/etc/ssl# diff  openssl.orig  openssl.cnf.4ServerCerts
         < dir           = ./demoCA              # Where everything is kept
         ---
@@ -434,17 +440,17 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         245a251
         > keyUsage = cRLSign, keyCertSign
 
-  
 
- 
-    
-    
-    
+
+
+
+
+
 ** OpenSSL Directory Structure **
-    
-    Everything will live in /root/ca. It will also all be owned by root. 
+
+    Everything will live in /root/ca. It will also all be owned by root.
     Remember this computer is a dedicated CA
-    
+
 *** setup directories and permissions ***
 
      mkdir -p /root/ca/{certs,crl,csr,newcerts,private}
@@ -454,7 +460,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
      touch /root/ca/index.txt
      tee /root/ca/serial <<< 1000
 
-    Those setfacl commands set filesystem ACLs which enforce default 
+    Those setfacl commands set filesystem ACLs which enforce default
     maximum file permissions for new files/directories. A brief description for these directories:
 
         Directory	Description
@@ -462,18 +468,18 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         /root/ca/crl	Certificate revocation lists.
         /root/ca/csr	Certificate signing request.
         /root/ca/newcerts	Not used in this guide.
-        /root/ca/private	Private keys. VERY SENSITIVE. 
-    
-    
-    This is where we actually generate the root key and certificate. 
-    The root key is used to sign additional certificate pairs for specific 
-    devices/servers, and the root certificate is what you’ll export to 
+        /root/ca/private	Private keys. VERY SENSITIVE.
+
+
+    This is where we actually generate the root key and certificate.
+    The root key is used to sign additional certificate pairs for specific
+    devices/servers, and the root certificate is what you’ll export to
     clients that should trust any of these additional certificates.
 
     *** Warning ***
 
-    The root key ca.key.pem you’ll be generating is the most sensitive file on this 
-    dedicated computer. Keep it as secure as possible. When openssl genrsa asks you 
+    The root key ca.key.pem you’ll be generating is the most sensitive file on this
+    dedicated computer. Keep it as secure as possible. When openssl genrsa asks you
     for a password enter a unique and very secure password. Make sure setfacl worked a
     nd the permissions are: -r-------- 1 root root 1.8K Aug 15 12:21 private/ca.key.pem
     Note
@@ -481,30 +487,30 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 
-    
-    
+
+
  ** Generate root certificate and private key for embedded Certificate Authority (CA) **
- 
-    This section provides the procedure to create the private embedded MGS Certificate 
-    Authority that is used to sign (issue) the MGS server certificates.  
-    These certificates are only utilized for internal MGS communication, and are 
-    not be propagated externally from MGS (i.e. the Internet); therefore, they do not 
-    require a commercial trust anchor.  Instead, this embedded MGS CA acts as a trust 
-    anchor (i.e. Trusted Certificate Authority) for MGS servers and clients 
-    requiring certificates.  
-    
-    
-    
- 
+
+    This section provides the procedure to create the private embedded MGS Certificate
+    Authority that is used to sign (issue) the MGS server certificates.
+    These certificates are only utilized for internal MGS communication, and are
+    not be propagated externally from MGS (i.e. the Internet); therefore, they do not
+    require a commercial trust anchor.  Instead, this embedded MGS CA acts as a trust
+    anchor (i.e. Trusted Certificate Authority) for MGS servers and clients
+    requiring certificates.
+
+
+
+
      rm  ./index.txt ; rm ./cacert.pem ; rm private/*  rm certs/*
-     
+
      #Note: Common Name = mitainesoftCA
-     
+
      #Use openssl made for CA anchor
      cd /etc/ssl
      mv openssl.cnf openssl.cnf.orig2  #Just in case!
      ln -s openssl.cnf.mgsCA openssl.cnf
-     
+
      cd /usr/lib/ssl/misc
      ./CA_mitainesoft.pl -newca
 
@@ -609,22 +615,22 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
              ...
              ...
              b7:67:ca:b7:fd:fc:0d:88:7b:22:d6:87:c4:4f:32:92:35:31:
- 
- 
- 
+
+
+
 ** Generate the mitainesoft server/component key pair and CSR **
-   
-    This is stored under /usr/lib/ssl/misc and generates files with 
+
+    This is stored under /usr/lib/ssl/misc and generates files with
     generic name such as newkey.pem  and newreq.pem
-    
+
     Common Name should be diffferent!  use *.mitainesoft.net
-    
+
      cd /etc/ssl
      rm openssl.cnf #Delete symbollic link created prior
      ln -s  openssl.cnf.4ServerCerts openssl.cnf
-     
+
      cd /usr/lib/ssl/misc
-    
+
      ./CA_mitainesoft.pl -newreq
         Generating a 4096 bit RSA private key
         ....................................................................++
@@ -649,22 +655,22 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         Email Address [mitainesoft@gmail.com]:
         Request is in newreq.pem, private key is in newkey.pem
 
-        
+
         *** Verify 2 files ***
         cd /usr/lib/ssl/misc
         ls -l
             -rw-r----- 1 root root 1834 Jan  3 15:04 newkey.pem
             -rw-r----- 1 root root 1228 Jan  3 15:04 newreq.pem
 
-        
+
  ** mitainesoft embedded CA signing the CSR Method#2**
-     
-    At this stage, the server/component private key is generated (newkey.pem) 
-    and the associated certificate signing request (newreq.pem). The next 
-    step is for the MGS embedded CA to sign the certificate signing request, 
+
+    At this stage, the server/component private key is generated (newkey.pem)
+    and the associated certificate signing request (newreq.pem). The next
+    step is for the MGS embedded CA to sign the certificate signing request,
     and it is accomplished through the below procedure.
-        
-   
+
+
     su - root
     cd /usr/lib/ssl/misc
 
@@ -700,15 +706,15 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         Data Base Updated
         Signed certificate is in newcert.pem
 
-        
-    
+
+
 *** ERROR! Failed to update database TXT_DB error number 2 ? ***
 
         Problem:
         Because you have generated your own self signed certificate with the same CN (Common Name) information that the CA certificate that you’ve generated before.
 
         Enter another Common Name.
-    
+
 
 ** Verify the server/component private key and associated certificate signing request (CSR) **
     At this point, the /usr/lib/ssl/misc directory should contain three files:
@@ -717,79 +723,79 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     - newreq.pem: the certificate signing request (CSR)
     - newcert.pem: the server/component signed certificate
 
-    cd /usr/lib/ssl/misc 
+    cd /usr/lib/ssl/misc
     ls -la *.pem
         -rw-r--r-- 1 root root 7157 Jul 31 09:28 newcert.pem
         -rw-r--r-- 1 root root 3394 Jul 31 09:27 newkey.pem
         -rw-r--r-- 1 root root 1858 Jul 31 09:27 newreq.pem
 
- 
-    The following command verifies that the certificate newcert.pem has been 
-    signed by a Trusted Certificate Authority.  In this case, the Trusted CA 
-    is the mitainesoft embedded CA, and the –verify option uses the MGS embedded 
-    CA certificate (cacert.pem) located in the /root/ca directory. 
-    
+
+    The following command verifies that the certificate newcert.pem has been
+    signed by a Trusted Certificate Authority.  In this case, the Trusted CA
+    is the mitainesoft embedded CA, and the –verify option uses the MGS embedded
+    CA certificate (cacert.pem) located in the /root/ca directory.
+
     openssl verify -CAfile /root/ca/certs/ca.cert.pem newcert.pem
 
         newcert.pem: OK
 
-    
+
     ./CA_mitainesoft.pl  -verify /root/ca/certs/ca.cert.pem newcert.pem
         /root/ca/cacert.pem: OK
         newcert.pem: OK
 
-        
-    
-** Rename the generated Files **    
-    
+
+
+** Rename the generated Files **
+
     The MGS solution uses a specific naming convention for the certificate and private key files, to rename the file appropriately, refer to the following example.
     For example:
 
     The file newkey.pem would become mitainesoftsvr.key.pem
     The file newcert.pem would become mitainesoftsvr.cert.pem
 
-    
-    Note:	All certificates generated by the MGS embedded CA are backed up in 
-    /root/ca/newcerts/.  The file name is represented by the certificate 
-    serial number which can be viewed in the index.txt located in the 
+
+    Note:	All certificates generated by the MGS embedded CA are backed up in
+    /root/ca/newcerts/.  The file name is represented by the certificate
+    serial number which can be viewed in the index.txt located in the
     /root/ca directory.
-    
+
 
     root@nomiberry:~/ca# cat index.txt
         V       270729194601Z           928E8DAB06690548        unknown /C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
 
-    
-    
+
+
      #928E8DAB06690548 & 928E8DAB06690549 in this case
-        
-        
+
+
     Rename generated files:
 
     mv newcert.pem mitainesoftsvr.cert.pem
     mv newkey.pem mitainesoftsvr.key.pem
 
-        
+
 ** Remove Paraphrase from Key **
     When restarting apache, apache asks for a pass-phrase each time you execute a restart.
     To avoid these requests, execute the following step.
 
     cd /usr/lib/ssl/misc
     ########cp  ca.key.pem  ca.key.pem.with_p
-    
+
     cp mitainesoftsvr.key.pem mitainesoftsvr.key.pem.orig
     mv mitainesoftsvr.key.pem mitainesoftsvr.key.pem.with_p
-    
+
     openssl rsa -in  mitainesoftsvr.key.pem.with_p -out  mitainesoftsvr.key.pem
                 Enter pass phrase for mitainesoftsvr.key.pem.with_p: <MY PARAPHRASE>
                 writing RSA key
 
-    Expected Result: 
+    Expected Result:
       ca.key.pem now contains a pass-phrase.
      Verify as follows:
     # openssl rsa -in  ca.key.pem.with_p -noout -text  (will require pass-phrase)
     # openssl rsa -in  ca.key.pem -noout -text   (will NOT require pass-phrase)
-    
+
 
 ** Distribution of Certificates and Private Keys to mitainesoft run directory **
     cd /usr/lib/ssl/misc
@@ -797,27 +803,27 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     cp  mitainesoftsvr.cert.pem /opt/mitainesoft/security
     cat mitainesoftsvr.cert.pem mitainesoftsvr.key.pem > mitainesoftsvr.pem
     cp mitainesoftsvr.pem /opt/mitainesoft/security
-    
+
     cd  /opt/mitainesoft/security/
     #Make certificates readeable by others
     chmod 444 *.pem
-    
+
  ** ?!?!??  Combine the private key and the certificate **
     cd /root/ca
     #cat ./certs/ca.cert.pem  ./private/ca.key.pem > ./certs/garagemobile.pem
-    
- 
+
+
 ** Error curl: (60) SSL certificate problem: unable to get local issuer certificate **
-    
+
     https://stackoverflow.com/questions/24611640/curl-60-ssl-certificate-unable-to-get-local-issuer-certificate
 
-            We ran into this error recently. Turns out it was related to the root cert not being installed 
+            We ran into this error recently. Turns out it was related to the root cert not being installed
             in the CA store directory properly. I was using a curl command where I was specifying the CA dir directly.
-            curl --cacert /etc/test/server.pem --capath /etc/test ... This command was failing every time with 
+            curl --cacert /etc/test/server.pem --capath /etc/test ... This command was failing every time with
             curl: (60) SSL certificate problem: unable to get local issuer certificate.
 
-            After using strace curl ..., it was determined that curl was looking for the root 
-            cert file with a name of 60ff2731.0, which is based on an openssl hash naming convetion. So I found 
+            After using strace curl ..., it was determined that curl was looking for the root
+            cert file with a name of 60ff2731.0, which is based on an openssl hash naming convetion. So I found
             this command to effectively import the root cert properly:
 
             ln -s rootcert.pem `openssl x509 -hash -noout -in rootcert.pem`.0
@@ -826,33 +832,33 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
             60ff2731.0 -> rootcert.pem
             curl, under the covers read the server.pem cert, determined the name of the root cert file (rootcert.pem), converted it to its hash name, then did an OS file lookup, but could not find it.
 
-            So, the takeaway is, use strace when running curl when the curl error is obscure (was a tremendous help), and then be sure to properly install the root cert using the openssl naming convention.    
-            
-    
+            So, the takeaway is, use strace when running curl when the curl error is obscure (was a tremendous help), and then be sure to properly install the root cert using the openssl naming convention.
+
+
      /etc/ssl/certs/71486fe4.0", 0x7eb2ac28) = -1 ENOENT (No such file or directory)
 
-    cd ~/ca/certs 
-    
+    cd ~/ca/certs
+
   cat ca.cert.pem /etc/ssl/certs/ca-certificates.crt >caBundle.cert.pem
   openssl x509 -hash -noout -in  caBundle.cert.pem
 
-    
+
   openssl x509 -hash -noout -in caBundle.cert.pem
-    
+
         71486fe4
-     
+
     cd /usr/lib/ssl/certs
     ln -s  /root/ca/certs/caBundle.cert.pem 71486fe4.0
-        
-    
 
-    
-    
+
+
+
+
 ** test **
     #/root/ca/ is root only
     sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
-    
-    
+
+
     *** Test for Verify return code: 0 (ok) ***
     openssl s_client -connect 192.168.1.83:443
         CONNECTED(00000003)
@@ -903,32 +909,32 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
             Timeout   : 300 (sec)
             Verify return code: 0 (ok)
 
-    
-    
+
+
 ** Post activity After creating Embedded Certificates ?!? **
 
-    The Original openssl.cnf must be restored after creating the embedded certificates. 
-    Otherwise, when regenerate the name server on the CUT server, it will fail with the 
+    The Original openssl.cnf must be restored after creating the embedded certificates.
+    Otherwise, when regenerate the name server on the CUT server, it will fail with the
     following message:
 
     Auto configuration failed
     139830449022912:error:0200100D:system library:fopen:Permission denied:bss_file.c:169:fopen('/etc/pki/tls/openssl.cnf',
     'rb')
 
-    Restore back original openssl 
+    Restore back original openssl
 
     cd /etc/ssl
     rm -f openssl.cnf
     cp openssl.orig openssl.cnf
 
-  
+
 
 
 ** Install security certificates in Apache2
 
     cd /etc/apache2/sites-available
     vi 000-default.conf
-    
+
     root@nomiberry:/etc/apache2/sites-available# cat 000-default.conf
     <VirtualHost *:80>
 
@@ -977,15 +983,15 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     </VirtualHost>
 
 
-        
+
 ** Install certificates in cherrypy web server **
 
     Review section !
     pyOpenSSL not working
-    
+
     #Install cython, takes 20mins without any indication that it is running. `ls -ltr /tmp` to monitor...
     pip3 install cython
-    
+
     # already installed my pi
     pip3 install pyOpenSSL
 
@@ -994,7 +1000,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     http://docs.cherrypy.org/en/latest/deploy.html?highlight=certificate
 
     Add the following lines in your CherryPy config to point to your certificate files:
-    
+
         'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/mitainesoftsvr.cert.pem",
         'cherrypy.server.ssl_private_key': "/opt/mitainesoft/security/mitainesoftsvr.key.pem",
 
@@ -1009,7 +1015,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         :OUTPUT ACCEPT [818:146333]
         # Admin rule with ssh port 22
         -A INPUT -p tcp -m mac --mac-source XX:XX:XX:XX:XX:XX -m multiport --dports 22,8050,80,443 -j ACCEPT
-        
+
         #User
         -A INPUT -p tcp -m mac --mac-source YY:YY:YY:YY:YY:YY -m multiport --dports 8050,80,443 -j ACCEPT
 
@@ -1017,12 +1023,13 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         #gmail
         -A OUTPUT -p tcp -m multiport --dports 465,587,993 -j ACCEPT
         -A INPUT  -p tcp -m multiport --sports 465,587,993 -j ACCEPT
- 
-        #DNS Raspberry
-        -A OUTPUT -p udp -m multiport --dports 53 -m state --state NEW,ESTABLISHED -j ACCEPT
-        -A INPUT  -p udp -m multiport --dports 53 -m state --state ESTABLISHED -j ACCEPT
-        -A OUTPUT -p udp -m multiport --sports 53 -m state --state NEW,ESTABLISHED -j ACCEPT
-        -A INPUT  -p udp -m multiport --sports 53 -m state --state ESTABLISHED -j ACCEPT
+
+
+        #DNS & NTP Raspberry
+        -A OUTPUT -p udp -m multiport --dports 53,123 -m state --state NEW,ESTABLISHED -j ACCEPT
+        -A INPUT  -p udp -m multiport --dports 53,123 -m state --state ESTABLISHED -j ACCEPT
+        -A OUTPUT -p udp -m multiport --sports 53,123 -m state --state NEW,ESTABLISHED -j ACCEPT
+        -A INPUT  -p udp -m multiport --sports 53,123 -m state --state ESTABLISHED -j ACCEPT
 
         #Drop everything else
         -A INPUT -p tcp -j DROP
