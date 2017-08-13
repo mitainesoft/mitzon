@@ -98,10 +98,10 @@
     
     su - mitainesoft
     cd /opt/mitainesoft/
-    tar -zxvf  garage-1.0.14.tar.gz
+    tar -zxvf  garage-1.1.1.tar.gz
 
-    mkdir -p /opt/mitainesoft/garage-1.0.14/log
-    chmod 700 /opt/mitainesoft/garage-1.0.14/*.bash
+    mkdir -p /opt/mitainesoft/garage-1.1.1/log
+    chmod 700 /opt/mitainesoft/garage-1.1.1/*.bash
 
     #if untar with other user
     # su - root
@@ -110,10 +110,10 @@
 
     ** Edit config **
     su - mitainesoft
-    cd /opt/mitainesoft/garage-1.0.14/config
+    cd /opt/mitainesoft/garage-1.1.1/config
     cp garage_backend.template garage_backend.config
     # cp ../../garage/config/garage_backend.config .
-    cd /opt/mitainesoft/garage-1.0.14
+    cd /opt/mitainesoft/garage-1.1.1
 
     #3 steps below may not be required
     su - root
@@ -151,7 +151,7 @@
     su - mitainesoft
     cd /opt/mitainesoft/
     rm garage
-    ln -s garage-1.0.14 garage
+    ln -s garage-1.1.1 garage
 
     ** Restart garage **
         #Check if running
