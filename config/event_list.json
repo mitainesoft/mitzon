@@ -53,14 +53,14 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "open denied. current status is ",
+      "text": "open denied.",
       "workaround": "Calm down! Stop trying !"
     },
     "GTO004": {
       "deviceType": "Garage",
       "severity": "3",
       "category": "GARAGE_COMMAND",
-      "text": "Door Locked, open denied . current status is ",
+      "text": "Door Locked, open denied.",
       "workaround": "Calm down! Check why door is locked and Unlock!"
     },
     "GTC01": {
@@ -81,7 +81,7 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "close denied. current status is ",
+      "text": "close denied.",
       "workaround": "Calm down! Stop trying !"
     },
     "HW001": {
@@ -160,14 +160,14 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "Ouverture refusée. Le status est ",
+      "text": "Ouverture refusée.",
       "workaround": "Arrêtez d'essayer, allez voir se qui se passe !"
     },
     "GTO004": {
       "deviceType": "Garage",
       "severity": "3",
       "category": "GARAGE_COMMAND",
-      "text": "Porte vérouillée, Ouverture refusée. Le status est ",
+      "text": "Porte vérouillée, Ouverture refusée.",
       "workaround": "Arrêtez d'essayer, demandez pourquoi la porte a été vérouillée !"
     },
     "GTC01": {
@@ -188,7 +188,7 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "Fermeture refusée. Le status est ",
+      "text": "Fermeture refusée.",
       "workaround": "Arrêtez d'essayer !"
     },
     "HW001": {
@@ -218,7 +218,7 @@
       "deviceType": "Garage",
       "severity": "1",
       "category": "GARAGE_OPEN",
-      "text": "Temps d'ouverture de la porte expirée mule!",
+      "text": "Temps d'ouverture du portail expirée mule!",
       "workaround": "Ferme la porte mule si elle ne se ferme pas toute seule!"
     },
     "GO002": {
@@ -226,13 +226,13 @@
       "severity": "2",
       "category": "GARAGE_OPEN",
       "text": "Attention, porte ouverte mule!",
-      "workaround": "Grouille toi de fermer la porte mule!"
+      "workaround": "Grouille toi de fermer le portail mule avant que les hordes de visigoths ne le passe! l'enchanteur la fermera sous peu!"
     },
     "GLO01": {
       "deviceType": "Garage",
       "severity": "1",
       "category": "GARAGE_LOCK",
-      "text": "Portail du chateau ouverte perdu dans les couloirs va laisser entrer les huttes !",
+      "text": "Portail du chateau ouverte perdu dans les couloirs du temps qui va laisser entrer les hutts !",
       "workaround": "Enlevez l'option cadenas dans la boite a troubadour et fermez le portail ou soyez maudit !"
     },
     "GCD01": {
@@ -247,7 +247,7 @@
       "severity": "1",
       "category": "SENSOR",
       "text": "problème avec un senseur sur la porte de mule",
-      "workaround": "La fermeture est peut-être bloquée par de la neige à cause d'une mule ou un des senseurs ne fonctionne plus!"
+      "workaround": "La fermeture est peut-être bloquée par de la neige à cause d'une mule ou un des senseur qui ne fonctionne plus!"
     },
     "GTO01": {
       "deviceType": "Garage",
@@ -267,14 +267,14 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "Ouverture refusée. Le status est ",
+      "text": "Ouverture refusée.",
       "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
     },
     "GTO004": {
       "deviceType": "Garage",
       "severity": "3",
       "category": "GARAGE_COMMAND",
-      "text": "Ouverture point accordée. Le status est ",
+      "text": "Ouverture point accordée. ",
       "workaround": "Calme toi la fripouille! Arrêstez d'essayer mortecouille, Allez quérir au seigneur pourquoi le portail n'est point passable !"
     },
     "GTC01": {
@@ -295,7 +295,7 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "Fermeture refusée. Le status est ",
+      "text": "Fermeture refusée.",
       "workaround": "Calme toi tête de veau! Arrêtes d'essayer !"
     },
     "HW001": {
@@ -309,14 +309,14 @@
       "deviceType": "Garage",
       "severity": "1",
       "category": "HARDWARE",
-      "text": "Command sent but nothing happened!",
-      "workaround": "Check the door !"
+      "text": "Maudit portail ne réagit point à la commande!",
+      "workaround": "Demandez audience avec le seigneur des lieux !"
     },
      "SW001": {
       "deviceType": "SW",
       "severity": "1",
       "category": "SOFTWARE",
-      "text": "Erreur Logicielle de mule detectée",
+      "text": "Erreur Logicielle de mule détectée",
       "workaround": "Inspectez garage.log !"
     }
   }
