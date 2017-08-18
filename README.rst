@@ -23,7 +23,7 @@
     ** MITAINESOFT_GARAGE_REVISION **
 
     MITAINESOFT_GARAGE_REVISION is replaced by garage-x.y.z in the below instructions
-    which can be found in the READ.rst garage-x.y.z tar file.
+    which can be found in the README.rst garage-x.y.z tar file.
 
 
     ** Install Arduino Image **
@@ -120,14 +120,20 @@
     cd /opt/mitainesoft/
     
 2.  Install or Upgrade garage packages
-    #Upload package to /opt/mitainesoft as user mitainesoft
-    
+
     su - mitainesoft
+
+    # Upload [MITAINESOFT_GARAGE_REVISION] package to /opt/mitainesoft as user mitainesoft
+    # cp /git/garage/dist/[MITAINESOFT_GARAGE_REVISION] .
+
     cd /opt/mitainesoft/
     tar -zxvf  [MITAINESOFT_GARAGE_REVISION].tar.gz
 
     mkdir -p /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/log
     chmod 700 /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/*.bash
+    find /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/GarageFrontend -type d -exec chmod 755 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/GarageFrontend -type f -exec chmod 644 {} \;
+
 
     #if untar with other user
     # su - root

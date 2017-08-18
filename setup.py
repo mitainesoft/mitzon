@@ -23,7 +23,10 @@ from shutil import move
 from os import fdopen, remove
 import codecs
 
-fileListToSearchReplace_MITAINESOFT_GARAGE_REVISION =['README.rst','GarageFrontend/index.html']
+fileListToSearchReplace_MITAINESOFT_GARAGE_REVISION = \
+    ['README.rst',
+     'GarageFrontend/index.html',
+     'config/garage_backend.template']
 
 current_dir = path.abspath(path.dirname(__file__))
 package_outfiles = current_dir + "/packages"
