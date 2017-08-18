@@ -51,7 +51,14 @@
 
     ** Passwords **
 
-    Immediatly change raspberry default passwords !
+    Immediatly change raspberry default passwords and assign one to root (optional security breach to avoid sudo !)
+
+    passwd pi
+
+    sudo passwd root
+
+    #Note iptables should specify which device can login in later steps.
+
 
     ** install cherrypy for python3 **
       
@@ -83,6 +90,19 @@
         sudo vi /etc/group
 
             dialout:x:20:pi,mitainesoft
+
+
+    ** Add mitainesoft to sudoers **
+
+    cd /etc/sudoers.d
+    cp 010_pi-nopasswd 010_mitainesoft-nopasswd
+
+    #remove pi from sudoers?!?
+
+    #Change line
+        pi ALL=(ALL) NOPASSWD: ALL
+    to
+        mitainesoft ALL=(ALL) NOPASSWD: ALL
 
     ** Setup package dir **
 
@@ -134,10 +154,13 @@
 
      ** Fix garage start boot script
         cd /etc/init.d
-        cp /opt/mitainesoft/garage/scripts/garage.sh /etc/init.d
-        chmod 755 /opt/mitainesoft/garage/scripts/garage.sh
+        cp /opt/mitainesoft/garage/scripts/garage /etc/init.d
+        chmod 755 /opt/mitainesoft/garage/scripts/garage
         cd /etc/rc3.d
-        ln -s ../init.d/garage.sh S99garage
+        ln -s ../init.d/garage S99garage
+
+        # Try it
+        /etc/init.d/garage
 
     ** Edit mitainesoft crontab **
         su - mitainesoft
@@ -1174,7 +1197,21 @@ a) Raspberry Temperature Overheat !
     
 9. Stuff
 
-10. Notification
+    ** Remove ^M Windows transfer dos2unix raspbian **
+    perl -i -pe 's/\r\n$/\n/g' MYFILENAME
+
+    ** apache sym links **
+        root@nomiberry:/var/www# ls -la
+        total 12
+        drwxr-xr-x  3 root root 4096 Jul 16 16:19 .
+        drwxr-xr-x 12 root root 4096 Dec  1  2016 ..
+        lrwxrwxrwx  1 root root   31 Jul 16 16:19 dev_html -> /home/pi/garage/GarageFrontend/
+        lrwxrwxrwx  1 root root    8 Jun 28 17:24 html -> dev_html
+        drwxr-xr-x  2 root root 4096 Jun  3 16:28 html.orig
+        lrwxrwxrwx  1 root root   38 Jun 28 17:22 pkg_html -> /opt/mitainesoft/garage/GarageFrontend
+
+
+ ** Notification **
 
     gmail:
     https://www.google.com/settings/security/lesssecureapps
