@@ -20,6 +20,12 @@
                                                        
 1. INSTALLATION INSTRUCTIONS
 
+    ** MITAINESOFT_GARAGE_REVISION **
+
+    MITAINESOFT_GARAGE_REVISION is replaced by garage-x.y.z in the below instructions
+    which can be found in the READ.rst garage-x.y.z tar file.
+
+
     ** Install Arduino Image **
     First of all, you need to build the firmware and upload it on your Arduino, 
     to do that clone the nanpy-firmware repository on Github or download it from PyPi.
@@ -118,10 +124,10 @@
     
     su - mitainesoft
     cd /opt/mitainesoft/
-    tar -zxvf  garage-1.1.1.tar.gz
+    tar -zxvf  [MITAINESOFT_GARAGE_REVISION].tar.gz
 
-    mkdir -p /opt/mitainesoft/garage-1.1.1/log
-    chmod 700 /opt/mitainesoft/garage-1.1.1/*.bash
+    mkdir -p /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/log
+    chmod 700 /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/*.bash
 
     #if untar with other user
     # su - root
@@ -130,10 +136,10 @@
 
     ** Edit config **
     su - mitainesoft
-    cd /opt/mitainesoft/garage-1.1.1/config
+    cd /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/config
     cp garage_backend.template garage_backend.config
     # cp ../../garage/config/garage_backend.config .
-    cd /opt/mitainesoft/garage-1.1.1
+    cd /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]
 
     #3 steps below may not be required
     su - root
@@ -174,7 +180,7 @@
     su - mitainesoft
     cd /opt/mitainesoft/
     rm garage
-    ln -s garage-1.1.1 garage
+    ln -s [MITAINESOFT_GARAGE_REVISION] garage
 
     ** Restart garage **
         #Check if running
