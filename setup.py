@@ -134,7 +134,9 @@ class sdistPyCommand(setuptools.command.sdist.sdist):
             try:
                 source_file_path=base_dir+'/'+fileToSearchReplace
                 keyw='[MITAINESOFT_GARAGE_REVISION]'
-                substring=base_dir.upper()
+                substring = base_dir.upper()
+                if (fileToSearchReplace == "README.rst"): #Exception for instructions, not upper() !
+                    substring = base_dir
                 print("File: "+fileToSearchReplace+"   search: "+keyw+"   replace with: "+substring)
                 self.replace(source_file_path,keyw,substring)
             except Exception:
