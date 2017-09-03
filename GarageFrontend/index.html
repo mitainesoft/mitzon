@@ -94,7 +94,7 @@
 
         <div class="coffee-span-12">
             <!--<p class="paragraph Footer">Montreal<br> +1 514 594 3818 mitainesoft@gmail.com</p>-->
-            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft 2017
+            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft 2017 [MITAINESOFT_GARAGE_REVISION]
             </a>
             </p>
         </div>
@@ -185,7 +185,8 @@
 
             } //switch
 
-            var cmd = 'https://192.168.1.83:8050/GarageDoor/' + subcmd + '/' + id
+            var cmd = 'https://' + window.location.hostname +':8050/GarageDoor/' + subcmd + '/' + id
+            console.log(cmd);
             var posting = $.post(cmd, function (data) {
                 parseResponse(data);
             })
@@ -208,19 +209,21 @@
                     console.log("Lock button Desync garagecmd"+ count +" ! so resync!");
                 } else {
                     console.log("Lock button In Sync garagecmd"+ count +" !  ")
-                    cmd = 'https://192.168.1.83:8050/GarageDoor/lock/' + count
+                    cmd = 'https://' + window.location.hostname +':8050/GarageDoor/lock/' + count
+                    console.log(cmd);
+
                     garageid = "garagestatus" + count;
                     posting = $.post(cmd, function (data) {
                         parseResponse(data, status)
                     }, null, "text")
                 }
             }
-
         }
 
         function doorStatus() {
             for (count = 0; count <= 1; count++) {
-                cmd = 'https://192.168.1.83:8050/GarageDoor/status/' + count
+                cmd = 'https://' + window.location.hostname +':8050/GarageDoor/status/' + count
+                console.log(cmd);
                 garageid = "garagestatus" + count;
                 posting = $.post(cmd, function (data) {
                     parseResponse(data, status)

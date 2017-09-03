@@ -1,3 +1,8 @@
+##############################################################
+# Mitainesodt Garage Config file
+# Generated for revision [MITAINESOFT_GARAGE_REVISION]
+##############################################################
+
 [GARAGE_MANAGER]
 GARAGE_MANAGER_LOOP_TIMEOUT = 10
 
@@ -115,6 +120,6 @@ GARAGE_USERS=Add MAC Addresses here separated by colun ','
 ###########################################
 
 [INTERNAL]
-CONFIG_FILE_REV=1.0
+CONFIG_FILE_REV=[MITAINESOFT_GARAGE_REVISION]
 ALERT_DEFINITION_FILE=config/event_list.json
 

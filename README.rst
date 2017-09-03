@@ -20,6 +20,12 @@
                                                        
 1. INSTALLATION INSTRUCTIONS
 
+    ** MITAINESOFT_GARAGE_REVISION **
+
+    MITAINESOFT_GARAGE_REVISION is replaced by garage-x.y.z in the below instructions
+    which can be found in the README.rst garage-x.y.z tar file.
+
+
     ** Install Arduino Image **
     First of all, you need to build the firmware and upload it on your Arduino, 
     to do that clone the nanpy-firmware repository on Github or download it from PyPi.
@@ -51,7 +57,14 @@
 
     ** Passwords **
 
-    Immediatly change raspberry default passwords !
+    Immediatly change raspberry default passwords and assign one to root (optional security breach to avoid sudo !)
+
+    passwd pi
+
+    sudo passwd root
+
+    #Note iptables should specify which device can login in later steps.
+
 
     ** install cherrypy for python3 **
       
@@ -84,6 +97,19 @@
 
             dialout:x:20:pi,mitainesoft
 
+
+    ** Add mitainesoft to sudoers **
+
+    cd /etc/sudoers.d
+    cp 010_pi-nopasswd 010_mitainesoft-nopasswd
+
+    #remove pi from sudoers?!?
+
+    #Change line
+        pi ALL=(ALL) NOPASSWD: ALL
+    to
+        mitainesoft ALL=(ALL) NOPASSWD: ALL
+
     ** Setup package dir **
 
 
@@ -94,14 +120,20 @@
     cd /opt/mitainesoft/
     
 2.  Install or Upgrade garage packages
-    #Upload package to /opt/mitainesoft as user mitainesoft
-    
-    su - mitainesoft
-    cd /opt/mitainesoft/
-    tar -zxvf  garage-1.1.1.tar.gz
 
-    mkdir -p /opt/mitainesoft/garage-1.1.1/log
-    chmod 700 /opt/mitainesoft/garage-1.1.1/*.bash
+    su - mitainesoft
+
+    # Upload [MITAINESOFT_GARAGE_REVISION] package to /opt/mitainesoft as user mitainesoft
+    # cp /git/garage/dist/[MITAINESOFT_GARAGE_REVISION] .
+
+    cd /opt/mitainesoft/
+    tar -zxvf  [MITAINESOFT_GARAGE_REVISION].tar.gz
+
+    mkdir -p /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/log
+    chmod 700 /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/*.bash
+    find /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/GarageFrontend -type d -exec chmod 755 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/GarageFrontend -type f -exec chmod 644 {} \;
+
 
     #if untar with other user
     # su - root
@@ -110,10 +142,10 @@
 
     ** Edit config **
     su - mitainesoft
-    cd /opt/mitainesoft/garage-1.1.1/config
+    cd /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/config
     cp garage_backend.template garage_backend.config
     # cp ../../garage/config/garage_backend.config .
-    cd /opt/mitainesoft/garage-1.1.1
+    cd /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]
 
     #3 steps below may not be required
     su - root
@@ -134,10 +166,13 @@
 
      ** Fix garage start boot script
         cd /etc/init.d
-        cp /opt/mitainesoft/garage/scripts/garage.sh /etc/init.d
-        chmod 755 /opt/mitainesoft/garage/scripts/garage.sh
+        cp /opt/mitainesoft/garage/scripts/garage /etc/init.d
+        chmod 755 /opt/mitainesoft/garage/scripts/garage
         cd /etc/rc3.d
-        ln -s ../init.d/garage.sh S99garage
+        ln -s ../init.d/garage S99garage
+
+        # Try it
+        /etc/init.d/garage
 
     ** Edit mitainesoft crontab **
         su - mitainesoft
@@ -151,7 +186,7 @@
     su - mitainesoft
     cd /opt/mitainesoft/
     rm garage
-    ln -s garage-1.1.1 garage
+    ln -s [MITAINESOFT_GARAGE_REVISION] garage
 
     ** Restart garage **
         #Check if running
@@ -1174,7 +1209,21 @@ a) Raspberry Temperature Overheat !
     
 9. Stuff
 
-10. Notification
+    ** Remove ^M Windows transfer dos2unix raspbian **
+    perl -i -pe 's/\r\n$/\n/g' MYFILENAME
+
+    ** apache sym links **
+        root@nomiberry:/var/www# ls -la
+        total 12
+        drwxr-xr-x  3 root root 4096 Jul 16 16:19 .
+        drwxr-xr-x 12 root root 4096 Dec  1  2016 ..
+        lrwxrwxrwx  1 root root   31 Jul 16 16:19 dev_html -> /home/pi/garage/GarageFrontend/
+        lrwxrwxrwx  1 root root    8 Jun 28 17:24 html -> dev_html
+        drwxr-xr-x  2 root root 4096 Jun  3 16:28 html.orig
+        lrwxrwxrwx  1 root root   38 Jun 28 17:22 pkg_html -> /opt/mitainesoft/garage/GarageFrontend
+
+
+ ** Notification **
 
     gmail:
     https://www.google.com/settings/security/lesssecureapps

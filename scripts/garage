@@ -22,12 +22,14 @@ do_status () {
 	MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 	if [ -n "$MITAINE_GARAGE_PROC" ]
 	then
-   		echo "garageURLCmdProcessor running PID='$MITAINE_GARAGE_PROC'"
+   		echo "Mitainesoft Garage Running :) PID='$MITAINE_GARAGE_PROC'"
 	else
-   		echo "launch_dashboard.bash not running($MITAINE_GARAGE_PROC)"
+   		echo "Mitainesoft Garage NOT Running :("
 	fi
 
 	/opt/vc/bin/vcgencmd measure_temp
+
+    cat /opt/mitainesoft/garage/build_info.txt
 
 }
 
