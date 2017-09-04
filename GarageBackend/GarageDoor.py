@@ -31,6 +31,7 @@ class GarageDoor():
         self.g_status = G_UNKNOWN
         self.g_prevstatus = G_UNKNOWN
         self.g_sensor_props = {}
+        self.g_light_list = {}  #Dict of lights. key = color GREEN RED WHITE
         self.g_update_time=time.time()
         self.g_open_time = None
         self.g_close_time = None
@@ -58,6 +59,30 @@ class GarageDoor():
 
     def isGarageOpen(self,mything,myservice,myid):
         return self.g_status==G_OPEN
+
+    def startLightFlash(self,color):
+        key=self.g_name+"_"+color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].startFlashLight()
+
+    def stopLightFlash(self, color):
+        key = self.g_name + "_" + color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].stopFlashLight()
+
+    def turnOnLight(self, color):
+        key = self.g_name + "_" + color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].turnOnLight()
+
+    def turnOffLight(self, color):
+        key = self.g_name + "_" + color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].turnOffLight()
 
 
     def updateSensor(self):
@@ -218,6 +243,12 @@ class GarageDoor():
         self.initBoardPinModeInput(self.g_sensor_props[key].board_pin_id)
         log.debug(str(sensor_props))
         self.s_update_time = time.time()
+        pass
+
+    def addLight(self, key,lightobj):
+        self.g_light_list[key]=lightobj
+        self.initBoardPinModeOutput(self.g_light_list[key].board_pin_id)
+        log.debug(str(lightobj))
         pass
 
     def initBoardPinModeOutput(self, pin):

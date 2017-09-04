@@ -36,11 +36,17 @@ GarageElapsedTimeForStatusChange=20
 SuperviseThisGarage = True
 GarageBoardPin = 7
 GarageSensorsBoardPin = 8,9
+GarageGreenLightBoardPin=5
+GarageRedLightBoardPin=4
+GarageWhiteLightBoardPin=12
 
 [GARAGE_1]
 SuperviseThisGarage = True
 GarageBoardPin = 6
 GarageSensorsBoardPin = 10,11
+GarageGreenLightBoardPin=5
+GarageRedLightBoardPin=4
+GarageWhiteLightBoardPin=12
 
 [GARAGE_2]
 SuperviseThisGarage = False

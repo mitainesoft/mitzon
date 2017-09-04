@@ -55,6 +55,11 @@ class GarageManager():
                     obj.updateSensor()
                     obj.determineGarageDoorOpenClosedStatus()
                     self.checkGaragePolicy(obj)
+
+                    # obj.g_light_list[obj.g_name + '_GREEN'].turnOnLight()
+                    # sleep(1.00)
+                    # obj.g_light_list[obj.g_name + '_GREEN'].turnOffLight()
+                    # sleep(0.500)
                 else:
                     log.info("typedef not found!")
 
