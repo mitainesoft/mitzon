@@ -5,6 +5,7 @@ from time import sleep
 from threading import Thread
 import time
 import datetime
+import os, sys, traceback
 
 log = logging.getLogger('Light')
 
@@ -23,6 +24,7 @@ class Light():
         log.info(strlog)
         self.thread_light_flash = None
         self.relayLOWEnableList=(self.config_handler.getConfigParam('GARAGE_COMMON', "GarageRelayLOWEnable")).split(',')
+        self.stop_thread = False
         pass
 
     def commandLight(self,cmd):
@@ -42,7 +44,7 @@ class Light():
                 self.usbConnectHandler.digitalWrite(self.board_pin_id, low)
 
             strlog = "%s %s Turn %s" % (self.light_gname, self.light_id,cmd)
-            log.info(strlog)
+            log.debug(strlog)
         pass
 
 
@@ -56,23 +58,35 @@ class Light():
 
     def startFlashLight(self):
         strlog = "%s %s Start Flashing" % (self.light_gname, self.light_id)
-        log.info(strlog)
-
+        log.debug(strlog)
+        self.stop_thread = False
         # light_manager=Light()
         if (self.thread_light_flash == None):
-            self.thread_light_flash = Thread(target=self.flashLight,name=self.l_name,daemon=True)
-
-        if (not self.thread_light_flash.is_alive()):
+            self.thread_light_flash = Thread(target=self.flashLight,name=self.l_name,daemon=False)
+        try:
             strlog = "%s %s Start Flashing thread start" % (self.light_gname, self.light_id)
             log.info(strlog)
             self.thread_light_flash.start()
+        except Exception:
+            strlog = "%s %s Start Flashing thread Eception.  Already started ?" % (self.light_gname, self.light_id)
+            log.info(strlog)
 
     def stopFlashLight(self):
         strlog = "%s %s Stop Flashing" % (self.light_gname, self.light_id)
         log.info(strlog)
-        if (self.thread_light_flash.is_alive()):
-            self.thread_light_flash.stop()
-        self.thread_light_flash = None
+        self.stop_thread = True
+        if (self.thread_light_flash == None):
+            return
+        try:
+            self.stop_thread = True
+            self.thread_light_flash == None
+            self.thread_light_flash.join()
+            strlog = "%s %s Stop Flashing AFTER thread join" % (self.light_gname, self.light_id)
+            log.info(strlog)
+        except Exception:
+            self.thread_light_flash = None
+            strlog = "%s %s Stop Flashing Exception" % (self.light_gname, self.light_id)
+            traceback.print_exc()
 
     def monitor(self):
 
@@ -81,17 +95,19 @@ class Light():
 
     def flashLight(self):
         crazyloop=0;
-        while (crazyloop<900): #2 sec loop
+        while (self.stop_thread == False
+               and crazyloop<90): #2 sec loop
 
-            strlog = "%s %s flashLight !" % (self.light_gname, self.light_id)
-            log.info(strlog)
+            strlog = "%s %s flashing Light !" % (self.light_gname, self.light_id)
+            log.debug(strlog)
             crazyloop+=1
-            sleep(2.000)
-            if (self.status == "OFF"):
-                self.commandLight("ON")
-            else:
-                self.commandLight("OFF")
-            sleep(2.000)
+            if self.stop_thread == False: #Skip flash on thread stop
+                sleep(1.000)
+                if (self.status == "OFF" and self.stop_thread == False):
+                    self.commandLight("ON")
+                else:
+                    self.commandLight("OFF")
+                sleep(1.000)
             self.commandLight(self.status)
 
     def connectUSB(self,usbConnectHandler):
