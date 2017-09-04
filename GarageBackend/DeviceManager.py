@@ -56,12 +56,15 @@ class DeviceManager(metaclass=SingletonMeta):
             redlightpin=int(self.config_handler.getConfigParam(garageNameKey, "GarageRedLightBoardPin"))
             if (redlightpin >=0):
                 obj.addLight(key_color, Light('RED', redlightpin,garageNameKey,self.usbConnectHandler))
-                log.info("%s light pin %d" %(key_color,greenlightpin) )
+                log.info("%s light pin %d" %(key_color,redlightpin) )
             key_color = garageNameKey + '_WHITE'
             whitelightpin = int(self.config_handler.getConfigParam(garageNameKey, "GarageWhiteLightBoardPin"))
             if (whitelightpin >= 0):
-                obj.addLight(key_color, Light('WHITE', redlightpin,garageNameKey,self.usbConnectHandler))
-                log.info("%s light pin %d" %(key_color,greenlightpin) )
+                obj.addLight(key_color, Light('WHITE', whitelightpin,garageNameKey,self.usbConnectHandler))
+                log.info("%s light pin %d" %(key_color,whitelightpin) )
+            obj.turnOffLight('WHITE')
+            obj.turnOffLight('GREEN')
+            obj.turnOffLight('RED')
             obj_key = "GarageDoor_%d" % garage_id
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1

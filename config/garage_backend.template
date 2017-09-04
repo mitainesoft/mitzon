@@ -32,30 +32,33 @@ TimeBeforeRetryCloseDoor = 20
 #Minimum Time between commands. Compare current time vs last cmd sent time
 GarageElapsedTimeForStatusChange=20
 
+#Relay Outputs List where LOW means Enable or Trigger relay
+GarageRelayLOWEnable=2,3,12,13
+
 [GARAGE_0]
 SuperviseThisGarage = True
 GarageBoardPin = 7
 GarageSensorsBoardPin = 8,9
-GarageGreenLightBoardPin=5
-GarageRedLightBoardPin=4
+GarageGreenLightBoardPin=2
+GarageRedLightBoardPin=3
 GarageWhiteLightBoardPin=12
 
 [GARAGE_1]
 SuperviseThisGarage = True
 GarageBoardPin = 6
 GarageSensorsBoardPin = 10,11
-GarageGreenLightBoardPin=5
-GarageRedLightBoardPin=4
-GarageWhiteLightBoardPin=12
+GarageGreenLightBoardPin=4
+GarageRedLightBoardPin=5
+GarageWhiteLightBoardPin=13
 
 [GARAGE_2]
 SuperviseThisGarage = False
-GarageBoardPin = 5
+GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [GARAGE_3]
 SuperviseThisGarage = False
-GarageBoardPin = 4
+GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [ALERT]

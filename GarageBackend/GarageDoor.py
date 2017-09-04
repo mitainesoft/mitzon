@@ -172,6 +172,8 @@ class GarageDoor():
             self.g_prevstatus = self.g_status
             if self.g_status == G_OPEN:
                 self.g_open_time = time.time()
+                self.turnOnLight('WHITE')
+                self.turnOnLight('GREEN')
             elif self.g_status == G_CLOSED or self.g_status == G_LOCKCLOSED:
                 # self.g_auto_force_ignore_garage_open_close_cmd = False
                 self.g_close_time = time.time()
@@ -181,8 +183,12 @@ class GarageDoor():
                 for sensorkey in self.g_sensor_props:
                     sensordevname=self.g_name+"_"+sensorkey
                     self.alarm_mgr_handler.clearAlertDevice("SENSOR",sensordevname)
+                self.turnOffLight('WHITE')
+                self.turnOffLight('GREEN')
+                self.turnOffLight('RED')
             elif self.g_status == G_ERROR:
                 self.g_error_time = time.time()
+                self.turnOnLight('RED')
         else:
             log.debug(self.g_name + "status no change !")
             if (self.g_status == G_CLOSED and self.g_error_time!=None \

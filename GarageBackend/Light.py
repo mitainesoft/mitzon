@@ -11,6 +11,7 @@ log = logging.getLogger('Light')
 
 class Light():
     def __init__(self,lid,board_pin_id,garage_key, usbConnectHandler):
+        self.config_handler = ConfigManager()
         self.light_id=lid
         self.light_gname = garage_key
         self.l_name=garage_key+"_" + lid
@@ -21,16 +22,24 @@ class Light():
         strlog = "%s created (board pin %d)" % (self.l_name,board_pin_id)
         log.info(strlog)
         self.thread_light_flash = None
-
+        self.relayLOWEnableList=(self.config_handler.getConfigParam('GARAGE_COMMON', "GarageRelayLOWEnable")).split(',')
         pass
 
     def commandLight(self,cmd):
+        high=self.usbConnectHandler.HIGH
+        low=self.usbConnectHandler.LOW
+
+        #Handle those relays that are reversed
+        if (str(self.board_pin_id) in self.relayLOWEnableList):
+            high = self.usbConnectHandler.LOW
+            low = self.usbConnectHandler.HIGH
+
         if (self.usbConnectHandler != None):
             self.l_update_time = time.time()
             if (cmd == "ON"):
-                self.usbConnectHandler.digitalWrite(self.board_pin_id, self.usbConnectHandler.HIGH)
+                self.usbConnectHandler.digitalWrite(self.board_pin_id, high)
             else:
-                self.usbConnectHandler.digitalWrite(self.board_pin_id, self.usbConnectHandler.LOW)
+                self.usbConnectHandler.digitalWrite(self.board_pin_id, low)
 
             strlog = "%s %s Turn %s" % (self.light_gname, self.light_id,cmd)
             log.info(strlog)
@@ -77,12 +86,12 @@ class Light():
             strlog = "%s %s flashLight !" % (self.light_gname, self.light_id)
             log.info(strlog)
             crazyloop+=1
-            sleep(1.000)
+            sleep(2.000)
             if (self.status == "OFF"):
                 self.commandLight("ON")
             else:
                 self.commandLight("OFF")
-            sleep(1.000)
+            sleep(2.000)
             self.commandLight(self.status)
 
     def connectUSB(self,usbConnectHandler):
