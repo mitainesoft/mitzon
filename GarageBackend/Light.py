@@ -43,7 +43,7 @@ class Light():
             else:
                 self.usbConnectHandler.digitalWrite(self.board_pin_id, low)
 
-            strlog = "%s %s Turn %s" % (self.light_gname, self.light_id,cmd)
+            strlog = "%s %s Turn %s" % (self.l_name, self.light_id,cmd)
             log.debug(strlog)
         pass
 
@@ -57,35 +57,41 @@ class Light():
         self.commandLight(self.status)
 
     def startFlashLight(self):
-        strlog = "%s %s Start Flashing" % (self.light_gname, self.light_id)
+        strlog = "%s %s Start Flashing" % (self.l_name, self.light_id)
         log.debug(strlog)
         self.stop_thread = False
         # light_manager=Light()
         if (self.thread_light_flash == None):
             self.thread_light_flash = Thread(target=self.flashLight,name=self.l_name,daemon=False)
+            strlog = "%s %s Start Thread Flashing" % (self.l_name, self.light_id)
+            log.debug(strlog)
+        else:
+            strlog = "%s %s Already flashing!" % (self.l_name, self.light_id)
+            log.debug(strlog)
+            return
         try:
-            strlog = "%s %s Start Flashing thread start" % (self.light_gname, self.light_id)
-            log.info(strlog)
+            strlog = "%s %s Start Flashing thread start" % (self.l_name, self.light_id)
+            log.debug(strlog)
             self.thread_light_flash.start()
         except Exception:
-            strlog = "%s %s Start Flashing thread Eception.  Already started ?" % (self.light_gname, self.light_id)
-            log.info(strlog)
+            strlog = "%s %s Start Flashing thread Eception.  Already started ?" % (self.l_name, self.light_id)
+            log.debug(strlog)
 
     def stopFlashLight(self):
-        strlog = "%s %s Stop Flashing" % (self.light_gname, self.light_id)
-        log.info(strlog)
+        strlog = "%s %s Stop Flashing" % (self.l_name, self.light_id)
+        log.debug(strlog)
         self.stop_thread = True
         if (self.thread_light_flash == None):
             return
         try:
             self.stop_thread = True
-            self.thread_light_flash == None
             self.thread_light_flash.join()
+            self.thread_light_flash = None
             strlog = "%s %s Stop Flashing AFTER thread join" % (self.light_gname, self.light_id)
-            log.info(strlog)
+            log.debug(strlog)
         except Exception:
             self.thread_light_flash = None
-            strlog = "%s %s Stop Flashing Exception" % (self.light_gname, self.light_id)
+            strlog = "%s %s Stop Flashing Exception" % (self.l_name, self.light_id)
             traceback.print_exc()
 
     def monitor(self):
@@ -96,9 +102,9 @@ class Light():
     def flashLight(self):
         crazyloop=0;
         while (self.stop_thread == False
-               and crazyloop<90): #2 sec loop
+               and crazyloop<150): #2 sec loop
 
-            strlog = "%s %s flashing Light !" % (self.light_gname, self.light_id)
+            strlog = "%s %s flashing Light !" % (self.l_name, self.light_id)
             log.debug(strlog)
             crazyloop+=1
             if self.stop_thread == False: #Skip flash on thread stop
@@ -109,9 +115,12 @@ class Light():
                     self.commandLight("OFF")
                 sleep(1.000)
             self.commandLight(self.status)
+        self.stop_thread = True
+        # self.thread_light_flash = None
+
 
     def connectUSB(self,usbConnectHandler):
-        strlog = "%s %s Re-connect USB (board pin %d) !" % (self.light_gname, self.light_id, self.board_pin_id)
+        strlog = "%s %s Re-connect USB (board pin %d) !" % (self.l_name, self.light_id, self.board_pin_id)
         log.info(strlog)
         self.usbConnectHandler = usbConnectHandler
 

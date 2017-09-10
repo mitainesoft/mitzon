@@ -4,7 +4,7 @@
 ##############################################################
 
 [GARAGE_MANAGER]
-GARAGE_MANAGER_LOOP_TIMEOUT = 10
+GARAGE_MANAGER_LOOP_TIMEOUT = 14
 
 # SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
 SENSOR_DEFECT_ASSESSMENT_TIME = 15
@@ -14,11 +14,16 @@ GARAGE_NAME_FOR_TEST=GARAGE_0
 RESP_TIMEOUT = 10
 
 [GARAGE_COMMON]
-#nbr seconds before warning is sent #180
-GarageOpenTriggerAlarmElapsedTime = 58
+#nbr seconds before warning is sent #
+# Test = 40 default=180
+GarageOpenTriggerAlarmElapsedTime = 120
 
 #nbr seconds before door will attempt to close #600
-GarageOpenTriggerCloseDoorElapsedTime = 90
+# Test = 90  default=600
+GarageOpenTriggerCloseDoorElapsedTime = 180
+
+#LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=20
+LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=30
 
 #Nbr seconds to trigger an alarm when door is LOCK OPEN
 GarageLockOpenTriggerAlarmElapsedTime=3600

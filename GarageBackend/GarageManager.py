@@ -24,6 +24,7 @@ class GarageManager():
         self.alarm_mgr_handler = AlertManager()
         self.GarageOpenTriggerAlarmElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerAlarmElapsedTime"))
         self.GarageOpenTriggerCloseDoorElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerCloseDoorElapsedTime"))
+        self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose = float(self.config_handler.getConfigParam("GARAGE_COMMON","LightGarageOpenTriggerCloseDoorPreWarningBeforeClose"))
         self.cherryweb_server_last_run_time = time.time()
 
     def monitor(self):
@@ -79,13 +80,6 @@ class GarageManager():
                 tmpstr="checkGaragePolicy time=%f otime=%f NextCmdAllowedTime=%f remain=%d sec"  % (time.time(), gd.g_open_time,gd.g_next_cmd_allowed_time, gd.g_next_cmd_allowed_time-time.time())
                 log.info(tmpstr )
                 if (gd.g_open_time != None): #Is there an open time stamp ?
-
-                    if time.time() > (gd.g_open_time + (self.GarageOpenTriggerCloseDoorElapsedTime-30)):
-                        gd.startLightFlash('RED')
-                        gd.stopLightFlash('GREEN')
-                        gd.turnOffLight('GREEN')
-                        gd.turnOffLight('WHITE')
-
                     if time.time() > (gd.g_open_time + self.GarageOpenTriggerCloseDoorElapsedTime ):
                         # " GARAGE OPEN TIME EXPIRED ALERT"
                         #status_text = gd.g_name + " " + self.alarm_magr_handler.alertTable["G0001"]["text"]
@@ -96,6 +90,13 @@ class GarageManager():
                         #close door when timer expires!
                         if gd.g_next_cmd_allowed_time != None and time.time() > gd.g_next_cmd_allowed_time:
                             gd.triggerGarageDoor() # return True is No Manual Overide
+                    elif time.time() > (gd.g_open_time + (self.GarageOpenTriggerCloseDoorElapsedTime - self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose)):
+                        #LightGarageOpenTriggerCloseDoorPreWarningBeforeClose
+                        gd.startLightFlash('RED')
+                        gd.stopLightFlash('GREEN')
+                        gd.stopLightFlash('WHITE')
+                        gd.turnOffLight('GREEN')
+                        gd.turnOffLight('WHITE')
                     elif time.time() > (gd.g_open_time + self.GarageOpenTriggerAlarmElapsedTime ):
                         # status_text = gd.g_name + " GARAGE OPEN TIME WARNING ALERT"
                         # self.alarm_magr_handler.addAlert(CommmandQResponse(0, status_text))
@@ -103,9 +104,13 @@ class GarageManager():
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
                         status_text = self.alarm_mgr_handler.addAlert("GO002", gd.g_name)
                         log.error(status_text)
-                        gd.startLightFlash('WHITE')
+                        gd.startLightFlash('GREEN')
                     else:
-                        pass
+                        gd.turnOnLight('GREEN')
+                        gd.turnOnLight('WHITE')
+                        gd.stopLightFlash('RED')
+                        gd.turnOffLight('RED')
+
 
             if (gd.g_status == G_LOCKOPEN):
                 #Alert in this case every GarageLockOpenTriggerAlarmElapsedTime
@@ -114,7 +119,29 @@ class GarageManager():
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
                     status_text = self.alarm_mgr_handler.addAlert("GLO01", gd.g_name)
                     log.error(status_text)
+                    gd.startLightFlash('WHITE')
+                    gd.startLightFlash('RED')
+                    gd.startLightFlash('GREEN')
+                else:
+                    gd.stopLightFlash('WHITE')
+                    gd.stopLightFlash('RED')
+                    gd.stopLightFlash('GREEN')
+                    gd.turnOnLight('WHITE')
+                    gd.turnOnLight('GREEN')
+                    gd.turnOnLight('RED')
 
+
+            if (gd.g_status == G_CLOSED):
+                if (gd.g_close_time != None): #Is there an open time stamp ?
+                    if time.time() <= (gd.g_close_time + (2* float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
+
+                        log.info("%s Turn off all lights!" % gd.g_name)
+                        gd.turnOffLight('WHITE')
+                        gd.turnOffLight('GREEN')
+                        gd.turnOffLight('RED')
+                        gd.stopLightFlash('WHITE')
+                        gd.stopLightFlash('GREEN')
+                        gd.stopLightFlash('RED')
 
         except Exception:
             traceback.print_exc()
