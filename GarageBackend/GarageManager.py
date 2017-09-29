@@ -135,7 +135,7 @@ class GarageManager():
                 if (gd.g_close_time != None): #Is there an open time stamp ?
                     if time.time() <= (gd.g_close_time + (2* float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
 
-                        log.info("%s Turn off all lights!" % gd.g_name)
+                        log.debug("%s Turn off all lights!" % gd.g_name)
                         gd.turnOffLight('WHITE')
                         gd.turnOffLight('GREEN')
                         gd.turnOffLight('RED')

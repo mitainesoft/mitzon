@@ -1,4 +1,5 @@
 import logging
+import logging.handlers
 import sys, traceback
 import cherrypy
 # try:
@@ -176,10 +177,15 @@ if __name__ == '__main__':
         _csp_rules.append('{:s}-src {:s}'.format(c, _csp_default_source))
     _csp = '; '.join(_csp_rules)
 
+
+    ''' @TODO Hardcoded RotatingFileHandler '''
+    logrotate_handler=logging.handlers.RotatingFileHandler("log/garage.log",maxBytes=10000000,backupCount=25,encoding=None, delay=0)
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        handlers=[logging.FileHandler("log/garage.log"),
+                        handlers=[logrotate_handler,
                                   logging.StreamHandler()])
+
+    logrotate_handler.doRollover() #Roolover logs on startup
 
     server_config = {
             'server.socket_host': '0.0.0.0',
