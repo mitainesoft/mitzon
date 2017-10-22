@@ -31,6 +31,7 @@ class GarageDoor():
         self.g_status = G_UNKNOWN
         self.g_prevstatus = G_UNKNOWN
         self.g_sensor_props = {}
+        self.g_light_list = {}  #Dict of lights. key = color GREEN RED WHITE
         self.g_update_time=time.time()
         self.g_open_time = None
         self.g_close_time = None
@@ -58,6 +59,30 @@ class GarageDoor():
 
     def isGarageOpen(self,mything,myservice,myid):
         return self.g_status==G_OPEN
+
+    def startLightFlash(self,color):
+        key=self.g_name+"_"+color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].startFlashLight()
+
+    def stopLightFlash(self, color):
+        key = self.g_name + "_" + color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].stopFlashLight()
+
+    def turnOnLight(self, color):
+        key = self.g_name + "_" + color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].turnOnLight()
+
+    def turnOffLight(self, color):
+        key = self.g_name + "_" + color
+        if (key in self.g_light_list):
+            # log.info("Green startFlashLight started !!!")
+            self.g_light_list[key].turnOffLight()
 
 
     def updateSensor(self):
@@ -99,6 +124,9 @@ class GarageDoor():
                     self.g_status=self.g_sensor_props[sensor].status
                     if (S_ERROR in self.g_statusEventList):
                         self.g_statusEventList.remove(S_ERROR)
+                        self.stopLightFlash('RED')
+                        self.stopLightFlash('WHITE')
+                        self.stopLightFlash('GREEN')
                         for sensorkey in self.g_sensor_props:
                             sensordevname = self.g_name + "_" + sensorkey
                             self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname)
@@ -113,6 +141,9 @@ class GarageDoor():
                     if (S_ERROR not in self.g_statusEventList):
                         self.g_statusEventList.append(S_ERROR)
                         self.g_sensor_error_time=time.time()
+                        self.startLightFlash('RED')
+                        self.startLightFlash('GREEN')
+                        self.startLightFlash('WHITE')
                         #log.warning(logstr)
 
                     self.nbrfault=self.nbrfault+1
@@ -157,7 +188,10 @@ class GarageDoor():
                     sensordevname=self.g_name+"_"+sensorkey
                     self.alarm_mgr_handler.clearAlertDevice("SENSOR",sensordevname)
             elif self.g_status == G_ERROR:
+                tmpstrerr=self.g_name + ":" + self.g_status+" ERROR status"
+                log.info(tmpstrerr)
                 self.g_error_time = time.time()
+                # self.startLightFlash('RED')
         else:
             log.debug(self.g_name + "status no change !")
             if (self.g_status == G_CLOSED and self.g_error_time!=None \
@@ -183,7 +217,6 @@ class GarageDoor():
             if (self.g_status == G_CLOSED and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
                 self.alarm_mgr_handler.clearAlertID("GTC01",self.g_name)
 
-        # resp = CommmandQResponse(time.time()*1000000, sensor_status_text )
         return (sensor_status_text)
 
     def lock(self):
@@ -209,7 +242,6 @@ class GarageDoor():
         return (resp)
 
     def clear(self):
-        # self.alarm_mgr_handler.clearAllAlert()
         resp = CommmandQResponse(time.time()*1000000, "Garage alarm cleared" )
         return (resp)
 
@@ -218,6 +250,13 @@ class GarageDoor():
         self.initBoardPinModeInput(self.g_sensor_props[key].board_pin_id)
         log.debug(str(sensor_props))
         self.s_update_time = time.time()
+        pass
+
+    def addLight(self, key,lightobj):
+        self.g_light_list[key]=lightobj
+        self.initBoardPinModeOutput(self.g_light_list[key].board_pin_id)
+        self.turnOffLight(key)
+        log.debug(str(lightobj))
         pass
 
     def initBoardPinModeOutput(self, pin):
@@ -242,6 +281,7 @@ class GarageDoor():
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
                     self.triggerGarageDoor()
                     status_text = self.alarm_mgr_handler.addAlert("GTO01", self.g_name)
+                    # self.startLightFlash('GREEN')
                 else:
                     # status_text+="open denied. Too early to retry!"
                     status_text = self.alarm_mgr_handler.addAlert("GTO02", self.g_name)
@@ -270,6 +310,7 @@ class GarageDoor():
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
                     status_text = self.alarm_mgr_handler.addAlert("GTC01", self.g_name)
                     self.triggerGarageDoor()
+                    # self.startLightFlash('RED')
                 else:
                     # status_text += "close denied. Too early to retry!"
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)

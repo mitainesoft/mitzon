@@ -4,7 +4,7 @@
 ##############################################################
 
 [GARAGE_MANAGER]
-GARAGE_MANAGER_LOOP_TIMEOUT = 10
+GARAGE_MANAGER_LOOP_TIMEOUT = 14
 
 # SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
 SENSOR_DEFECT_ASSESSMENT_TIME = 15
@@ -14,11 +14,16 @@ GARAGE_NAME_FOR_TEST=GARAGE_0
 RESP_TIMEOUT = 10
 
 [GARAGE_COMMON]
-#nbr seconds before warning is sent
-GarageOpenTriggerAlarmElapsedTime = 180
+#nbr seconds before warning is sent #
+# Test = 40 default=180
+GarageOpenTriggerAlarmElapsedTime = 120
 
-#nbr seconds before door will attempt to close
-GarageOpenTriggerCloseDoorElapsedTime = 600
+#nbr seconds before door will attempt to close #600
+# Test = 90  default=600
+GarageOpenTriggerCloseDoorElapsedTime = 180
+
+#LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=20
+LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=30
 
 #Nbr seconds to trigger an alarm when door is LOCK OPEN
 GarageLockOpenTriggerAlarmElapsedTime=3600
@@ -32,24 +37,33 @@ TimeBeforeRetryCloseDoor = 20
 #Minimum Time between commands. Compare current time vs last cmd sent time
 GarageElapsedTimeForStatusChange=20
 
+#Relay Outputs List where LOW means Enable or Trigger relay
+GarageRelayLOWEnable=2,3,12,13
+
 [GARAGE_0]
 SuperviseThisGarage = True
 GarageBoardPin = 7
 GarageSensorsBoardPin = 8,9
+GarageGreenLightBoardPin=2
+GarageRedLightBoardPin=3
+GarageWhiteLightBoardPin=12
 
 [GARAGE_1]
 SuperviseThisGarage = True
 GarageBoardPin = 6
 GarageSensorsBoardPin = 10,11
+GarageGreenLightBoardPin=4
+GarageRedLightBoardPin=5
+GarageWhiteLightBoardPin=13
 
 [GARAGE_2]
 SuperviseThisGarage = False
-GarageBoardPin = 5
+GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [GARAGE_3]
 SuperviseThisGarage = False
-GarageBoardPin = 4
+GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [ALERT]

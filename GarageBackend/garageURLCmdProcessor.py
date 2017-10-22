@@ -1,4 +1,6 @@
 import logging
+import logging.handlers
+import logging.config
 import sys, traceback
 import cherrypy
 # try:
@@ -176,10 +178,15 @@ if __name__ == '__main__':
         _csp_rules.append('{:s}-src {:s}'.format(c, _csp_default_source))
     _csp = '; '.join(_csp_rules)
 
+
+    ''' @TODO Hardcoded RotatingFileHandler '''
+    logrotate_handler=logging.handlers.RotatingFileHandler("log/garage.log",maxBytes=10485760,backupCount=20,encoding=None, delay=0)
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        handlers=[logging.FileHandler("log/garage.log"),
+                        handlers=[logrotate_handler,
                                   logging.StreamHandler()])
+
+    logrotate_handler.doRollover() #Roolover logs on startup
 
     server_config = {
             'server.socket_host': '0.0.0.0',
@@ -219,8 +226,66 @@ if __name__ == '__main__':
         }
     }
     log = logging.getLogger('garageCmdProcessor')
+
+
+    LOG_CONF = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'void': {
+                'format': ''
+            },
+            'standard': {
+                'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+            },
+        },
+         'handlers': {
+           'cherrypy_console': {
+                'level': 'INFO',
+                'class': 'logging.StreamHandler',
+                'formatter': 'void',
+                'stream': 'ext://sys.stdout'
+            },
+            'cherrypy_access': {
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'void',
+                'filename': 'log/garage_cherrypy_access.log',
+                'maxBytes': 10485760,
+                'backupCount': 10,
+                'encoding': 'utf8'
+            },
+            'cherrypy_error': {
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'void',
+                'filename': 'log/garage_cherrypy_error.log',
+                'maxBytes': 10485760,
+                'backupCount': 10,
+                'encoding': 'utf8'
+            },
+        },
+        'loggers': {
+            'cherrypy.access': {
+                'handlers': ['cherrypy_access'],
+                'level': 'INFO',
+                'propagate': False
+            },
+            'cherrypy.error': {
+                'handlers': ['cherrypy_console', 'cherrypy_error'],
+                'level': 'INFO',
+                'propagate': False
+            },
+        }
+    }
+
+    logging.config.dictConfig(LOG_CONF)
+
+
+
     log.setLevel(logging.INFO)
     log.info("Starting garage...")
+
 
     '''Subscriber - Dispatcher '''
     command_queue = Queue()

@@ -2,6 +2,7 @@ import logging
 from GarageBackend.GarageDoor import GarageDoor
 from GarageBackend.ConfigManager import *
 from GarageBackend.Sensor import Sensor
+from GarageBackend.Light import Light
 from GarageBackend.CommandQResponse import *
 from GarageBackend.SingletonMeta import SingletonMeta
 from time import sleep
@@ -36,6 +37,7 @@ class DeviceManager(metaclass=SingletonMeta):
             objSensorProp = {}
             sensorPinArray = self.config_handler.getConfigParam(garageNameKey, "GarageSensorsBoardPin").split(",")
             sensorId = 0
+            # Define Sensor objets for garage
             for sensorPinKey in sensorPinArray:
                 sensor_pin_id = int(sensorPinKey)
                 objSensorProp_key = "sensor_%s" % sensorId
@@ -43,6 +45,26 @@ class DeviceManager(metaclass=SingletonMeta):
                 obj.addSensor(objSensorProp_key, objSensorProp[objSensorProp_key])
                 log.debug(str(objSensorProp[objSensorProp_key]))
                 sensorId += 1
+
+            # Define Lights
+            key_color=garageNameKey+'_GREEN'
+            greenlightpin=int(self.config_handler.getConfigParam(garageNameKey, "GarageGreenLightBoardPin"))
+            if (greenlightpin >=0):
+                obj.addLight(key_color ,Light('GREEN',greenlightpin,garageNameKey,self.usbConnectHandler))
+                log.info("%s light pin %d" %(key_color,greenlightpin) )
+            key_color = garageNameKey + '_RED'
+            redlightpin=int(self.config_handler.getConfigParam(garageNameKey, "GarageRedLightBoardPin"))
+            if (redlightpin >=0):
+                obj.addLight(key_color, Light('RED', redlightpin,garageNameKey,self.usbConnectHandler))
+                log.info("%s light pin %d" %(key_color,redlightpin) )
+            key_color = garageNameKey + '_WHITE'
+            whitelightpin = int(self.config_handler.getConfigParam(garageNameKey, "GarageWhiteLightBoardPin"))
+            if (whitelightpin >= 0):
+                obj.addLight(key_color, Light('WHITE', whitelightpin,garageNameKey,self.usbConnectHandler))
+                log.info("%s light pin %d" %(key_color,whitelightpin) )
+            obj.turnOffLight('WHITE')
+            obj.turnOffLight('GREEN')
+            obj.turnOffLight('RED')
             obj_key = "GarageDoor_%d" % garage_id
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1

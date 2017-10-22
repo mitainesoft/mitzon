@@ -1,6 +1,16 @@
 #!/bin/bash
 
-kill -9 `pgrep -f  /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py`
+MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+
+if [ -n "$MITAINE_GARAGE_PROC" ]
+then
+   echo "garageURLCmdProcessor already running...Stopping PID='$MITAINE_GARAGE_PROC'"
+   kill -9 `pgrep -f  /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py`
+
+else
+   echo "Starting garage..."
+fi
+
 
 MITAINEGARAGEHOME=/opt/mitainesoft/garage
 mkdir -p /opt/mitainesoft/garage/log
