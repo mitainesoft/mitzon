@@ -1131,11 +1131,11 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     su - [git user]
     cd /git/garage
     python3 setup.py sdist
+  
+    #Pull back code on PC dev env to update build info!
 
     
-
-    
-  #Package is under dist
+    #Package is under dist
 
 
 

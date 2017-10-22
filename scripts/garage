@@ -13,8 +13,6 @@ MITAINEGARAGEHOME=/opt/mitainesoft/garage
 MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 
 do_start () {
-	# Update motd
-	#uname -snrvm > /var/run/motd.dynamic
 	exec sudo -u mitainesoft /opt/mitainesoft/garage/watchdog_mitaine_garage.bash
 }
 
@@ -60,7 +58,7 @@ case "$1" in
 	exit $?
 	;;
   *)
-	echo "Usage: motd [start|stop|status]" >&2
+	echo "Usage: garage [start|stop|status]" >&2
 	exit 3
 	;;
 esac
