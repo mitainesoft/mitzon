@@ -8,14 +8,10 @@
 # SCRUM board: https://github.com/mitainesoft/garage/projects                     #
 ###################################################################################
 
- __        __         _      _         ____                                      _ 
- \ \      / /__  _ __| | __ (_)_ __   |  _ \ _ __ ___   __ _ _ __ ___  ___ ___  | |
-  \ \ /\ / / _ \| '__| |/ / | | '_ \  | |_) | '__/ _ \ / _` | '__/ _ \/ __/ __| | |
-   \ V  V / (_) | |  |   <  | | | | | |  __/| | | (_) | (_| | | |  __/\__ \__ \ |_|
-    \_/\_/ \___/|_|  |_|\_\ |_|_| |_| |_|   |_|  \___/ \__, |_|  \___||___/___/ (_)
-                                                       |___/                       
-
-                                                       
+# Work in Progress !
+# Work in Progress !
+# Work in Progress !
+# Work in Progress !                                                       
                                                                                                              
                                                        
 1. INSTALLATION INSTRUCTIONS
@@ -245,14 +241,11 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
  ** Setting up a Mitainesoft Garage (MG) Embedded Certificate Authority **
 
-    This appendix describes the procedure for implementing an embedded
+    This section describes the procedure for implementing an embedded
     Certificate Authority (CA) in the mitainesoft garage solution (MGS),
     then utilize this CA to generate a server key pair and certificate
     signing request (CSR), and finally have the Rasp+ embedded CA sign the
-    CSR. The signing of the CSR allows the server or component certificate
-    to be used in the MGS solution by the various MGS components
-    communicating on the OAM network using secure protocols such as
-    REST over HTTPS, HTTPS and FTPS.
+    CSR. 
 
     Perform a clean install of Debian (or install the latest Raspbian PIXEL
     image on the Raspberry Pi) and boot up the host. It’s ok to have network access for now.
@@ -382,9 +375,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         134c135
         < stateOrProvinceName_default   = Some-State
         ---
-        > stateOrProvinceName_default   = QUEBEC
+        > stateOrProvinceName_default   = Quebec
         136a138,139
-        > localityName_default            = ILE-BIZARD
+        > localityName_default            = Montreal
         >
         139c142,143
         < 0.organizationName_default    = Internet Widgits Pty Ltd
@@ -453,9 +446,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         134c136
         < stateOrProvinceName_default   = Some-State
         ---
-        > stateOrProvinceName_default   = QUEBEC
+        > stateOrProvinceName_default   = Quebec
         136a139
-        > localityName_default            = ILE-BIZARD
+        > localityName_default            = Montreal
         139c142
         < 0.organizationName_default    = Internet Widgits Pty Ltd
         ---
@@ -569,7 +562,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         If you enter '.', the field will be left blank.
         -----
         Country Name (2 letter code) [CA]:
-        State or Province Name [QUEBEC]:
+        State or Province Name [Quebec]:
         Locality Name [ILE-BIZ]:
         Organization Name [mitainesoft.net]:
         Organizational Unit Name [mitaine]:
@@ -586,7 +579,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
                     Not After : Jul 30 12:47:27 2020 GMT
                 Subject:
                     countryName               = CA
-                    stateOrProvinceName       = QUEBEC
+                    stateOrProvinceName       = Quebec
                     localityName              = ILE-BIZ
                     organizationName          = mitainesoft.net
                     organizationalUnitName    = mitaine
@@ -618,11 +611,11 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
             Version: 3 (0x2)
             Serial Number: 4096 (0x1000)
         Signature Algorithm: sha256WithRSAEncryption
-            Issuer: C=CA, ST=QUEBEC, L=ILE-BIZ, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
+            Issuer: C=CA, ST=Quebec, L=ILE-BIZ, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
             Validity
                 Not Before: Jul 31 12:47:27 2017 GMT
                 Not After : Jul 30 12:47:27 2020 GMT
-            Subject: C=CA, ST=QUEBEC, L=ILE-BIZ, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
+            Subject: C=CA, ST=Quebec, L=ILE-BIZ, O=mitainesoft.net, OU=mitaine, CN=nomiberry/emailAddress=mitainesoft@gmail.com
             Subject Public Key Info:
                 Public Key Algorithm: rsaEncryption
                     Public-Key: (4096 bit)
@@ -682,7 +675,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         If you enter '.', the field will be left blank.
         -----
         Country Name (2 letter code) [CA]:
-        State or Province Name [QUEBEC]:
+        State or Province Name [Quebec]:
         Locality Name [ILE-BIZ]:
         Organization Name [mitainesoft.net]:
         Organizational Unit Name [mitaine]:
@@ -721,7 +714,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
                     Not After : Aug 10 13:28:51 2018 GMT
                 Subject:
                     countryName               = CA
-                    stateOrProvinceName       = QUEBEC
+                    stateOrProvinceName       = Quebec
                     localityName              = ILE-BIZ
                     organizationName          = mitainesoft.net
                     organizationalUnitName    = mitaine
@@ -797,8 +790,8 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
     root@nomiberry:~/ca# cat index.txt
-        V       270729194601Z           928E8DAB06690548        unknown /C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
-        V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        V       270729194601Z           928E8DAB06690548        unknown /C=CA/ST=Quebec/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
+        V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
 
 
 
@@ -897,14 +890,14 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     *** Test for Verify return code: 0 (ok) ***
     openssl s_client -connect 192.168.1.83:443
         CONNECTED(00000003)
-        depth=1 C = CA, ST = QUEBEC, O = mitainesoft.net, OU = Mitaine, CN = MitainesoftCA, emailAddress = mitainesoft@gmail.com
+        depth=1 C = CA, ST = Quebec, O = mitainesoft.net, OU = Mitaine, CN = MitainesoftCA, emailAddress = mitainesoft@gmail.com
         verify return:1
-        depth=0 C = CA, ST = QUEBEC, L = ILE-BIZ, O = mitainesoft.net, OU = Mitaine, CN = 192.168.1.83, emailAddress = mitainesoft@gmail.com
+        depth=0 C = CA, ST = Quebec, L = ILE-BIZ, O = mitainesoft.net, OU = Mitaine, CN = 192.168.1.83, emailAddress = mitainesoft@gmail.com
         verify return:1
         ---
         Certificate chain
-         0 s:/C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
-           i:/C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
+         0 s:/C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+           i:/C=CA/ST=Quebec/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         ---
         Server certificate
         -----BEGIN CERTIFICATE-----
@@ -913,8 +906,8 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         ...
         8HjlRnurxh3rfAPUD/u/O5q6KGo=
         -----END CERTIFICATE-----
-        subject=/C=CA/ST=QUEBEC/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
-        issuer=/C=CA/ST=QUEBEC/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
+        subject=/C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        issuer=/C=CA/ST=Quebec/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         ---
         No client certificate CA names sent
         ---
