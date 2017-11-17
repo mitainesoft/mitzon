@@ -124,9 +124,9 @@ class GarageDoor():
                     self.g_status=self.g_sensor_props[sensor].status
                     if (S_ERROR in self.g_statusEventList):
                         self.g_statusEventList.remove(S_ERROR)
-                        self.stopLightFlash('RED')
-                        self.stopLightFlash('WHITE')
-                        self.stopLightFlash('GREEN')
+                        # self.stopLightFlash('RED')
+                        # self.stopLightFlash('WHITE')
+                        # self.stopLightFlash('GREEN')
                         for sensorkey in self.g_sensor_props:
                             sensordevname = self.g_name + "_" + sensorkey
                             self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname)
