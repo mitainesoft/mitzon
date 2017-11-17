@@ -24,7 +24,7 @@ from os import fdopen, remove
 import codecs
 
 fileListToSearchReplace_MITAINESOFT_GARAGE_REVISION = \
-    ['README.rst',
+    ['README.md',
      'GarageFrontend/index.html',
      'config/garage_backend.template']
 
@@ -32,7 +32,7 @@ current_dir = path.abspath(path.dirname(__file__))
 package_outfiles = current_dir + "/packages"
 
 # Get the long description from the README file
-with open(path.join(current_dir, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(current_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 nowstr = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -138,7 +138,7 @@ class sdistPyCommand(setuptools.command.sdist.sdist):
                 source_file_path=base_dir+'/'+fileToSearchReplace
                 keyw='[MITAINESOFT_GARAGE_REVISION]'
                 substring = base_dir.upper()
-                if (fileToSearchReplace == "README.rst"): #Exception for instructions, not upper() !
+                if (fileToSearchReplace == "README.md"): #Exception for instructions, not upper() !
                     substring = base_dir
                 print("File: "+fileToSearchReplace+"   search: "+keyw+"   replace with: "+substring)
                 self.replace(source_file_path,keyw,substring)

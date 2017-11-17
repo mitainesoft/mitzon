@@ -1115,19 +1115,32 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     - Need checkin permissions to mitainesoft, or comment subprocess.call (vcscmd_array[i]) in setup.py
     - python3 installed 
 
-    
+6.1 Merge & Push code with pyCharm
+
+    Fix are done in Master
+    #Fix build_info.txt
+    VCS->Git->Branches->Checkout v1_stable
+    VCS->Git->Pull
+    VCS->Git->Merge
+    VCS->Git->Push
+    VCS->Git->Branches->Checkout master
+
+
+6.2 Make build
     #open Linux terminal on garage raspberry pi 
     su - root
     iptables --list
     iptables --flush
-    #Push code from development PC!
+    #Merge code from development PC!
     su - [git user]
     cd /git/garage
+    git status
+    git checkout v1_stable
+    git pull
     python3 setup.py sdist
-  
-    #Pull back code on PC dev env to update build info!
 
-    
+
+
     #Package is under dist
 
 
