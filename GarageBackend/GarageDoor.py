@@ -117,7 +117,7 @@ class GarageDoor():
             logstr="%d Garage %d Sensor %s Status = %s" % (i, self.g_id, sensor, self.g_sensor_props[sensor].status)
 
             if i==0:
-                #keep track of 1st sensor, not necerraly in order to see all are the same
+                #keep track of 1st sensor, not necessarely in order to see all are the same
                 sensorkey0=sensor
             else:
                 if (self.g_sensor_props[sensor].status == self.g_sensor_props[sensorkey0].status):
@@ -141,9 +141,6 @@ class GarageDoor():
                     if (S_ERROR not in self.g_statusEventList):
                         self.g_statusEventList.append(S_ERROR)
                         self.g_sensor_error_time=time.time()
-                        self.startLightFlash('RED')
-                        self.startLightFlash('GREEN')
-                        self.startLightFlash('WHITE')
                         #log.warning(logstr)
 
                     self.nbrfault=self.nbrfault+1
@@ -161,6 +158,9 @@ class GarageDoor():
                         self.g_auto_force_ignore_garage_open_close_cmd = True
                         status_text = self.alarm_mgr_handler.addAlert("GCD01", self.g_name)
                         log.info(status_text)
+                        self.startLightFlash('RED')
+                        self.startLightFlash('GREEN')
+                        self.startLightFlash('WHITE')
 
         #Overide Garage but keep Sensor status upto date
         if self.g_manual_force_lock_garage_open_close_cmd == True:

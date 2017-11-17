@@ -105,7 +105,7 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
 
         resp_str += self.alert_manager_handler.status().getRspPropsToString()
 
-        if log.isEnabledFor(logging.INFO):
+        if log.isEnabledFor(logging.DEBUG):
             self.dev_manager_handler.listDevices()
         return resp_str
 
