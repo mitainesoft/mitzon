@@ -9,7 +9,7 @@
     },
     "GO002": {
       "deviceType": "Garage",
-      "severity": "2",
+      "severity": "1",
       "category": "GARAGE_OPEN",
       "text": "Open Warning",
       "workaround": "Close the garage door!"
@@ -116,7 +116,7 @@
     },
     "GO002": {
       "deviceType": "Garage",
-      "severity": "2",
+      "severity": "1",
       "category": "GARAGE_OPEN",
       "text": "Attention, porte ouverte!",
       "workaround": "Fermez la porte!"
@@ -223,7 +223,7 @@
     },
     "GO002": {
       "deviceType": "Garage",
-      "severity": "2",
+      "severity": "1",
       "category": "GARAGE_OPEN",
       "text": "Attention, porte ouverte mule!",
       "workaround": "Grouille toi de fermer le portail mule avant que les hordes de visigoths ne le passe! l'enchanteur la fermera sous peu!"

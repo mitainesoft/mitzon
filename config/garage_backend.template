@@ -4,10 +4,10 @@
 ##############################################################
 
 [GARAGE_MANAGER]
-GARAGE_MANAGER_LOOP_TIMEOUT = 14
+GARAGE_MANAGER_LOOP_TIMEOUT = 13
 
 # SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
-SENSOR_DEFECT_ASSESSMENT_TIME = 15
+SENSOR_DEFECT_ASSESSMENT_TIME = 45
 GARAGE_NAME_FOR_TEST=GARAGE_0
 
 [THREAD_CONTROL]
@@ -15,15 +15,15 @@ RESP_TIMEOUT = 10
 
 [GARAGE_COMMON]
 #nbr seconds before warning is sent #
-# Test = 40 default=180
-GarageOpenTriggerAlarmElapsedTime = 120
+# Test = 40 default=780
+GarageOpenTriggerAlarmElapsedTime = 780
 
-#nbr seconds before door will attempt to close #600
+#nbr seconds before door will attempt to close #900
 # Test = 90  default=600
-GarageOpenTriggerCloseDoorElapsedTime = 180
+GarageOpenTriggerCloseDoorElapsedTime = 900
 
 #LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=20
-LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=30
+LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=45
 
 #Nbr seconds to trigger an alarm when door is LOCK OPEN
 GarageLockOpenTriggerAlarmElapsedTime=3600
@@ -32,10 +32,10 @@ GarageLockOpenTriggerAlarmElapsedTime=3600
 GarageDoorAssumedClosedTime = 20
 
 TimeToKeepButtonPressedMilliSec = 1000
-TimeBeforeRetryCloseDoor = 20
+TimeBeforeRetryCloseDoor = 120
 
 #Minimum Time between commands. Compare current time vs last cmd sent time
-GarageElapsedTimeForStatusChange=20
+GarageElapsedTimeForStatusChange=10
 
 #Relay Outputs List where LOW means Enable or Trigger relay
 GarageRelayLOWEnable=2,3,12,13
@@ -118,6 +118,9 @@ NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15
 #NOTIFICATION_ALERT_SEVERITY_FILTER
 # Show alert of severy 1 & 2 with =1,2
 NOTIFICATION_ALERT_SEVERITY_FILTER=1,2
+
+
+# Not Used! -> NOTIFICATION_MANAGER_MAX_FAILURE
 #NOTIFICATION_MANAGER_MAX_FAILURE = 1
 
 ###########################################

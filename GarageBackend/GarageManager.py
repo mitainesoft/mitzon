@@ -77,7 +77,11 @@ class GarageManager():
     def checkGaragePolicy(self,gd: GarageDoor ):
         try:
             if gd.g_status == G_OPEN:  #Locked Status is LOCKOPEN !
-                tmpstr="checkGaragePolicy time=%f otime=%f NextCmdAllowedTime=%f remain=%d sec"  % (time.time(), gd.g_open_time,gd.g_next_cmd_allowed_time, gd.g_next_cmd_allowed_time-time.time())
+                #datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S")
+                tmpstr="checkGaragePolicy time=%s otime=%s NextCmdAllowedTime=%s remain=%d sec"  % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"),\
+                                                                                                    datetime.datetime.fromtimestamp(gd.g_open_time).strftime("%Y%m%d-%H%M%S"), \
+                                                                                                    datetime.datetime.fromtimestamp(gd.g_next_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
+                                                                                                    gd.g_next_cmd_allowed_time-time.time())
                 log.info(tmpstr )
                 if (gd.g_open_time != None): #Is there an open time stamp ?
                     if time.time() > (gd.g_open_time + self.GarageOpenTriggerCloseDoorElapsedTime ):
