@@ -32,7 +32,9 @@ GarageLockOpenTriggerAlarmElapsedTime=3600
 GarageDoorAssumedClosedTime = 20
 
 TimeToKeepButtonPressedMilliSec = 1000
-TimeBeforeRetryCloseDoor = 120
+
+# TODO TimeBeforeRetryCloseDoor for automatic close or manual open or close!  need t fix!
+TimeBeforeRetryCloseDoor = 60
 
 #Minimum Time between commands. Compare current time vs last cmd sent time
 GarageElapsedTimeForStatusChange=10

@@ -23,16 +23,16 @@
 
 
     ** Install Arduino Image **
-    First of all, you need to build the firmware and upload it on your Arduino, 
+    First of all, you need to build the firmware and upload it on your Arduino,
     to do that clone the nanpy-firmware repository on Github or download it from PyPi.
-    
+
     https://github.com/nanpy/nanpy
 
         git clone https://github.com/nanpy/nanpy-firmware.git
         cd nanpy-firmware
         ./configure.sh
 
-        load and upload nanpy.ino
+        load and upload nanpy.ino on Arduino
         
     ** Linux **
     # In linux Debian or in Oracle VirtualBox,
@@ -62,9 +62,17 @@
     #Note iptables should specify which device can login in later steps.
 
 
+    ** Update Raspbian **
+        su - root
+        apt-get update
+        apt-get upgrade
+        init 6
+
+
     ** install cherrypy for python3 **
       
         pip3 install cherrypy --upgrade
+        # Errors related to cheroot !
         pip3 install cheroot
 
     ** install nanpy for raspberry pi arduino
@@ -99,20 +107,20 @@
     cd /etc/sudoers.d
     cp 010_pi-nopasswd 010_mitainesoft-nopasswd
 
-    #remove pi from sudoers?!?
 
-    #Change line
-        pi ALL=(ALL) NOPASSWD: ALL
-    to
-        mitainesoft ALL=(ALL) NOPASSWD: ALL
+    ** remove pi from sudoers
+
+        #Change line
+                pi ALL=(ALL) NOPASSWD: ALL
+                to
+                mitainesoft ALL=(ALL) NOPASSWD: ALL
+
 
     ** Setup package dir **
 
-
-    su root
-    mkdir -p /opt/mitainesoft/
+    su - root
+    mkdir -p /opt/mitainesoft/security
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
-
     cd /opt/mitainesoft/
     
 2.  Install or Upgrade garage packages
@@ -152,7 +160,7 @@
     #Customize config for notif email addresses and accoounts !
 
     ** Change apache2 index.html default link **
-
+        #  Apache2 & Cherrypy web server will NOT start without valid certificate files
         su - root
         ls -l
         #IF not done already !
@@ -163,12 +171,16 @@
      ** Fix garage start boot script
         cd /etc/init.d
         cp /opt/mitainesoft/garage/scripts/garage /etc/init.d
-        chmod 755 /opt/mitainesoft/garage/scripts/garage
+        chmod 755 /etc/init.d/garage
         cd /etc/rc3.d
         ln -s ../init.d/garage S99garage
 
+        # Fix it
+        cd etc/init.d
+        perl -i -pe 's/\r\n$/\n/g' garage
+
         # Try it
-        /etc/init.d/garage
+        /etc/init.d/garage status
 
     ** Edit mitainesoft crontab **
         su - mitainesoft
@@ -190,6 +202,12 @@
         ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v grep
         cd /opt/mitainesoft/garage
         ./garage.bash
+
+        #IMPORTANT NOTE:
+        #  Cherrypy web server will NOT start without valid certificate files
+        #  See section 4 - Enable Security
+        #    'server.ssl_certificate': '/opt/mitainesoft/security/mitainesoftsvr.cert.pem',
+        #    'server.ssl_private_key': '/opt/mitainesoft/security/mitainesoftsvr.key.pem',
 
 
 3.  Test
@@ -267,6 +285,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 ** Time NTP Raspberry **
+
+    ### SKIP !
+
     Since time is very important for signing certificates we’ll want to avoid
     forgetting this. You can install this systemd file to have it prompt you for the
     current time before the Raspberry Pi finishes booting up, guaranteeing you won’t forget:
@@ -336,7 +357,8 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 ** Prepare SSL Files **
 
-    #sftp openssl.cnf.mgsCA & openssl.cnf.4ServerCerts from this package to /etc/ssl
+    # File Included :)
+    # sftp openssl.cnf.mgsCA & openssl.cnf.4ServerCerts from this package ../security_certificates to /etc/ssl
 
     root@nomiberry:/etc/ssl# diff  openssl.orig  openssl.cnf.4ServerCerts
         < dir           = ./demoCA              # Where everything is kept
@@ -514,9 +536,6 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 
-
-
-
  ** Generate root certificate and private key for embedded Certificate Authority (CA) **
 
     This section provides the procedure to create the private embedded MGS Certificate
@@ -528,9 +547,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     requiring certificates.
 
 
+    # File Included :)
+    # sftp CA_mitainesoft.pl from this package ../security_certificates to  /usr/lib/ssl/misc
 
-
-     rm  ./index.txt ; rm ./cacert.pem ; rm private/*  rm certs/*
 
      #Note: Common Name = mitainesoftCA
 
@@ -538,6 +557,10 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
      cd /etc/ssl
      mv openssl.cnf openssl.cnf.orig2  #Just in case!
      ln -s openssl.cnf.mgsCA openssl.cnf
+
+     # Before each attempt !
+     cd /root/ca
+     rm  ./index.txt ; rm ./*.pem ; rm private/*  ; rm certs/* ; rm ./newcerts/*.pem
 
      cd /usr/lib/ssl/misc
      ./CA_mitainesoft.pl -newca
@@ -654,7 +677,10 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     Common Name should be diffferent!  use *.mitainesoft.net
 
      cd /etc/ssl
-     rm openssl.cnf #Delete symbollic link created prior
+
+     #Delete symbolic link created prior
+     rm openssl.cnf
+
      ln -s  openssl.cnf.4ServerCerts openssl.cnf
 
      cd /usr/lib/ssl/misc
@@ -809,8 +835,6 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     To avoid these requests, execute the following step.
 
     cd /usr/lib/ssl/misc
-    ########cp  ca.key.pem  ca.key.pem.with_p
-
     cp mitainesoftsvr.key.pem mitainesoftsvr.key.pem.orig
     mv mitainesoftsvr.key.pem mitainesoftsvr.key.pem.with_p
 
@@ -821,12 +845,14 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     Expected Result:
       ca.key.pem now contains a pass-phrase.
      Verify as follows:
-    # openssl rsa -in  ca.key.pem.with_p -noout -text  (will require pass-phrase)
-    # openssl rsa -in  ca.key.pem -noout -text   (will NOT require pass-phrase)
+    # openssl rsa -in  mitainesoftsvr.key.pem.with_p -noout -text  (will require pass-phrase)
+    # openssl rsa -in  mitainesoftsvr.key.pem -noout -text   (will NOT require pass-phrase)
 
 
 ** Distribution of Certificates and Private Keys to mitainesoft run directory **
     cd /usr/lib/ssl/misc
+    # dir must exist ! /opt/mitainesoft/security
+    ls -la  /opt/mitainesoft/security
     cp  mitainesoftsvr.key.pem /opt/mitainesoft/security
     cp  mitainesoftsvr.cert.pem /opt/mitainesoft/security
     cat mitainesoftsvr.cert.pem mitainesoftsvr.key.pem > mitainesoftsvr.pem
@@ -865,8 +891,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
      /etc/ssl/certs/71486fe4.0", 0x7eb2ac28) = -1 ENOENT (No such file or directory)
 
-    cd ~/ca/certs
-
+  cd ~/ca/certs
   cat ca.cert.pem /etc/ssl/certs/ca-certificates.crt >caBundle.cert.pem
   openssl x509 -hash -noout -in  caBundle.cert.pem
 
@@ -959,6 +984,10 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 ** Install security certificates in Apache2
+
+    su - root
+    # Enable apache2 ssl module
+    a2enmod ssl
 
     cd /etc/apache2/sites-available
     vi 000-default.conf
@@ -1240,4 +1269,8 @@ a) Raspberry Temperature Overheat !
             self.email_server.login(self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER"), \
                                     self.getConfigParam("EMAIL_ACCOUNT_INFORMATION","PASSWORD"))
 
+
+  ** tcpdump **
+
+  # Installing: apt-get install tcpdump
 
