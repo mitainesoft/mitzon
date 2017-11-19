@@ -151,6 +151,7 @@ organizationalUnitName_default	= Mitaine
 
 commonName			= Common Name (e.g. server FQDN or YOUR name)
 commonName_max			= 64
+commonName_default              = MitainesoftCA
 
 
 emailAddress			= Email Address
