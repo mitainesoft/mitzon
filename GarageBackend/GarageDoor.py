@@ -164,6 +164,8 @@ class GarageDoor():
 
         #Overide Garage but keep Sensor status upto date
         if self.g_manual_force_lock_garage_open_close_cmd == True:
+            #Strip LOCK in case already there
+            self.g_status=self.g_status.replace(G_LOCK,"")
             self.g_status=G_LOCK+self.g_status
             logstr = "Garage %s Status = %s" % (self.g_id, self.g_status )
 
@@ -194,7 +196,7 @@ class GarageDoor():
                 # self.startLightFlash('RED')
         else:
             log.debug(self.g_name + "status no change !")
-            if (self.g_status == G_CLOSED and self.g_error_time!=None \
+            if (self.g_status.find(G_CLOSED)>=0 and self.g_error_time!=None \
                         and self.g_auto_force_ignore_garage_open_close_cmd==True \
                         and (time.time() > (self.g_error_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageDoorAssumedClosedTime") ) ) )
                              ):
@@ -214,7 +216,7 @@ class GarageDoor():
                 log.error("HW problem ? :"+status_text)
             if (self.g_status == G_OPEN and self.g_open_time!=None and time.time() > (self.g_open_time+15)):
                 self.alarm_mgr_handler.clearAlertID("GTO01",self.g_name)
-            if (self.g_status == G_CLOSED and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
+            if (self.g_status.find(G_CLOSED)>=0 and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
                 self.alarm_mgr_handler.clearAlertID("GTC01",self.g_name)
 
         return (sensor_status_text)

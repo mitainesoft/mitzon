@@ -135,7 +135,7 @@ class GarageManager():
                     gd.turnOnLight('RED')
 
 
-            if (gd.g_status == G_CLOSED):
+            if (gd.g_status.find(G_CLOSED)>=0):
                 if (gd.g_close_time != None): #Is there an open time stamp ?
                     if time.time() <= (gd.g_close_time + (2* float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
 

@@ -1244,6 +1244,10 @@ a) Raspberry Temperature Overheat !
     
 9. Stuff
 
+    *** kill proc one shot! ***
+    kill -9 `pgrep -f garageURLCmdProcessor`
+
+
     ** Remove ^M Windows transfer dos2unix raspbian **
     perl -i -pe 's/\r\n$/\n/g' MYFILENAME
 
@@ -1273,4 +1277,8 @@ a) Raspberry Temperature Overheat !
   ** tcpdump **
 
   # Installing: apt-get install tcpdump
+
+  tcpdump -i any -s 65535 port 8050 -w /tmp/000.pcap
+  # open fast with winscp
+
 
