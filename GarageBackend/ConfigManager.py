@@ -49,8 +49,7 @@ class ConfigManager(metaclass=SingletonMeta):
                         log.debug("config file, not garage: " + keySections + "...Skipping" )
                 for key in self.config[keySections]:
                     log.info(keySections + "/" + key + " = " + self.config[keySections][key])
-
-            pass
+            self.validateParamsUsed()
         except KeyError:
             log.info("Something went wrong while reading the config, Suspect is wrong file name or param")
             traceback.print_exc()
@@ -69,3 +68,70 @@ class ConfigManager(metaclass=SingletonMeta):
             traceback.print_exc()
             os._exit(-1)
         return val
+
+    def validateParamsUsed(self):
+        section=""
+        param=""
+        configParamsUsedinCodeArray = [
+            ['GARAGE_MANAGER', 'garage_manager_loop_timeout'],
+            ['GARAGE_MANAGER', 'sensor_defect_assessment_time'],
+            ['GARAGE_MANAGER', 'garage_name_for_test'],
+            ['THREAD_CONTROL', 'resp_timeout'],
+            ['GARAGE_COMMON', 'garageopentriggeralarmelapsedtime'],
+            ['GARAGE_COMMON', 'garageopentriggerclosedoorelapsedtime'],
+            ['GARAGE_COMMON', 'lightgarageopentriggerclosedoorprewarningbeforeclose'],
+            ['GARAGE_COMMON', 'garagelockopentriggeralarmelapsedtime'],
+            ['GARAGE_COMMON', 'garagedoorassumedclosedtime'],
+            ['GARAGE_COMMON', 'timetokeepbuttonpressedmillisec'],
+            ['GARAGE_COMMON', 'timebeforeautoretryclosedoor'],
+            ['GARAGE_COMMON', 'timebetweenbuttonmanualpressed'],
+            ['GARAGE_COMMON', 'garageelapsedtimeforstatuschange'],
+            ['GARAGE_COMMON', 'garagerelaylowenable'],
+            ['GARAGE_0', 'supervisethisgarage'],
+            ['GARAGE_0', 'garageboardpin'],
+            ['GARAGE_0', 'garagesensorsboardpin'],
+            ['GARAGE_0', 'garagegreenlightboardpin'],
+            ['GARAGE_0', 'garageredlightboardpin'],
+            ['GARAGE_0', 'garagewhitelightboardpin'],
+            ['GARAGE_1', 'supervisethisgarage'],
+            ['GARAGE_1', 'garageboardpin'],
+            ['GARAGE_1', 'garagesensorsboardpin'],
+            ['GARAGE_1', 'garagegreenlightboardpin'],
+            ['GARAGE_1', 'garageredlightboardpin'],
+            ['GARAGE_1', 'garagewhitelightboardpin'],
+            ['GARAGE_2', 'supervisethisgarage'],
+            ['GARAGE_2', 'garageboardpin'],
+            ['GARAGE_2', 'garagesensorsboardpin'],
+            ['GARAGE_3', 'supervisethisgarage'],
+            ['GARAGE_3', 'garageboardpin'],
+            ['GARAGE_3', 'garagesensorsboardpin'],
+            ['ALERT', 'timebetweenalerts'],
+            ['NOTIFICATION_COMMON', 'notificationenabled'],
+            ['NOTIFICATION_COMMON', 'default_language'],
+            ['EMAIL_ACCOUNT_INFORMATION', 'smtp_server'],
+            ['EMAIL_ACCOUNT_INFORMATION', 'user'],
+            ['EMAIL_ACCOUNT_INFORMATION', 'email_sender_name'],
+            ['EMAIL_ACCOUNT_INFORMATION', 'password'],
+            ['EMAIL_ACCOUNT_INFORMATION', 'recipientlist'],
+            ['NOTIFICATION_MANAGER', 'notification_manager_loop_timeout'],
+            ['NOTIFICATION_MANAGER', 'notification_alert_severity_filter'],
+            ['USERS', 'garage_admin'],
+            ['USERS', 'garage_users'],
+            ['INTERNAL', 'config_file_rev'],
+            ['INTERNAL', 'alert_definition_file']
+        ]
+
+        try:
+            for cfg in configParamsUsedinCodeArray:
+                  section=cfg[0]
+                  param=cfg[1]
+                  logstr="Check %s %s" % (section,param)
+                  self.getConfigParam(section,param)
+                  log.debug(logstr)
+        except Exception:
+            traceback.print_exc()
+            logstr = "Error %s %s NOT defined !" % (section, param)
+            log.error(logstr)
+            os._exit(-1)
+
+

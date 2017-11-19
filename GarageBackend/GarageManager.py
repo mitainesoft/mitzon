@@ -32,8 +32,6 @@ class GarageManager():
         self.deviceList=self.dev_manager_handler.deviceList
         i=0
 
-
-
         while (True):
             if cherrypy.engine.state == cherrypy.engine.states.STARTED:
                 log.debug("Cherrypy Web Server Thread Running")
@@ -76,12 +74,14 @@ class GarageManager():
 
     def checkGaragePolicy(self,gd: GarageDoor ):
         try:
-            if gd.g_status == G_OPEN:  #Locked Status is LOCKOPEN !
+            if gd.g_status == G_OPEN:  #Locked Status is LOCKOPEN ! Don't allow auto close on lock open.
                 #datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S")
-                tmpstr="checkGaragePolicy time=%s otime=%s NextCmdAllowedTime=%s remain=%d sec"  % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"),\
+                tmpstr="checkGaragePolicy %s time=%s otime=%s Allowed Next_Manual_Cmd=%s Next_Auto_Cmd=%s --> Remain=%d sec"  % (gd.g_name, \
+                                                                                                    datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"),\
                                                                                                     datetime.datetime.fromtimestamp(gd.g_open_time).strftime("%Y%m%d-%H%M%S"), \
-                                                                                                    datetime.datetime.fromtimestamp(gd.g_next_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
-                                                                                                    gd.g_next_cmd_allowed_time-time.time())
+                                                                                                    datetime.datetime.fromtimestamp(gd.g_next_manual_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
+                                                                                                    datetime.datetime.fromtimestamp(gd.g_next_auto_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
+                                                                                                    gd.g_next_auto_cmd_allowed_time-time.time())
                 log.info(tmpstr )
                 if (gd.g_open_time != None): #Is there an open time stamp ?
                     if time.time() > (gd.g_open_time + self.GarageOpenTriggerCloseDoorElapsedTime ):
@@ -92,8 +92,18 @@ class GarageManager():
                         status_text = self.alarm_mgr_handler.addAlert("GO001", gd.g_name)
                         log.error(status_text)
                         #close door when timer expires!
-                        if gd.g_next_cmd_allowed_time != None and time.time() > gd.g_next_cmd_allowed_time:
-                            gd.triggerGarageDoor() # return True is No Manual Overide
+                        if gd.g_next_auto_cmd_allowed_time != None and time.time() > gd.g_next_auto_cmd_allowed_time:
+                            gd.g_next_auto_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeAutoRetryCloseDoor"))
+                            tmpstr = "checkGaragePolicy triggerGarageDoor %s Next Auto Cmd Allowed Time=%s --> Remain=%d sec" % (gd.g_name, \
+                                                                                                               datetime.datetime.fromtimestamp(gd.g_next_auto_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
+                                                                                                               gd.g_next_auto_cmd_allowed_time - time.time())
+                            log.info(tmpstr)
+                            if (gd.g_auto_force_ignore_garage_open_close_cmd == False and gd.g_manual_force_lock_garage_open_close_cmd==False):
+                                gd.triggerGarageDoor() # return True is No Manual Overide
+                            else:
+                                tmpstr = "checkGaragePolicy %s Automatic triggerGarageDoor not allowed" % (gd.g_name)
+                                log.info(tmpstr)
+
                     elif time.time() > (gd.g_open_time + (self.GarageOpenTriggerCloseDoorElapsedTime - self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose)):
                         #LightGarageOpenTriggerCloseDoorPreWarningBeforeClose
                         gd.startLightFlash('RED')

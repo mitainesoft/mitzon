@@ -4,7 +4,7 @@
 ##############################################################
 
 [GARAGE_MANAGER]
-GARAGE_MANAGER_LOOP_TIMEOUT = 13
+GARAGE_MANAGER_LOOP_TIMEOUT = 5
 
 # SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
 SENSOR_DEFECT_ASSESSMENT_TIME = 45
@@ -31,10 +31,15 @@ GarageLockOpenTriggerAlarmElapsedTime=3600
 # Time it  takes to consider door closed. Used in context of alarm reset
 GarageDoorAssumedClosedTime = 20
 
+# Garage Automatic close. How long to simulate pressing button.
 TimeToKeepButtonPressedMilliSec = 1000
 
-# TODO TimeBeforeRetryCloseDoor for automatic close or manual open or close!  need t fix!
-TimeBeforeRetryCloseDoor = 60
+
+# Time Before Auto Retry Close Door for automatic close or manual open or close!  need t fix!
+TimeBeforeAutoRetryCloseDoor = 120
+
+#Time Between Button Manual Pressed
+TimeBetweenButtonManualPressed=10
 
 #Minimum Time between commands. Compare current time vs last cmd sent time
 GarageElapsedTimeForStatusChange=10
