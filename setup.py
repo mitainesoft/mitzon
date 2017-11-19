@@ -74,7 +74,7 @@ print("Garage next version = %s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], b
 with open(buildfilename, 'w') as buildinfofile:
     buildinfo.write(buildinfofile)
 
-version_str = "v%s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch'])
+version_str = "%s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch'])
 package_name = "mitainesoft_garage_" + version_str
 
 print("GIT Pull, Commit & Push $buildfile... \n")
