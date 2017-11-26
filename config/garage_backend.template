@@ -7,7 +7,7 @@
 GARAGE_MANAGER_LOOP_TIMEOUT = 5
 
 # SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
-SENSOR_DEFECT_ASSESSMENT_TIME = 45
+SENSOR_DEFECT_ASSESSMENT_TIME = 60
 GARAGE_NAME_FOR_TEST=GARAGE_0
 
 [THREAD_CONTROL]
@@ -39,7 +39,7 @@ TimeToKeepButtonPressedMilliSec = 1000
 TimeBeforeAutoRetryCloseDoor = 120
 
 #Time Between Button Manual Pressed
-TimeBetweenButtonManualPressed=10
+TimeBetweenButtonManualPressed=2
 
 #Minimum Time between commands. Compare current time vs last cmd sent time
 GarageElapsedTimeForStatusChange=10

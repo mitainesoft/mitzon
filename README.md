@@ -1282,3 +1282,10 @@ a) Raspberry Temperature Overheat !
   # open fast with winscp
 
 
+  ** .bashrc **
+    Add to .bashrc:
+    alias llog='less /opt/mitainesoft/garage/log/garage.log'
+    alias log='cd /opt/mitainesoft/garage/log'
+    alias cfg='cd  /opt/mitainesoft/garage/config'
+    alias mit='cd  /opt/mitainesoft/garage/'
+
