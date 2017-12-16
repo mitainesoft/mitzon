@@ -174,6 +174,7 @@ class GarageDoor():
 
         if (self.g_prevstatus != self.g_status):
             self.g_update_time = time.time()
+            self.printStatus()
             sensor_status_text=self.g_name + ":" +self.g_status
             log_status_text=self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status
             log.info(log_status_text)
@@ -369,6 +370,43 @@ class GarageDoor():
             os._exit(-1)
 
         return True
+
+
+
+    def printStatus(self):
+        logstr = "%s:%s " % (self.g_name, self.g_status)
+        sensor_status_str = ""
+
+        for sensor in self.g_sensor_props:
+            sensor_status_str = sensor_status_str + sensor + "=" + self.g_sensor_props[sensor].status + " "
+        if self.g_update_time != None:
+            printut = datetime.datetime.fromtimestamp(self.g_update_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printut = "None"
+        if self.g_open_time != None:
+            printot = datetime.datetime.fromtimestamp(self.g_open_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printot = "None"
+        if self.g_close_time != None:
+            printct = datetime.datetime.fromtimestamp(self.g_close_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printct = "None"
+        if self.g_error_time != None:
+            printerrt = datetime.datetime.fromtimestamp(self.g_error_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printerrt = "None"
+        if self.g_last_alert_send_time != None:
+            printlast = datetime.datetime.fromtimestamp(self.g_last_alert_send_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printlast = "None"
+        try:
+            logstr = logstr + sensor_status_str + " utime=" + printut + " otime=" + printot + " ctime=" + printct + " errtime=" + printerrt + " LastAlertTime=" + printlast
+            log.info(logstr)
+        except Exception:
+            log.error("Time Stamp print error ?!?  print to stdout ")
+            print(logstr)
+
+
 
     def test(self):
         self.initBoardPinModeOutput(self.g_board_pin_relay)
