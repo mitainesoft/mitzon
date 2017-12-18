@@ -65,12 +65,12 @@ class NotificationManager(metaclass=SingletonMeta):
 
                     if (self.notif_enabled.upper() == "TRUE"):
                         logtxt = " Notif from %s to %s msg:<<<%s>>>" % (sender, recipients, msg)
-                        log.info(logtxt)
+                        log.debug(logtxt)
                         self.send_email(sender, recipients, msg)
                     else:
                         log.error("Notification disabled by config NOTIFICATION_MANAGER-->NotificationEnabled=False !")
                 except Empty:
-                    log.debug("notifQueue empty!?!?")
+                    log.debug("notifQueue empty")
                     pass
 
             sleep(float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
@@ -81,19 +81,21 @@ class NotificationManager(metaclass=SingletonMeta):
         try:
             COMMASPACE = ', '
             mmrecipients = recipients.split(',')
-            log.info("Connecting to SMTP %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            log.debug("Connecting to SMTP %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
             # TODO make 465 configurable
             self.email_server = smtplib.SMTP_SSL(self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"), 465)
             self.email_server.ehlo()
 
-            log.info("Login with %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"))
+            log.debug("Login with %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"))
 
             self.email_server.login(self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER"), \
                                     self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "PASSWORD"))
 
             user_name = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "EMAIL_SENDER_NAME")
 
-            log.info("Send email: <<%s>>" % msg)
+            #print a one line in logs
+            tmptxt=msg.replace("\n", " ** ")
+            log.info("Send email: <<%s>>" % tmptxt)
             # subject = "Alerte Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
 
             # mmmsg = MIMEMultipart()
@@ -105,7 +107,7 @@ class NotificationManager(metaclass=SingletonMeta):
             smtpmsg = mmmsg.as_string()
             self.email_server.send_message(mmmsg)
 
-            log.info("Close %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
+            log.debug("Close %s" % self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "SMTP_SERVER"))
             self.email_server.close()
         except Exception:
 
@@ -144,11 +146,6 @@ class NotificationManager(metaclass=SingletonMeta):
             log.debug("AddNotif email:%s lang:%s recipientsHash:%s" % (email_addr, lang, recipientsHash[lang]))
 
         lang_bookmarks = self.alertFileListJSON.keys()
-        # lb_str=""
-        # for lb in lang_bookmarks:
-        #     lb_str+=lb+";"
-        # lb_str=lb_str[:-1]
-        # log.info("Languages defined: " + lb_str)
 
         for keylang in recipientsHash:
             alertlisttxt = "Liste Alerte:\n"
@@ -164,14 +161,14 @@ class NotificationManager(metaclass=SingletonMeta):
 
                     if alsev in self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_ALERT_SEVERITY_FILTER"):
                         alertfiltertrigger = True
-                        log.info("Accept notif by filter %s" % (id))
+                        log.debug("Accept notif by filter %s" % (id))
                     else:
-                        log.info("Skip notif low severity %s" % (id))
+                        log.debug("Skip notif low severity %s" % (id))
                         keyalert = keyiter.__next__()
 
                     nbrnotif_recipient += 1
                     tmptxt = "%d>Alert notif Key=%s %d" % (nbrnotif_recipient, keyalert, keyiter.__sizeof__())
-                    log.info(tmptxt)
+                    log.debug(tmptxt)
                     nbrnotif += 1
                     altime = "%s" % datetime.datetime.fromtimestamp(int(alert_current_list[keyalert].time)).strftime(
                         "%Y%m%d-%H%M%S")
@@ -197,10 +194,11 @@ class NotificationManager(metaclass=SingletonMeta):
                 os._exit(-1)
 
             if (alertfiltertrigger):
-                notif_text = "Msg from: " + sender + "\n\n" + alertlisttxt
+                #notif_text = "Msg from: " + sender + "\n\n" + alertlisttxt
+                notif_text = "Attention!\n\n" + alertlisttxt
                 self.notifQueue.put(self.Notif(sender, recipients, notif_text, time.time()))
-                log.info("Notif added to queue for " + recipients + " <<<" + notif_text + ">>>")
+                log.debug("Notif added to queue for " + recipients + " <<<" + notif_text + ">>>")
             else:
-                log.info("Skip notif message, no high sev !")
-        log.info("Send %d email notifications..." % nbrnotif)
+                log.debug("Skip notif message, no high sev !")
+        log.debug("Send %d email notifications..." % nbrnotif)
         return

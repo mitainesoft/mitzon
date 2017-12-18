@@ -65,29 +65,30 @@ class AlertManager(metaclass=SingletonMeta):
         #Send Alert?!?
         if (alert_triggered == True):
             if self.isAlertToBeSent() == True:
-                log.info("Sending '%d' Alerts Notification thread" % len(self.alertCurrentList))
+                log.debug("Sending '%d' Alerts Notification thread" % len(self.alertCurrentList))
                 self.notif_handler.addNotif(self.alertCurrentList)
 
         return (alert_triggered)
 
     def isAlertToBeSent(self):
         sendalert=False
+        forcesendAlert = True  #for debug purposes !!!
         lastalerttime = "%s" % datetime.datetime.fromtimestamp(int(self.last_alert_sent_time)).strftime("%Y%m%d-%H%M%S")
         tmpmsg= "Last Alert sent at %s" % lastalerttime
         try:
             #Last check if any alarms left due to some racing condition
             keyiter = iter(self.alertCurrentList)
             keyalert = keyiter.__next__()
-            if (time.time() > (self.last_alert_sent_time + self.seconds_between_alerts)):
+            if (forcesendAlert==True or (time.time() > (self.last_alert_sent_time + self.seconds_between_alerts))):
                 prev_alert_time = self.last_alert_sent_time
                 self.last_alert_sent_time = time.time()
                 nbrmin= int((self.last_alert_sent_time-prev_alert_time))/60
                 tmpmsg = tmpmsg + (" last alert sent %d minutes ago" % nbrmin)
-                log.info("Alert send authorized. " + tmpmsg)
+                log.debug("Alert send authorized. " + tmpmsg)
                 sendalert = True
             else:
                 tmpmsg = tmpmsg + (" (Time between alerts:%dsec)" % self.seconds_between_alerts )
-                log.info("Alert Send denied! "+tmpmsg)
+                log.debug("Alert Send denied! "+tmpmsg)
         except StopIteration:
             log.info("No alert left due to racing condition. Alert send denied! " +tmpmsg )
         except Exception:
@@ -165,7 +166,7 @@ class AlertManager(metaclass=SingletonMeta):
                     self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                     self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
                     self.alertCurrentList[keyalert].text, altime)
-                    log.info("Clear alert " + cat + " for " + dev + "-->" + txt)
+                    log.debug("Clear alert " + cat + " for " + dev + "-->" + txt)
                     del self.alertCurrentList[keyalert]
                 keyalert = keyiter.__next__()
             if (crazyloop>=clmax):
@@ -195,7 +196,7 @@ class AlertManager(metaclass=SingletonMeta):
                         self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                         self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category, \
                         self.alertCurrentList[keyalert].text, altime)
-                    log.info("Clear alert ID " + id_to_clear + " for " + dev + "-->" + txt)
+                    log.debug("Clear alert ID " + id_to_clear + " for " + dev + "-->" + txt)
                     del self.alertCurrentList[keyalert]
                 keyalert = keyiter.__next__()
             if (crazyloop >= clmax):
@@ -227,7 +228,7 @@ class AlertManager(metaclass=SingletonMeta):
                         self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                         self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category, \
                         self.alertCurrentList[keyalert].text, altime, nstime)
-                    log.info("Clear alert Notif Sent for " + dev + "-->" + txt)
+                    log.debug("Clear alert Notif Sent for " + dev + "-->" + txt)
                     del self.alertCurrentList[keyalert]
                 keyalert = keyiter.__next__()
             if (crazyloop >= clmax):

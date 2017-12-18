@@ -2,24 +2,10 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="On explicit save action" serverName="testBerry" traceLevel="ERRORS" autoUploadExternalChanges="true">
     <serverData>
-      <paths name="garageBerry">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="garageVM1">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="testBerry">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/garage" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

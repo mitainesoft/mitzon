@@ -16,7 +16,7 @@ RESP_TIMEOUT = 10
 [GARAGE_COMMON]
 #nbr seconds before warning is sent #
 # Test = 40 default=780
-GarageOpenTriggerAlarmElapsedTime = 780
+GarageOpenTriggerWarningElapsedTime = 780
 
 #nbr seconds before door will attempt to close #900
 # Test = 90  default=600
@@ -26,7 +26,7 @@ GarageOpenTriggerCloseDoorElapsedTime = 900
 LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=45
 
 #Nbr seconds to trigger an alarm when door is LOCK OPEN
-GarageLockOpenTriggerAlarmElapsedTime=3600
+GarageLockOpenTriggerAlarmElapsedTime=7200
 
 # Time it  takes to consider door closed. Used in context of alarm reset
 GarageDoorAssumedClosedTime = 20
