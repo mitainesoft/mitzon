@@ -28,6 +28,8 @@ class GarageManager():
         self.cherryweb_server_last_run_time = time.time()
         self.gm_add_alert_time_by_type = {}  #Key is Alert type, data is time()
         self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
+        self.g_add_alert_time_by_type = {}  #Key is Alert type, data is time()
+
 
 
     def monitor(self):
@@ -178,11 +180,12 @@ class GarageManager():
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
                     status_text = gd.addAlert("GLO01", gd.g_name)
-                    gd.g_last_alert_time = time.time()
-                    log.debug(status_text)
                     gd.startLightFlash('WHITE')
                     gd.startLightFlash('RED')
                     gd.startLightFlash('GREEN')
+                    gd.g_last_alert_time = time.time()
+                    log.debug(status_text)
+                    gd.g_lock_time = time.time()
                 else:
                     gd.stopLightFlash('WHITE')
                     gd.stopLightFlash('RED')
@@ -222,3 +225,24 @@ class GarageManager():
             sleep(5)
             os._exit(-1)
 
+    def addAlert(self, id, device,extratxt=""):
+        self.g_last_alert_time = time.time()
+        status_text="request for Alert %s %s %s" %(id, device,extratxt)
+
+        if (id in self.g_add_alert_time_by_type):
+            lastalerttime = self.g_add_alert_time_by_type[id]
+            if ( time.time() >(lastalerttime+self.seconds_between_alerts)):
+                try:
+                    del self.g_add_alert_time_by_type[id]
+                except KeyError:
+                    pass
+
+                log.info("%s can now be sent again for %s!" %(id,device))
+            else:
+                log.debug("Skip %s" % status_text)
+        else:
+            self.g_add_alert_time_by_type[id]=time.time()
+            status_text = self.alarm_mgr_handler.addAlert(id, device, extratxt)
+            log.warning(status_text)
+
+        return status_text

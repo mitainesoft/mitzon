@@ -49,14 +49,14 @@
       "text": "open denied. Too early to retry!",
       "workaround": "Calm down! Wait before trying again!"
     },
-    "GTO003": {
+    "GTO03": {
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
       "text": "open denied.",
       "workaround": "Calm down! Stop trying !"
     },
-    "GTO004": {
+    "GTO04": {
       "deviceType": "Garage",
       "severity": "3",
       "category": "GARAGE_COMMAND",
@@ -156,14 +156,14 @@
       "text": "Ouverture refusée. Déclenchement trop récent!",
       "workaround": "Attendre un peu avant de re-ouvrir!"
     },
-    "GTO003": {
+    "GTO03": {
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
       "text": "Ouverture refusée.",
       "workaround": "Arrêtez d'essayer, allez voir se qui se passe !"
     },
-    "GTO004": {
+    "GTO04": {
       "deviceType": "Garage",
       "severity": "3",
       "category": "GARAGE_COMMAND",
@@ -263,14 +263,14 @@
       "text": "Ouverture refusée mule. Déclenchement trop récent!",
       "workaround": "Calme toi tête de veau! Attendre un peu avant de re-ouvrir!"
     },
-    "GTO003": {
+    "GTO03": {
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
       "text": "Ouverture refusée.",
       "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
     },
-    "GTO004": {
+    "GTO04": {
       "deviceType": "Garage",
       "severity": "3",
       "category": "GARAGE_COMMAND",

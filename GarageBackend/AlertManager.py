@@ -68,27 +68,35 @@ class AlertManager(metaclass=SingletonMeta):
                 log.debug("Sending '%d' Alerts Notification thread" % len(self.alertCurrentList))
                 self.notif_handler.addNotif(self.alertCurrentList)
 
+        self.autoClearAlertByList()
         return (alert_triggered)
 
     def isAlertToBeSent(self):
         sendalert=False
-        forcesendAlert = True  #for debug purposes !!!
+        tmpmsg=""
+        forcesendAlert = False  #for debug purposes !!!
         lastalerttime = "%s" % datetime.datetime.fromtimestamp(int(self.last_alert_sent_time)).strftime("%Y%m%d-%H%M%S")
-        tmpmsg= "Last Alert sent at %s" % lastalerttime
+        if self.last_alert_sent_time>0:
+            tmpmsg= "Last Alert sent at %s" % lastalerttime
+        tmp_alert_id_txt=""
         try:
             #Last check if any alarms left due to some racing condition
             keyiter = iter(self.alertCurrentList)
             keyalert = keyiter.__next__()
+            tmp_alert_id_txt = self.alertCurrentList[keyalert].id
+            if tmp_alert_id_txt == None:
+                tmp_alert_id_txt="[None]"
             if (forcesendAlert==True or (time.time() > (self.last_alert_sent_time + self.seconds_between_alerts))):
                 prev_alert_time = self.last_alert_sent_time
                 self.last_alert_sent_time = time.time()
-                nbrmin= int((self.last_alert_sent_time-prev_alert_time))/60
-                tmpmsg = tmpmsg + (" last alert sent %d minutes ago" % nbrmin)
-                log.debug("Alert send authorized. " + tmpmsg)
+                if (prev_alert_time>0):
+                    nbrmin= int((self.last_alert_sent_time-prev_alert_time))/60
+                    tmpmsg = tmpmsg + (" last alert sent %d minutes ago" % nbrmin)
+                log.info("Alert %s send authorized. %s" % (tmp_alert_id_txt,tmpmsg))
                 sendalert = True
             else:
                 tmpmsg = tmpmsg + (" (Time between alerts:%dsec)" % self.seconds_between_alerts )
-                log.debug("Alert Send denied! "+tmpmsg)
+                log.debug("Alert %s Send denied! %s" %(tmp_alert_id_txt,tmpmsg))
         except StopIteration:
             log.info("No alert left due to racing condition. Alert send denied! " +tmpmsg )
         except Exception:
@@ -176,6 +184,42 @@ class AlertManager(metaclass=SingletonMeta):
         except Exception:
             # traceback.print_exc()
             log.debug("Alarm List empty Exception!")
+
+    def autoClearAlertByList(self):
+        #Clears one at the time !
+        crazyloop = 0;
+        keyiter = iter(self.alertCurrentList)
+        clmax = 500
+        try:
+            keyalert = keyiter.__next__()
+            while keyalert != None and crazyloop < clmax:
+                id=self.alertCurrentList[keyalert].id
+                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
+                    "%Y%m%d-%H%M%S")
+                crazyloop += 1
+
+
+                if (id in self.config_handler.getConfigParam("ALERT", "AlertAutoClearList")):
+                    log.debug("auto Clear Alert By List %s %s %d triggered!" %(id,altime,float(self.alertCurrentList[keyalert].time)))
+
+                if id in self.config_handler.getConfigParam("ALERT", "AlertAutoClearList") \
+                    and time.time() > (float(self.alertCurrentList[keyalert].time)+float(self.config_handler.getConfigParam("ALERT", "AlertDefaultClearInterval"))):
+
+                    txt = "Alert id:%s dev:%s sev:%s cat:%s text:%s time:%s " % (
+                        self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
+                        self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category, \
+                        self.alertCurrentList[keyalert].text, altime)
+                    log.info("Auto Clear alert %s done!" % (txt))
+                    del self.alertCurrentList[keyalert]
+                keyalert = keyiter.__next__()
+            if (crazyloop >= clmax):
+                os._exit(clmax)
+        except StopIteration:
+            log.debug("Alarm List empty StopIteration!")
+        except Exception:
+            # traceback.print_exc()
+            log.debug("Alarm List empty Exception!")
+
 
     def clearAlertID(self, id_to_clear,dev ):
         log.debug("Clear alert ID request " + id_to_clear + " for " + dev)

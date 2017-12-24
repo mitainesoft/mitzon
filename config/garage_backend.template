@@ -16,7 +16,7 @@ RESP_TIMEOUT = 10
 [GARAGE_COMMON]
 #nbr seconds before warning is sent #
 # Test = 40 default=780
-GarageOpenTriggerWarningElapsedTime = 780
+GarageOpenTriggerWarningElapsedTime = 720
 
 #nbr seconds before door will attempt to close #900
 # Test = 90  default=600
@@ -74,7 +74,11 @@ GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [ALERT]
-TimeBetweenAlerts=1800
+TimeBetweenAlerts=120
+AlertDefaultClearInterval=15
+
+#These alarms will auto clear if True
+AlertAutoClearList=GLO01
 
 
 ########################

@@ -75,6 +75,7 @@ class NotificationManager(metaclass=SingletonMeta):
 
             sleep(float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_MANAGER_LOOP_TIMEOUT")))
             i = i + 1
+
         pass
 
     def send_email(self, sender, recipients, msg):
@@ -156,8 +157,13 @@ class NotificationManager(metaclass=SingletonMeta):
                 keyiter = iter(alert_current_list)
                 keyalert = keyiter.__next__()  # Goto except StopIteration if empty
                 while keyalert != None and nbrnotif < clmax:
+                    alert_sent_too_recently=False
                     id = alert_current_list[keyalert].id
+                    device = alert_current_list[keyalert].device
                     alsev = self.alertFileListJSON[keylang][id]["severity"]
+                    altime = "%s" % datetime.datetime.fromtimestamp(int(alert_current_list[keyalert].time)).strftime(
+                        "%Y%m%d-%H%M%S")
+
 
                     if alsev in self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_ALERT_SEVERITY_FILTER"):
                         alertfiltertrigger = True
@@ -169,9 +175,8 @@ class NotificationManager(metaclass=SingletonMeta):
                     nbrnotif_recipient += 1
                     tmptxt = "%d>Alert notif Key=%s %d" % (nbrnotif_recipient, keyalert, keyiter.__sizeof__())
                     log.debug(tmptxt)
-                    nbrnotif += 1
-                    altime = "%s" % datetime.datetime.fromtimestamp(int(alert_current_list[keyalert].time)).strftime(
-                        "%Y%m%d-%H%M%S")
+                    # nbrnotif += 1
+
 
                     altext = self.alertFileListJSON[keylang][id]["text"]
                     alworkaround = self.alertFileListJSON[keylang][id]["workaround"]
@@ -181,6 +186,7 @@ class NotificationManager(metaclass=SingletonMeta):
                     txt = "%d) %s\t%s -> %s (%s)" % (nbrnotif_recipient, alert_current_list[keyalert].device, altext, alworkaround, id)
                     alertlisttxt += "%s\n" % txt
 
+                    nbrnotif += 1
                     keyalert = keyiter.__next__()
 
             except StopIteration:
@@ -189,8 +195,8 @@ class NotificationManager(metaclass=SingletonMeta):
                 else:
                     alertlisttxt = "---"
             except Exception:
+                log.error("Exception during email processing")
                 traceback.print_exc()
-                log.error(alertlisttxt)
                 os._exit(-1)
 
             if (alertfiltertrigger):

@@ -106,6 +106,8 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_3', 'garageboardpin'],
             ['GARAGE_3', 'garagesensorsboardpin'],
             ['ALERT', 'timebetweenalerts'],
+            ['ALERT', 'AlertDefaultClearInterval'],
+            ['ALERT', 'AlertAutoClearList'],
             ['NOTIFICATION_COMMON', 'notificationenabled'],
             ['NOTIFICATION_COMMON', 'default_language'],
             ['EMAIL_ACCOUNT_INFORMATION', 'smtp_server'],
@@ -140,6 +142,11 @@ class ConfigManager(metaclass=SingletonMeta):
             else:
                 log.error("config ERROR 'GarageOpenTriggerWarningElapsedTime=%d' < 'Red Light Flashing time=%d' < 'GarageOpenTriggerCloseDoorElapsedTime=%d'" %(opentimewarning,opentimeredcritical,opentimefinal))
                 os._exit(-1)
+
+
+            if float(self.getConfigParam("GARAGE_MANAGER", "GARAGE_MANAGER_LOOP_TIMEOUT")) >=float(self.getConfigParam("ALERT", "AlertDefaultClearInterval")):
+                log.error("GARAGE_MANAGER_LOOP_TIMEOUT should be less than AlertDefaultClearInterval to ensure alarms are not cleared within one garage manager loop!")
+                os._exit(-2)
 
 
         except Exception:

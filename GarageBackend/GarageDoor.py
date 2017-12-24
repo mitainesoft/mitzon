@@ -90,11 +90,14 @@ class GarageDoor():
         self.g_last_alert_time = time.time()
         status_text="request for Alert %s %s %s" %(id, device,extratxt)
 
-
         if (id in self.g_add_alert_time_by_type):
             lastalerttime = self.g_add_alert_time_by_type[id]
             if ( time.time() >(lastalerttime+self.seconds_between_alerts)):
-                self.g_add_alert_time_by_type.remove(id)
+                try:
+                    del self.g_add_alert_time_by_type[id]
+                except KeyError:
+                    pass
+
                 log.info("%s can now be sent again for %s!" %(id,device))
             else:
                 log.debug("Skip %s" % status_text)
@@ -131,6 +134,7 @@ class GarageDoor():
         sensor_status_text=self.g_name+":"+G_UNKNOWN
         logstr=""
 
+        ''' Check garage status. Garage status g_status value based on sensor value if all sensors report the same'''
         for i, sensor in enumerate(self.g_sensor_props):
             logstr="%d Garage %d Sensor %s Status = %s" % (i, self.g_id, sensor, self.g_sensor_props[sensor].status)
 
@@ -182,6 +186,9 @@ class GarageDoor():
             self.g_status=G_LOCK+self.g_status
             logstr = "Garage %s Status = %s" % (self.g_id, self.g_status )
 
+            if self.g_lock_time != None and time.time() > self.g_lock_time+ float(self.config_handler.getConfigParam("ALERT", "AlertDefaultClearInterval")):
+                self.alarm_mgr_handler.clearAlertID("GTO04", self.g_name)
+
         log.debug(logstr)
 
         if (self.g_prevstatus != self.g_status):
@@ -209,6 +216,10 @@ class GarageDoor():
                 # self.startLightFlash('RED')
             self.printStatus()
         else:
+            # Status no change
+            # In case of previous garage error state and if garage is currently closed
+            # --> Check if garage is closed and auto close was disabled
+            # --> Check if enough time has passed to see if auto close can be re-enabled
             log.debug(self.g_name + "status no change !")
             if (self.g_status.find(G_CLOSED)>=0 and self.g_error_time!=None \
                         and self.g_auto_force_ignore_garage_open_close_cmd==True \
@@ -219,9 +230,16 @@ class GarageDoor():
                     self.alarm_mgr_handler.clearAlertID("GCD01", self.g_name)
                     log.info(self.g_name+ " assumed closed. Garage back to auto close mode!")
             else:
+                #here the status is set when the status didnt change
                 sensor_status_text = self.g_name + ":" + self.g_status
                 # log.info(sensor_status_text)
+
+            # Send HW error
+            # --> if current time is greater then last command sent time + some time
+            # --> and if last command trigger time is greater then last update status change + some time
+            # --> and garage is not manually locked
             if self.g_update_time != None and self.g_last_cmd_sent_time != None and self.g_last_cmd_trigger_time !=None \
+                and self.g_manual_force_lock_garage_open_close_cmd == False \
                 and time.time() > (self.g_last_cmd_sent_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange")))\
                 and self.g_last_cmd_trigger_time > (self.g_update_time+float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange"))):
                 self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
@@ -303,10 +321,10 @@ class GarageDoor():
 
                 else:
                     # open denied. current status is " + self.g_status
-                    status_text = self.addAlert("GTO003", self.g_name, self.g_status)
+                    status_text = self.addAlert("GTO03", self.g_name, self.g_status)
 
             else: #Lock!
-                status_text = self.addAlert("GTO004", self.g_name, self.g_status)
+                status_text = self.addAlert("GTO04", self.g_name, self.g_status)
 
             self.g_last_cmd_trigger_time=time.time()
 
