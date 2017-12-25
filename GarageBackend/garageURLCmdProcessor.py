@@ -209,10 +209,10 @@ if __name__ == '__main__':
             'tools.request_headers.on': False,
             'tools.staticdir.on': True,
             'tools.staticdir.dir': "log",
-            'log.access_file': 'log/garage_cherrypy_access.log',
-            'log.error_file': 'log/garage_cherrypy_error.log',
-            'log.screen': True,
-            'tools.sessions.on': True,
+            # 'log.access_file': 'log/garage_cherrypy_access.log',
+            # 'log.error_file': 'log/garage_cherrypy_error.log',
+            # 'log.screen': True,
+            # 'tools.sessions.on': True,
             'engine.autoreload_on': False,
     }
 
@@ -266,11 +266,18 @@ if __name__ == '__main__':
             },
         },
         'loggers': {
+            # # Only Log Request and reponses to file.  Screen is the next block!
             'cherrypy.access': {
                 'handlers': ['cherrypy_access'],
                 'level': 'INFO',
                 'propagate': False
             },
+            # # Log Requests to screen
+            # 'cherrypy.access': {
+            #     'handlers': ['cherrypy_console', 'cherrypy_access'],
+            #     'level': 'INFO',
+            #     'propagate': False
+            # },
             'cherrypy.error': {
                 'handlers': ['cherrypy_console', 'cherrypy_error'],
                 'level': 'INFO',

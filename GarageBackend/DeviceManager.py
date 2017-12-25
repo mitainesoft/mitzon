@@ -155,8 +155,8 @@ class DeviceManager(metaclass=SingletonMeta):
                     printerrt = datetime.datetime.fromtimestamp(obj.g_error_time).strftime("%Y%m%d-%H%M%S")
                 else:
                     printerrt = "None"
-                if obj.g_last_alert_send_time != None:
-                    printlast = datetime.datetime.fromtimestamp(obj.g_last_alert_send_time).strftime("%Y%m%d-%H%M%S")
+                if obj.g_last_alert_time != None:
+                    printlast = datetime.datetime.fromtimestamp(obj.g_last_alert_time).strftime("%Y%m%d-%H%M%S")
                 else:
                     printlast = "None"
                 try:

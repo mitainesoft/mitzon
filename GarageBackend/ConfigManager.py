@@ -77,7 +77,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_MANAGER', 'sensor_defect_assessment_time'],
             ['GARAGE_MANAGER', 'garage_name_for_test'],
             ['THREAD_CONTROL', 'resp_timeout'],
-            ['GARAGE_COMMON', 'garageopentriggeralarmelapsedtime'],
+            ['GARAGE_COMMON', 'garageopentriggerwarningelapsedtime'],
             ['GARAGE_COMMON', 'garageopentriggerclosedoorelapsedtime'],
             ['GARAGE_COMMON', 'lightgarageopentriggerclosedoorprewarningbeforeclose'],
             ['GARAGE_COMMON', 'garagelockopentriggeralarmelapsedtime'],
@@ -106,6 +106,8 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_3', 'garageboardpin'],
             ['GARAGE_3', 'garagesensorsboardpin'],
             ['ALERT', 'timebetweenalerts'],
+            ['ALERT', 'AlertDefaultClearInterval'],
+            ['ALERT', 'AlertAutoClearList'],
             ['NOTIFICATION_COMMON', 'notificationenabled'],
             ['NOTIFICATION_COMMON', 'default_language'],
             ['EMAIL_ACCOUNT_INFORMATION', 'smtp_server'],
@@ -128,6 +130,25 @@ class ConfigManager(metaclass=SingletonMeta):
                   logstr="Check %s %s" % (section,param)
                   self.getConfigParam(section,param)
                   log.debug(logstr)
+
+            #Check some config rules
+            # ------- <opentimewarning>----<opentimeredcritical>--<opentimefinal>-
+            opentimefinal = float(self.getConfigParam("GARAGE_COMMON","GarageOpenTriggerCloseDoorElapsedTime"))
+            opentimeredcritical = opentimefinal - float(self.getConfigParam("GARAGE_COMMON","LightGarageOpenTriggerCloseDoorPreWarningBeforeClose"))
+            opentimewarning = float(self.getConfigParam("GARAGE_COMMON","GarageOpenTriggerWarningElapsedTime"))
+
+            if opentimefinal>opentimewarning and opentimeredcritical>opentimewarning and opentimeredcritical>0 :
+                log.info("config OK 'GarageOpenTriggerWarningElapsedTime=%d' < 'Red Light Flashing time=%d' < 'GarageOpenTriggerCloseDoorElapsedTime=%d'" %(opentimewarning,opentimeredcritical,opentimefinal))
+            else:
+                log.error("config ERROR 'GarageOpenTriggerWarningElapsedTime=%d' < 'Red Light Flashing time=%d' < 'GarageOpenTriggerCloseDoorElapsedTime=%d'" %(opentimewarning,opentimeredcritical,opentimefinal))
+                os._exit(-1)
+
+
+            if float(self.getConfigParam("GARAGE_MANAGER", "GARAGE_MANAGER_LOOP_TIMEOUT")) >=float(self.getConfigParam("ALERT", "AlertDefaultClearInterval")):
+                log.error("GARAGE_MANAGER_LOOP_TIMEOUT should be less than AlertDefaultClearInterval to ensure alarms are not cleared within one garage manager loop!")
+                os._exit(-2)
+
+
         except Exception:
             traceback.print_exc()
             logstr = "Error %s %s NOT defined !" % (section, param)

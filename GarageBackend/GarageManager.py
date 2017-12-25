@@ -22,10 +22,15 @@ class GarageManager():
         log.info("GarageManager Starting")
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
-        self.GarageOpenTriggerAlarmElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerAlarmElapsedTime"))
+        self.GarageOpenTriggerWarningElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerWarningElapsedTime"))
         self.GarageOpenTriggerCloseDoorElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerCloseDoorElapsedTime"))
         self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose = float(self.config_handler.getConfigParam("GARAGE_COMMON","LightGarageOpenTriggerCloseDoorPreWarningBeforeClose"))
         self.cherryweb_server_last_run_time = time.time()
+        self.gm_add_alert_time_by_type = {}  #Key is Alert type, data is time()
+        self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
+        self.g_add_alert_time_by_type = {}  #Key is Alert type, data is time()
+
+
 
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
@@ -44,7 +49,8 @@ class GarageManager():
                 elif (time.time() > (self.cherryweb_server_last_run_time + 30) ):
                     # 15sec to allow for cherry pi web server to start
                     log.error("Cherrypy Web server thread not running, sending alert SW001 !")
-                    status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
+                    # status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
+                    status_text = self.addAlert("SW001", "RASPBERRY_PI")
                     log.error(status_text)
 
             for key in self.deviceList:
@@ -64,7 +70,7 @@ class GarageManager():
 
             self.alarm_mgr_handler.processAlerts()
 
-            if log.isEnabledFor(logging.INFO):
+            if log.isEnabledFor(logging.DEBUG) or i%10000==0:
                 log.info("** garageManager %d **" % (i))
                 self.dev_manager_handler.listDevices()
                 self.alarm_mgr_handler.status()
@@ -72,31 +78,71 @@ class GarageManager():
             i=i+1
         pass
 
+    #Warpper for add alert
+    def addAlert(self, id, device,extratxt=""):
+        self.g_last_alert_time = time.time()
+        status_text="request for Alert %s %s %s" %(id, device,extratxt)
+
+
+        if (id in self.gm_add_alert_time_by_type):
+            lastalerttime = self.g_add_alert_time_by_type[id]
+            if ( time.time() >(lastalerttime+self.seconds_between_alerts)):
+                self.gm_add_alert_time_by_type.remove(id)
+                log.info("%s can now be sent again for %s!" %(id,device))
+            else:
+                log.debug("Skip %s" % status_text)
+        else:
+            self.gm_add_alert_time_by_type[id]=time.time()
+            status_text = self.alarm_mgr_handler.addAlert(id, device, extratxt)
+            log.warning(status_text)
+
+        return status_text
+
+
     def checkGaragePolicy(self,gd: GarageDoor ):
         try:
+
+            # This is how the open time threasholds are defined.  refopentime is there to ensure opentime non null value.
+            # ------- <opentimewarning>----<opentimeredcritical>--<opentimefinal>----<opentimelightingstop>
+            refopentime = time.time()
+            if gd.g_open_time != None:
+                refopentime = gd.g_open_time
+            opentimefinal = refopentime + float(self.GarageOpenTriggerCloseDoorElapsedTime)
+            opentimeredcritical = refopentime + opentimefinal - self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose
+            opentimewarning = refopentime + float(self.GarageOpenTriggerWarningElapsedTime)
+            opentimelightingstop = opentimefinal + 120
+
             if gd.g_status == G_OPEN:  #Locked Status is LOCKOPEN ! Don't allow auto close on lock open.
+
+                remain_time_before_next_command_allowed = gd.g_next_auto_cmd_allowed_time - time.time()
+
+
                 #datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S")
-                tmpstr="checkGaragePolicy %s time=%s otime=%s Allowed Next_Manual_Cmd=%s Next_Auto_Cmd=%s --> Remain=%d sec"  % (gd.g_name, \
-                                                                                                    datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"),\
+                if remain_time_before_next_command_allowed > 0:
+                    tmpstr="checkGaragePolicy %s open=%s Allowed Next_Manual_Cmd=%s Next_Auto_Cmd=%s --> Remain=%d sec"  % (gd.g_name, \
+                                                                                                    # datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"),\
                                                                                                     datetime.datetime.fromtimestamp(gd.g_open_time).strftime("%Y%m%d-%H%M%S"), \
                                                                                                     datetime.datetime.fromtimestamp(gd.g_next_manual_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
                                                                                                     datetime.datetime.fromtimestamp(gd.g_next_auto_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
-                                                                                                    gd.g_next_auto_cmd_allowed_time-time.time())
-                log.info(tmpstr )
+                                                                                                    remain_time_before_next_command_allowed)
+                    if (int(time.time())%60==0  ):
+                        log.info(tmpstr )
                 if (gd.g_open_time != None): #Is there an open time stamp ?
-                    if time.time() > (gd.g_open_time + self.GarageOpenTriggerCloseDoorElapsedTime ):
+                    if time.time() > opentimefinal:
                         # " GARAGE OPEN TIME EXPIRED ALERT"
                         #status_text = gd.g_name + " " + self.alarm_magr_handler.alertTable["G0001"]["text"]
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
-                        status_text = self.alarm_mgr_handler.addAlert("GO001", gd.g_name)
-                        log.error(status_text)
+                        status_text = gd.addAlert("GO001", gd.g_name)
+                        gd.g_last_alert_time = time.time()
+                        log.debug(status_text)
                         #close door when timer expires!
                         if gd.g_next_auto_cmd_allowed_time != None and time.time() > gd.g_next_auto_cmd_allowed_time:
                             gd.g_next_auto_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeAutoRetryCloseDoor"))
+
                             tmpstr = "checkGaragePolicy triggerGarageDoor %s Next Auto Cmd Allowed Time=%s --> Remain=%d sec" % (gd.g_name, \
-                                                                                                               datetime.datetime.fromtimestamp(gd.g_next_auto_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
-                                                                                                               gd.g_next_auto_cmd_allowed_time - time.time())
+                                                                                                           datetime.datetime.fromtimestamp(gd.g_next_auto_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
+                                                                                                           remain_time_before_next_command_allowed)
                             log.info(tmpstr)
                             if (gd.g_auto_force_ignore_garage_open_close_cmd == False and gd.g_manual_force_lock_garage_open_close_cmd==False):
                                 gd.triggerGarageDoor() # return True is No Manual Overide
@@ -104,20 +150,22 @@ class GarageManager():
                                 tmpstr = "checkGaragePolicy %s Automatic triggerGarageDoor not allowed" % (gd.g_name)
                                 log.info(tmpstr)
 
-                    elif time.time() > (gd.g_open_time + (self.GarageOpenTriggerCloseDoorElapsedTime - self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose)):
+                    elif time.time() > opentimeredcritical :
+                            # and time.time() < (gd.g_open_time + self.GarageOpenTriggerCloseDoorElapsedTime) :
                         #LightGarageOpenTriggerCloseDoorPreWarningBeforeClose
                         gd.startLightFlash('RED')
                         gd.stopLightFlash('GREEN')
                         gd.stopLightFlash('WHITE')
                         gd.turnOffLight('GREEN')
                         gd.turnOffLight('WHITE')
-                    elif time.time() > (gd.g_open_time + self.GarageOpenTriggerAlarmElapsedTime ):
+                    elif time.time() > opentimewarning:
                         # status_text = gd.g_name + " GARAGE OPEN TIME WARNING ALERT"
                         # self.alarm_magr_handler.addAlert(CommmandQResponse(0, status_text))
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
-                        status_text = self.alarm_mgr_handler.addAlert("GO002", gd.g_name)
-                        log.error(status_text)
+                        status_text = gd.addAlert("GO002", gd.g_name)
+                        gd.g_last_alert_time = time.time()
+                        log.debug(status_text)
                         gd.startLightFlash('GREEN')
                     else:
                         gd.turnOnLight('GREEN')
@@ -131,11 +179,13 @@ class GarageManager():
                 if (gd.g_lock_time!=None and time.time() > (gd.g_lock_time + float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageLockOpenTriggerAlarmElapsedTime")))):
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
                     self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
-                    status_text = self.alarm_mgr_handler.addAlert("GLO01", gd.g_name)
-                    log.error(status_text)
+                    status_text = gd.addAlert("GLO01", gd.g_name)
                     gd.startLightFlash('WHITE')
                     gd.startLightFlash('RED')
                     gd.startLightFlash('GREEN')
+                    gd.g_last_alert_time = time.time()
+                    log.debug(status_text)
+                    gd.g_lock_time = time.time()
                 else:
                     gd.stopLightFlash('WHITE')
                     gd.stopLightFlash('RED')
@@ -150,10 +200,15 @@ class GarageManager():
                     if time.time() <= (gd.g_close_time + (2* float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
 
                         log.debug("%s Turn off all lights!" % gd.g_name)
-                        gd.turnOffLight('WHITE')
+                        if time.time() > opentimelightingstop:
+                            gd.turnOffLight('WHITE')
+                            gd.stopLightFlash('WHITE')
+                        else:
+                            gd.turnOnLight('WHITE')
+
                         gd.turnOffLight('GREEN')
                         gd.turnOffLight('RED')
-                        gd.stopLightFlash('WHITE')
+
                         gd.stopLightFlash('GREEN')
                         gd.stopLightFlash('RED')
 
@@ -164,8 +219,30 @@ class GarageManager():
             # self.alarm_magr_handler.addAlert(CommmandQResponse(0, status_text))
             self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
             self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
-            status_text = self.alarm_mgr_handler.addAlert("GCD01", gd.g_name)
-            log.error(status_text)
+            status_text = gd.addAlert("GCD01", gd.g_name)
+            gd.g_last_alert_time = time.time()
+            log.debug(status_text)
             sleep(5)
             os._exit(-1)
 
+    def addAlert(self, id, device,extratxt=""):
+        self.g_last_alert_time = time.time()
+        status_text="request for Alert %s %s %s" %(id, device,extratxt)
+
+        if (id in self.g_add_alert_time_by_type):
+            lastalerttime = self.g_add_alert_time_by_type[id]
+            if ( time.time() >(lastalerttime+self.seconds_between_alerts)):
+                try:
+                    del self.g_add_alert_time_by_type[id]
+                except KeyError:
+                    pass
+
+                log.info("%s can now be sent again for %s!" %(id,device))
+            else:
+                log.debug("Skip %s" % status_text)
+        else:
+            self.g_add_alert_time_by_type[id]=time.time()
+            status_text = self.alarm_mgr_handler.addAlert(id, device, extratxt)
+            log.warning(status_text)
+
+        return status_text
