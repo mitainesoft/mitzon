@@ -111,8 +111,9 @@ class sdistPyCommand(setuptools.command.sdist.sdist):
                 self.replace(source_file_path,keyw,substring)
 
                 #copy README file to a separate file
-                destreadme_filename=current_dir+"/dist/README_"+version_str+".txt"
-                shutil.copy(source_file_path,destreadme_filename)
+                if (fileToSearchReplace == "README.md"):
+                    destreadme_filename=current_dir+"/dist/README_"+version_str+".txt"
+                    shutil.copy(source_file_path,destreadme_filename)
 
             except Exception:
                 print ("Error for file:"+fileToSearchReplace)
