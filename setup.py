@@ -18,6 +18,7 @@ import sys
 import traceback
 import configparser
 import subprocess
+import shutil
 from tempfile import mkstemp
 from shutil import move
 from os import fdopen, remove
@@ -65,7 +66,7 @@ patch = int(buildinfo['BUILDINFO']['mgs.patch']) + 1
 
 # print ("Garage next version %s.%s.%s" %(major,minor,patch))
 
-buildinfo['BUILDINFO']['build.date'] = nowstr
+#buildinfo['BUILDINFO']['build.date'] = nowstr
 buildinfo['BUILDINFO']['mgs.major'] = "%d" % major
 buildinfo['BUILDINFO']['mgs.minor'] = "%d" % minor
 buildinfo['BUILDINFO']['mgs.patch'] = "%d" % patch
@@ -89,48 +90,14 @@ for i in range(len(vcscmd_array)):
     print("%d) VCS cmd=%s" % (i, vcscmd_array[i]))
     subprocess.call (vcscmd_array[i])
 
-
-# os._exit(-1)
-
-
-# class BuildPyCommand(setuptools.command.build_py.build_py):
-#     """Custom build command."""
-#     print(setuptools.command.build_py.build_py.__name__)
-#     command = ['find', '.', '-name', 'index.html', '-ls']
-#     print("\nBuildPyCommand cmd=%s \n\n %s\n" % (command, os.getcwd()))
-#     subprocess.check_call(command)
-#
-#
-#     def run(self):
-#         print("BuildPyCommand run:" + __name__)
-#         self.run_command('stuff')
-#         setuptools.command.build_py.build_py.run(self)
-#         exit(-1)
-
-
 class sdistPyCommand(setuptools.command.sdist.sdist):
-    """Custom build command."""
-    # print(setuptools.command.sdist.sdist.__name__)
-    # command = ['find', '.', '-name', 'index.html', '-ls']
-    # print("\nsdistPyCommand cmd=%s \n\n %s\n" % (command, os.getcwd()))
-    # subprocess.check_call(command)
-    # exit(-2)
-
     def run(self):
-        # print("sdistPyCommand run ENTRY:" + __name__)
-        # self.run_command('stuff')
         setuptools.command.sdist.sdist.run(self)
-        # print("sdistPyCommand run EXIT:" + __name__)
 
     def make_distribution(self):
-        # print("sdistPyCommand make_distribution ENTRY:" + __name__)
-        # self.run_command('stuff')
         setuptools.command.sdist.sdist.make_distribution(self)
-        # print("sdistPyCommand make_distribution EXIT:" + __name__)
 
     def make_release_tree(self,base_dir, files ):
-        # print("sdistPyCommand make_release_tree ENTRY:" + __name__)
-        # self.run_command('stuff')
         setuptools.command.sdist.sdist.make_release_tree(self,base_dir, files)
 
         for fileToSearchReplace in fileListToSearchReplace_MITAINESOFT_GARAGE_REVISION:
@@ -142,11 +109,15 @@ class sdistPyCommand(setuptools.command.sdist.sdist):
                     substring = base_dir
                 print("File: "+fileToSearchReplace+"   search: "+keyw+"   replace with: "+substring)
                 self.replace(source_file_path,keyw,substring)
+
+                #copy README file to a separate file
+                destreadme_filename=current_dir+"/dist/README_"+version_str+".txt"
+                shutil.copy(source_file_path,destreadme_filename)
+
             except Exception:
                 print ("Error for file:"+fileToSearchReplace)
                 traceback.print_exc()
                 os._exit(-5)
-        # print("sdistPyCommand make_release_tree EXIT:" + __name__)
 
     def replace(self,source_file_path, pattern, substring):
         fh, target_file_path = mkstemp()

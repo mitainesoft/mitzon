@@ -20,6 +20,7 @@ class GarageManager():
 
     def __init__(self):
         log.info("GarageManager Starting")
+        self.garage_manager_start_time=time.time()
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
         self.GarageOpenTriggerWarningElapsedTime = float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageOpenTriggerWarningElapsedTime"))
@@ -32,26 +33,31 @@ class GarageManager():
 
 
 
+
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
         self.deviceList=self.dev_manager_handler.deviceList
         i=0
 
         while (True):
-            if cherrypy.engine.state == cherrypy.engine.states.STARTED:
-                log.debug("Cherrypy Web Server Thread Running")
-                self.cherryweb_server_last_run_time = time.time()
+
+            if time.time() > (self.garage_manager_start_time+60):
+                if cherrypy.engine.state == cherrypy.engine.states.STARTED:
+                    log.debug("Cherrypy Web Server Thread Running")
+                    self.cherryweb_server_last_run_time = time.time()
+                else:
+                    log.error("Cherrypy Web Server Thread Dead")
+                    if (time.time() > (self.cherryweb_server_last_run_time + 120) ):
+                        log.error("Cherrypy Web server thread not running, force exit of garage processes for crontab restart !")
+                        os._exit(-1)
+                    elif (time.time() > (self.cherryweb_server_last_run_time + 30) ):
+                        # 15sec to allow for cherry pi web server to start
+                        log.error("Cherrypy Web server thread not running, sending alert SW001 !")
+                        # status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
+                        status_text = self.addAlert("SW001", "RASPBERRY_PI")
+                        log.error(status_text)
             else:
-                log.error("Cherrypy Web Server Thread Dead")
-                if (time.time() > (self.cherryweb_server_last_run_time + 120) ):
-                    log.error("Cherrypy Web server thread not running, force exit of garage processes !")
-                    os._exit(-1)
-                elif (time.time() > (self.cherryweb_server_last_run_time + 30) ):
-                    # 15sec to allow for cherry pi web server to start
-                    log.error("Cherrypy Web server thread not running, sending alert SW001 !")
-                    # status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
-                    status_text = self.addAlert("SW001", "RASPBERRY_PI")
-                    log.error(status_text)
+                log.debug("Cherrypy Web server thread monitoring off for 1 min after GarageManager thread startup")
 
             for key in self.deviceList:
                 sensor_status_str = ""
