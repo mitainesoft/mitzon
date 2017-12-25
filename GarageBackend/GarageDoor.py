@@ -206,6 +206,7 @@ class GarageDoor():
                 # Clear all alarms when all sensors are OK since garage is closed.
                 self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
                 self.alarm_mgr_handler.clearAlertID("GLO01", self.g_name)
+                self.alarm_mgr_handler.clearAlertID("HW002", self.g_name)
                 for sensorkey in self.g_sensor_props:
                     sensordevname=self.g_name+"_"+sensorkey
                     self.alarm_mgr_handler.clearAlertDevice("SENSOR",sensordevname)
