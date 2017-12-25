@@ -117,6 +117,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['EMAIL_ACCOUNT_INFORMATION', 'recipientlist'],
             ['NOTIFICATION_MANAGER', 'notification_manager_loop_timeout'],
             ['NOTIFICATION_MANAGER', 'notification_alert_severity_filter'],
+            ['NOTIFICATION_MANAGER','TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL'],
             ['USERS', 'garage_admin'],
             ['USERS', 'garage_users'],
             ['INTERNAL', 'config_file_rev'],

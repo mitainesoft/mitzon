@@ -74,7 +74,10 @@ GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [ALERT]
+#TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
 TimeBetweenAlerts=120
+
+#Alarm in AlertAutoClearList will cleared automatically after "AlertDefaultClearInterval"
 AlertDefaultClearInterval=15
 
 #These alarms will auto clear if True
@@ -129,6 +132,10 @@ NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15
 #NOTIFICATION_ALERT_SEVERITY_FILTER
 # Show alert of severy 1 & 2 with =1,2
 NOTIFICATION_ALERT_SEVERITY_FILTER=1,2
+
+#INTERVAL_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL
+#Time Interval between the same alert can be emailed or sent again for the same device.
+TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL=1800
 
 
 # Not Used! -> NOTIFICATION_MANAGER_MAX_FAILURE

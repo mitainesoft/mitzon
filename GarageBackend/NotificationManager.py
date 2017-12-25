@@ -36,6 +36,10 @@ class NotificationManager(metaclass=SingletonMeta):
         self.notif_enabled = self.config_handler.getConfigParam("NOTIFICATION_COMMON", "NotificationEnabled")
         self.default_language = self.config_handler.getConfigParam("NOTIFICATION_COMMON", "DEFAULT_LANGUAGE")
 
+        self.g_add_alert_time_by_type = {}  #Key is Alert type, data is time()
+        self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL=float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL"))
+
+
         try:
             f = open(self.alertfilename)
             self.alertFileListJSON = json.load(f)
@@ -77,6 +81,33 @@ class NotificationManager(metaclass=SingletonMeta):
             i = i + 1
 
         pass
+
+    def isAlertSentTooRecently(self, alertid, device, language=""):
+        self.g_last_alert_time = time.time()
+        alert_sent_too_rencently=False
+        key_email_recent=alertid+"_"+device+"_"+language
+        status_text = "check if email for %s %s %s (%s)" % (alertid, device, language,key_email_recent)
+
+        if (key_email_recent in self.g_add_alert_time_by_type):
+            lastalerttime = self.g_add_alert_time_by_type[key_email_recent]
+            if (time.time() > (lastalerttime + self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL)):
+                try:
+                    del self.g_add_alert_time_by_type[key_email_recent]
+                    alert_sent_too_rencently = False
+                except KeyError:
+                    pass
+
+                log.debug("%s for %s can now be emailed again since not sent for at least %ds !" % (alertid, device,self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL))
+            else:
+                alert_sent_too_rencently=True
+                log.debug("Skip email related to %s %s %s" % (alertid,device,language))
+        else:
+            #Email not duplicate
+            alert_sent_too_rencently = False
+            self.g_add_alert_time_by_type[key_email_recent] = time.time()
+            log.debug("email related to %s %s NOT a duplicate" % (status_text, device))
+
+        return alert_sent_too_rencently
 
     def send_email(self, sender, recipients, msg):
         try:
@@ -164,6 +195,9 @@ class NotificationManager(metaclass=SingletonMeta):
                     altime = "%s" % datetime.datetime.fromtimestamp(int(alert_current_list[keyalert].time)).strftime(
                         "%Y%m%d-%H%M%S")
 
+                    if self.isAlertSentTooRecently(id,device,keylang)==True:
+                        log.debug("Skip %s duplicate email notif for %s (%s)" % (id,device,keylang))
+                        keyalert = keyiter.__next__()
 
                     if alsev in self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_ALERT_SEVERITY_FILTER"):
                         alertfiltertrigger = True

@@ -34,6 +34,7 @@ class AlertManager(metaclass=SingletonMeta):
         self.last_alert_sent_time=0
         self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
 
+
         try:
             f=open(self.alertfilename)
             self.alertFileListJSON=json.load(f)

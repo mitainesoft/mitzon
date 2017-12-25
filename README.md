@@ -176,7 +176,7 @@
         ln -s ../init.d/garage S99garage
 
         # Fix it
-        cd etc/init.d
+        cd /etc/init.d
         perl -i -pe 's/\r\n$/\n/g' garage
 
         # Try it
@@ -190,18 +190,27 @@
         0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
 
 
-    ** Change active version of garage **
-    su - mitainesoft
-    cd /opt/mitainesoft/
-    rm garage
-    ln -s [MITAINESOFT_GARAGE_REVISION] garage
-
-    ** Restart garage **
-        #Check if running
+        ** Change active version of garage **
         su - mitainesoft
-        ps -eaf | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v grep
-        cd /opt/mitainesoft/garage
-        ./garage.bash
+        cd /opt/mitainesoft/
+        rm garage
+        ln -s [MITAINESOFT_GARAGE_REVISION] garage
+
+        ** Restart garage **
+        #Check status and stop
+        sudo /etc/init.d/garage status
+        sudo /etc/init.d/garage stop
+        # Stop could generate a SW error alert being sent by email due to "Cherrypy Web Server Thread Dead" visible in previous version's logs
+
+        #Start and check status
+        sudo /etc/init.d/garage start
+        sudo /etc/init.d/garage status
+
+        #Check logs
+        cd /opt/mitainesoft/garage/log
+        tail -f garage.log
+
+
 
         #IMPORTANT NOTE:
         #  Cherrypy web server will NOT start without valid certificate files
@@ -1151,6 +1160,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     VCS->Git->Branches->Checkout v1_stable
     VCS->Git->Pull
     VCS->Git->Merge
+    VCS->Git->Commit
     VCS->Git->Push
     VCS->Git->Branches->Checkout master
 
@@ -1167,11 +1177,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     git checkout v1_stable
     git pull
     python3 setup.py sdist
-
-
-
     #Package is under dist
-
 
 
 7. HW
