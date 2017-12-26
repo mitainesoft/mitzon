@@ -1,6 +1,7 @@
 ###################################################################################
 # Mitainesoft Garage (c) 2017                                                     #
 # HW: garage raspberry-pi arduino                                                 #
+# Version: [MITAINESOFT_GARAGE_REVISION]                                    #
 # Code: Python3 with cherrypy, nanpi                                              #
 # Purpose: Supervise garage door opening. Generate Alarms if required.            #
 #          Allow remote open.                                                     #
@@ -8,13 +9,9 @@
 # SCRUM board: https://github.com/mitainesoft/garage/projects                     #
 ###################################################################################
 
-# Work in Progress !
-# Work in Progress !
-# Work in Progress !
-# Work in Progress !                                                       
-                                                                                                             
+
                                                        
-1. INSTALLATION INSTRUCTIONS
+1. INSTALLATION INSTRUCTIONS [MITAINESOFT_GARAGE_REVISION]
 
     ** MITAINESOFT_GARAGE_REVISION **
 
