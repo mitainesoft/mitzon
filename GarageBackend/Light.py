@@ -20,6 +20,7 @@ class Light():
         self.l_update_time = time.time()
         self.usbConnectHandler = usbConnectHandler
         self.status="OFF"
+        self.flashstatus="OFF"
         strlog = "%s created (board pin %d)" % (self.l_name,board_pin_id)
         log.info(strlog)
         self.thread_light_flash = None
@@ -48,6 +49,12 @@ class Light():
         pass
 
 
+    def getLightStatus(self):
+        if self.flashstatus=="ON":
+            return "FLASH"
+        else:
+            return self.status
+
     def turnOffLight(self):
         self.status = "OFF"
         self.commandLight(self.status)
@@ -60,6 +67,7 @@ class Light():
         strlog = "%s %s Start Flashing" % (self.l_name, self.light_id)
         log.debug(strlog)
         self.stop_thread = False
+        self.flashstatus = "ON"
         # light_manager=Light()
         if (self.thread_light_flash == None):
             self.thread_light_flash = Thread(target=self.flashLight,name=self.l_name,daemon=False)
@@ -79,6 +87,7 @@ class Light():
 
     def stopFlashLight(self):
         strlog = "%s %s Stop Flashing" % (self.l_name, self.light_id)
+        self.flashstatus = "OFF"
         log.debug(strlog)
         self.stop_thread = True
         if (self.thread_light_flash == None):
