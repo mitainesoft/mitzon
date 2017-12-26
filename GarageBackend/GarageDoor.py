@@ -30,6 +30,10 @@ class GarageDoor():
 
         self.g_status = G_UNKNOWN
         self.g_prevstatus = G_UNKNOWN
+
+        self.g_lightstatus = ""
+        self.g_prevlightstatus = ""
+
         self.g_sensor_props = {}
         self.g_light_list = {}  #Dict of lights. key = color GREEN RED WHITE
         self.g_update_time=time.time()
@@ -133,6 +137,7 @@ class GarageDoor():
         sensorkey0="[UNKNOWN]"
         sensor_status_text=self.g_name+":"+G_UNKNOWN
         logstr=""
+        do_print_status=False
 
         ''' Check garage status. Garage status g_status value based on sensor value if all sensors report the same'''
         for i, sensor in enumerate(self.g_sensor_props):
@@ -215,7 +220,8 @@ class GarageDoor():
                 log.info(tmpstrerr)
                 self.g_error_time = time.time()
                 # self.startLightFlash('RED')
-            self.printStatus()
+            #self.printStatus()
+            do_print_status=True
         else:
             # Status no change
             # In case of previous garage error state and if garage is currently closed
@@ -250,6 +256,15 @@ class GarageDoor():
                 self.alarm_mgr_handler.clearAlertID("GTO01",self.g_name)
             if (self.g_status.find(G_CLOSED)>=0 and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
                 self.alarm_mgr_handler.clearAlertID("GTC01",self.g_name)
+
+        #Trigger a print status on light changes
+        self.g_lightstatus=self.getAllLightStatus()
+        if self.g_lightstatus != self.g_prevlightstatus:
+            do_print_status=True
+            self.g_prevlightstatus=self.g_lightstatus
+
+        if (do_print_status == True):
+            self.printStatus()
         return (sensor_status_text)
 
     def lock(self):
@@ -407,8 +422,11 @@ class GarageDoor():
         logstr = "%s:%s " % (self.g_name, self.g_status)
         sensor_status_str = ""
 
+        all_light_status=self.getAllLightStatus()
+
         for sensor in self.g_sensor_props:
             sensor_status_str = sensor_status_str + sensor + "=" + self.g_sensor_props[sensor].status + " "
+
         if self.g_update_time != None:
             printut = datetime.datetime.fromtimestamp(self.g_update_time).strftime("%Y%m%d-%H%M%S")
         else:
@@ -430,13 +448,27 @@ class GarageDoor():
         else:
             printlast = "None"
         try:
-            logstr = logstr + sensor_status_str + " utime=" + printut + " otime=" + printot + " ctime=" + printct + " errtime=" + printerrt + " LastAlertTime=" + printlast
+            logstr = logstr + sensor_status_str + "updte=" + printut + " opn=" + printot + " clse=" + printct + " err=" + printerrt + " Alert=" + printlast + " Lights:" + all_light_status
             log.info(logstr)
         except Exception:
             log.error("Time Stamp print error ?!?  print to stdout ")
             print(logstr)
 
-
+    def getAllLightStatus(self):
+        all_light_status = ""
+        for color in {"GREEN", "RED", "WHITE"}:
+            key_dev_color = self.g_name + "_" + color
+            if key_dev_color in self.g_light_list:
+                light_status = color[0]
+                if self.g_light_list[key_dev_color].getLightStatus() == "ON":
+                    all_light_status += light_status.lower()
+                elif self.g_light_list[key_dev_color].getLightStatus() == "FLASH":
+                    all_light_status += light_status.upper()
+                else:
+                    all_light_status += "-"
+            else:
+                log.debug("%s %s light defined yet" % (color,self.g_name))
+        return all_light_status
 
     def test(self):
         self.initBoardPinModeOutput(self.g_board_pin_relay)

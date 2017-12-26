@@ -116,7 +116,8 @@ class GarageManager():
             opentimefinal = refopentime + float(self.GarageOpenTriggerCloseDoorElapsedTime)
             opentimeredcritical = refopentime + opentimefinal - self.LightGarageOpenTriggerCloseDoorPreWarningBeforeClose
             opentimewarning = refopentime + float(self.GarageOpenTriggerWarningElapsedTime)
-            opentimelightingstop = opentimefinal + 120
+
+
 
             if gd.g_status == G_OPEN:  #Locked Status is LOCKOPEN ! Don't allow auto close on lock open.
 
@@ -203,12 +204,16 @@ class GarageManager():
 
             if (gd.g_status.find(G_CLOSED)>=0):
                 if (gd.g_close_time != None): #Is there an open time stamp ?
+                    # Manage specific case for light when GarageManager was restarted, door lock but door not opened !
+                    opentimelightingstop = gd.g_close_time + 120
+
                     if time.time() <= (gd.g_close_time + (2* float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
 
+
                         log.debug("%s Turn off all lights!" % gd.g_name)
+                        gd.stopLightFlash('WHITE')
                         if time.time() > opentimelightingstop:
                             gd.turnOffLight('WHITE')
-                            gd.stopLightFlash('WHITE')
                         else:
                             gd.turnOnLight('WHITE')
 
