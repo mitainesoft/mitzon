@@ -128,7 +128,8 @@
     su - mitainesoft
 
     # Upload [MITAINESOFT_GARAGE_REVISION] package to /opt/mitainesoft as user mitainesoft
-    # cp /git/garage/dist/[MITAINESOFT_GARAGE_REVISION] .
+    #   cp /git/garage/dist/[MITAINESOFT_GARAGE_REVISION] .
+    #   scp /git/garage/dist/* mitainesoft@192.168.1.xxx:/opt/mitainesoft
 
     cd /opt/mitainesoft/
     tar -zxvf  [MITAINESOFT_GARAGE_REVISION].tar.gz
@@ -1178,6 +1179,12 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     git pull
     python3 setup.py sdist
     #Package is under dist
+
+    #restore iptables
+    su - root
+    iptables-restore  </etc/iptables-garage.rule
+    #Check iptables rules list
+    iptables --list
 
 
 7. HW

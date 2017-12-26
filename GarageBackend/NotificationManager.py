@@ -87,25 +87,27 @@ class NotificationManager(metaclass=SingletonMeta):
         alert_sent_too_rencently=False
         key_email_recent=alertid+"_"+device+"_"+language
         status_text = "check if email for %s %s %s (%s)" % (alertid, device, language,key_email_recent)
+        log.debug(status_text)
 
         if (key_email_recent in self.g_add_alert_time_by_type):
             lastalerttime = self.g_add_alert_time_by_type[key_email_recent]
-            if (time.time() > (lastalerttime + self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL)):
+            if time.time() > (lastalerttime + self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL):
                 try:
-                    del self.g_add_alert_time_by_type[key_email_recent]
+                    #del self.g_add_alert_time_by_type[key_email_recent]
+                    self.g_add_alert_time_by_type[key_email_recent] = time.time()
                     alert_sent_too_rencently = False
+                    #Alarm not cleared will eventually be sent again !
+                    log.info("%s for %s can now be emailed again since not sent for at least %ds !" % (alertid, device, self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL))
                 except KeyError:
                     pass
-
-                log.debug("%s for %s can now be emailed again since not sent for at least %ds !" % (alertid, device,self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL))
             else:
                 alert_sent_too_rencently=True
-                log.debug("Skip email related to %s %s %s" % (alertid,device,language))
+                log.debug("Skip email related to %s %s %s (time between=%ds)" % (alertid,device,language,self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL))
         else:
             #Email not duplicate
             alert_sent_too_rencently = False
             self.g_add_alert_time_by_type[key_email_recent] = time.time()
-            log.debug("email related to %s %s NOT a duplicate" % (status_text, device))
+            log.debug("email related to %s %s NOT a duplicate (time between=%ds)" % (alertid, device,self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL))
 
         return alert_sent_too_rencently
 
