@@ -205,11 +205,10 @@ class GarageManager():
             if (gd.g_status.find(G_CLOSED)>=0):
                 if (gd.g_close_time != None): #Is there an open time stamp ?
                     # Manage specific case for light when GarageManager was restarted, door lock but door not opened !
-                    opentimelightingstop = gd.g_close_time + 120
-
-                    if time.time() <= (gd.g_close_time + (2* float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
-
-
+                    close_white_light_delay=120
+                    opentimelightingstop = gd.g_close_time + close_white_light_delay
+                    #Change light status during the close_white_light_delay period and a little more!
+                    if time.time() <= (gd.g_close_time + (close_white_light_delay+float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
                         log.debug("%s Turn off all lights!" % gd.g_name)
                         gd.stopLightFlash('WHITE')
                         if time.time() > opentimelightingstop:
