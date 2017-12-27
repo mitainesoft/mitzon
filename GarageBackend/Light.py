@@ -7,7 +7,7 @@ import time
 import datetime
 import os, sys, traceback
 
-log = logging.getLogger('Light')
+log = logging.getLogger('Garage.Light')
 
 
 class Light():

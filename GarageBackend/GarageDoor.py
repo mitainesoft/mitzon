@@ -13,7 +13,7 @@ import time
 import datetime
 from GarageBackend.ConfigManager import *
 
-log = logging.getLogger('GarageDoor')
+log = logging.getLogger('Garage.GarageDoor')
 
 class GarageDoor():
 
@@ -359,7 +359,7 @@ class GarageDoor():
         try:
             if self.g_auto_force_ignore_garage_open_close_cmd == True:
                 status_text=self.g_name + " " +  self.alarm_mgr_handler.alertFileListJSON["GCD01"]["text"]+" "
-                log.warning(status_text)
+                # log.warning(status_text)
             else:
                 if (self.g_status == G_OPEN and self.g_manual_force_lock_garage_open_close_cmd == False):
                     if time.time() > self.g_next_manual_cmd_allowed_time:
@@ -385,6 +385,8 @@ class GarageDoor():
             log.error(logstr)
             os._exit(-1)
         resp=CommmandQResponse(0, status_text)
+        log.warning(status_text)
+
         return resp
 
     '''
@@ -409,8 +411,9 @@ class GarageDoor():
             self.g_next_auto_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBeforeAutoRetryCloseDoor"))
             self.g_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBetweenButtonManualPressed"))
             self.g_last_cmd_sent_time=time.time()
+            log.info("%s Open/Close door button pressed" % (self.g_name))
         except Exception:
-            log.error("triggerGarageDoor Open or Close problem !")
+            log.error("triggerGarageDoor Open or Close button problem !")
             traceback.print_exc()
             os._exit(-1)
 
@@ -456,7 +459,7 @@ class GarageDoor():
 
     def getAllLightStatus(self):
         all_light_status = ""
-        for color in {"GREEN", "RED", "WHITE"}:
+        for color in sorted({"GREEN", "RED", "WHITE"}):
             key_dev_color = self.g_name + "_" + color
             if key_dev_color in self.g_light_list:
                 light_status = color[0]

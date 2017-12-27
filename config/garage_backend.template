@@ -158,3 +158,23 @@ GARAGE_USERS=Add MAC Addresses here separated by colun ','
 CONFIG_FILE_REV=[MITAINESOFT_GARAGE_REVISION]
 ALERT_DEFINITION_FILE=config/event_list.json
 
+
+[GARAGE_LOG_LEVEL]
+#  Level	    Numeric value
+#  CRITICAL	    50
+#  ERROR	    40
+#  WARNING	    30
+#  INFO	        20
+#  DEBUG	    10
+#  NOTSET	    0
+Garage.AlertManager=INFO
+Garage.ConfigManager=INFO
+Garage.DeviceManager=INFO
+Garage.GarageDoor=INFO
+Garage.GarageManager=INFO
+Garage.Light=INFO
+Garage.NotificationManager=INFO
+Garage.Sensor=INFO
+Garage.garageCmdProcessor=INFO
+nanpy=CRITICAL
+nanpy.serialmanager=CRITICAL
