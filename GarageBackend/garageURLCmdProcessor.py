@@ -219,9 +219,6 @@ if __name__ == '__main__':
             'engine.autoreload_on': False,
     }
 
-    # config_handler = ConfigManager()
-    # config_handler.setConfigFileName("config/garage_backend.config")
-
     garage_backend_conf = {
         '/': {
             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
@@ -230,7 +227,6 @@ if __name__ == '__main__':
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
     }
-    #log2 = logging.getLogger('garageCmdProcessor')
 
     LOG_CONF = {
         'version': 1,
@@ -356,11 +352,11 @@ if __name__ == '__main__':
 
     logging.config.dictConfig(LOG_CONF)
 
-
-
-    # log2.setLevel(logging.INFO)
-    # log2.info("Starting garage...")
-
+    # Say starting and force a log rotation
+    log=logging.getLogger('Garage.garageCmdProcessor')
+    logh=logging._handlers.get('Garage')
+    logh.doRollover()
+    log.info("Starting garage...")
 
     '''Subscriber - Dispatcher '''
     command_queue = Queue()
