@@ -15,7 +15,7 @@ import json
 
 
 
-log = logging.getLogger('AlertManager')
+log = logging.getLogger('Garage.AlertManager')
 
 
 class AlertManager(metaclass=SingletonMeta):
@@ -93,7 +93,7 @@ class AlertManager(metaclass=SingletonMeta):
                 if (prev_alert_time>0):
                     nbrmin= int((self.last_alert_sent_time-prev_alert_time))/60
                     tmpmsg = tmpmsg + (" last alert sent %d minutes ago" % nbrmin)
-                log.info("Alert %s send authorized. %s" % (tmp_alert_id_txt,tmpmsg))
+                log.debug("Alert %s send authorized if not filtered out. %s" % (tmp_alert_id_txt,tmpmsg))
                 sendalert = True
             else:
                 tmpmsg = tmpmsg + (" (Time between alerts:%dsec)" % self.seconds_between_alerts )

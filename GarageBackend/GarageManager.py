@@ -14,7 +14,7 @@ import datetime
 import cherrypy
 import os, sys, traceback
 
-log = logging.getLogger('GarageManager')
+log = logging.getLogger('Garage.GarageManager')
 
 class GarageManager():
 

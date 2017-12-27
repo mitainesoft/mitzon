@@ -8,7 +8,7 @@ import sys
 import os
 import re
 
-log = logging.getLogger('ConfigManager')
+log = logging.getLogger('Garage.ConfigManager')
 
 class ConfigManager(metaclass=SingletonMeta):
 
@@ -64,7 +64,7 @@ class ConfigManager(metaclass=SingletonMeta):
         try:
             val=self.config[section][param]
         except KeyError:
-            log.error("Section="+section+" param=" + param +" Not exist! Die !!!")
+            log.error("Section="+section+" param=" + param +" Not exist in config file")
             traceback.print_exc()
             os._exit(-1)
         return val

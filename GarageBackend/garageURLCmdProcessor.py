@@ -26,7 +26,7 @@ import time
 import datetime
 
 
-log = logging.getLogger('garageCmdProcessor')
+log = logging.getLogger('Garage.garageCmdProcessor')
 
 garage_manager_handler = None #GarageManager()
 notification_manager_handler = None
@@ -178,15 +178,18 @@ if __name__ == '__main__':
         _csp_rules.append('{:s}-src {:s}'.format(c, _csp_default_source))
     _csp = '; '.join(_csp_rules)
 
+    dispatch_queue = Queue()
+    garageHandler = garageURLCmdProcessor(dispatch_queue)
 
-    ''' @TODO Hardcoded RotatingFileHandler '''
-    logrotate_handler=logging.handlers.RotatingFileHandler("log/garage.log",maxBytes=10485760,backupCount=20,encoding=None, delay=0)
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        handlers=[logrotate_handler,
-                                  logging.StreamHandler()])
 
-    logrotate_handler.doRollover() #Roolover logs on startup
+    # ''' @TODO Hardcoded RotatingFileHandler '''
+    # logrotate_handler=logging.handlers.RotatingFileHandler("log/garage.log",maxBytes=10485760,backupCount=20,encoding=None, delay=0)
+    # logging.basicConfig(level=logging.INFO,
+    #                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    #                     handlers=[logrotate_handler,
+    #                               logging.StreamHandler()])
+    #
+    # logrotate_handler.doRollover() #Roolover logs on startup
 
     server_config = {
             'server.socket_host': '0.0.0.0',
@@ -216,6 +219,8 @@ if __name__ == '__main__':
             'engine.autoreload_on': False,
     }
 
+    # config_handler = ConfigManager()
+    # config_handler.setConfigFileName("config/garage_backend.config")
 
     garage_backend_conf = {
         '/': {
@@ -225,8 +230,7 @@ if __name__ == '__main__':
             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
         }
     }
-    log = logging.getLogger('garageCmdProcessor')
-
+    #log2 = logging.getLogger('garageCmdProcessor')
 
     LOG_CONF = {
         'version': 1,
@@ -240,16 +244,25 @@ if __name__ == '__main__':
             },
         },
          'handlers': {
+             'Garage': { #{"log/garage.log", maxBytes=, backupCount=20, encoding=None,delay=0, logging.handlers.RotatingFileHandler
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'standard',
+                'filename': 'log/garage.log',
+                'maxBytes': 10485760,
+                'backupCount': 20,
+                'encoding': 'utf8'
+            },
            'cherrypy_console': {
                 'level': 'INFO',
                 'class': 'logging.StreamHandler',
-                'formatter': 'void',
+                'formatter': 'standard',
                 'stream': 'ext://sys.stdout'
             },
             'cherrypy_access': {
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'formatter': 'void',
+                'formatter': 'standard',
                 'filename': 'log/garage_cherrypy_access.log',
                 'maxBytes': 10485760,
                 'backupCount': 10,
@@ -258,7 +271,7 @@ if __name__ == '__main__':
             'cherrypy_error': {
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'formatter': 'void',
+                'formatter': 'standard',
                 'filename': 'log/garage_cherrypy_error.log',
                 'maxBytes': 10485760,
                 'backupCount': 10,
@@ -266,6 +279,61 @@ if __name__ == '__main__':
             },
         },
         'loggers': {
+            'Garage.AlertManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.AlertManager"),
+                'propagate': True
+            },
+            'Garage.ConfigManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.ConfigManager"),
+                'propagate': True
+            },
+            'Garage.DeviceManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.DeviceManager"),
+                'propagate': True
+            },
+            'Garage.GarageDoor': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.GarageDoor"),
+                'propagate': True
+            },
+            'Garage.GarageManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.GarageManager"),
+                'propagate': True
+            },
+            'Garage.Light': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.Light"),
+                'propagate': True
+            },
+            'Garage.NotificationManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.NotificationManager"),
+                'propagate': True
+            },
+            'Garage.Sensor': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.Sensor"),
+                'propagate': True
+            },
+            'Garage.garageCmdProcessor': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.garageCmdProcessor"),
+                'propagate': True
+            },
+            'nanpy': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "nanpy"),
+                'propagate': True
+            },
+            'nanpy.serialmanager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "nanpy.serialmanager"),
+                'propagate': True
+            },
             # # Only Log Request and reponses to file.  Screen is the next block!
             'cherrypy.access': {
                 'handlers': ['cherrypy_access'],
@@ -290,16 +358,16 @@ if __name__ == '__main__':
 
 
 
-    log.setLevel(logging.INFO)
-    log.info("Starting garage...")
+    # log2.setLevel(logging.INFO)
+    # log2.info("Starting garage...")
 
 
     '''Subscriber - Dispatcher '''
     command_queue = Queue()
     response_queue = Queue()
-    dispatch_queue = Queue()
 
-    my_garageURLCmdProcessor = garageURLCmdProcessor(dispatch_queue)
+    # dispatch_queue = Queue()
+    # garageHandler = garageURLCmdProcessor(dispatch_queue)
 
     # pub1 = Pub1(dispatch_queue)
     sub1 = DeviceManager()
@@ -326,13 +394,13 @@ if __name__ == '__main__':
     try:
         cherrypy.config.update(server_config)
 
-        # cherrypy.quickstart(my_garageURLCmdProcessor,'/',garage_backend_conf)
+        # cherrypy.quickstart(garageHandler,'/',garage_backend_conf)
         #cherrypy.quickstart(RootServer())
 
-        #cherrypy.quickstart(my_garageURLCmdProcessor)
+        #cherrypy.quickstart(garageHandler)
 
         #cherrypy.tree.mount(garageURLCmdProcessor(dispatch_queue), script_name='/', config=server_config4)
-        cherrypy.quickstart(my_garageURLCmdProcessor, '/',garage_backend_conf)
+        cherrypy.quickstart(garageHandler, '/',garage_backend_conf)
 
     except Exception:
         log.error("Cherrypy quickstart fail !")
@@ -341,7 +409,7 @@ if __name__ == '__main__':
 
 
 
-    # cherrypy.tree.mount(my_garageURLCmdProcessor, '/backend', garage_backend_conf)
+    # cherrypy.tree.mount(garageHandler, '/backend', garage_backend_conf)
     # cherrypy.engine.start()
     # cherrypy.engine.block()
 

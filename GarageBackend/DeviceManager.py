@@ -11,7 +11,7 @@ import datetime
 from nanpy import ArduinoApi, SerialManager
 import re
 
-log = logging.getLogger('DeviceManager')
+log = logging.getLogger('Garage.DeviceManager')
 
 
 class DeviceManager(metaclass=SingletonMeta):

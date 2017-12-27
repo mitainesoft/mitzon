@@ -22,7 +22,7 @@ from queue import *
 import string
 import json
 
-log = logging.getLogger('NotificationManager')
+log = logging.getLogger('Garage.NotificationManager')
 
 
 

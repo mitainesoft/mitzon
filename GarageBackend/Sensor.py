@@ -3,7 +3,7 @@ from GarageBackend.ConfigManager import *
 import datetime
 import time
 
-log = logging.getLogger('Sensor')
+log = logging.getLogger('Garage.Sensor')
 
 
 class Sensor():
