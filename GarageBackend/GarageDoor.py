@@ -128,7 +128,8 @@ class GarageDoor():
             self.g_auto_force_ignore_garage_open_close_cmd = True
             sensor_status_text=self.addAlert("HW001", self.g_name + "_" + sensor)
             status_text=self.addAlert("GCD01", self.g_name)
-            resp = CommmandQResponse(time.time(), status_text)
+            # self.tid,self.module,self.device,self.status,self.text)
+            resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]",self.g_name + "_" + sensor,S_ERROR,status_text)
             # os._exit(6)
         return resp
 
@@ -279,18 +280,37 @@ class GarageDoor():
             # self.g_lock_time=None
         log.info(tmptxt)
 
-        resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineGarageDoorOpenClosedStatus())
+        # resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineGarageDoorOpenClosedStatus())
+        # self.tid,self.module,self.device,self.status,self.text)
+        mod="[DeviceManager]"
+        stat="[STATUS]"
+        str0 = self.determineGarageDoorOpenClosedStatus().split(':')
+        dev=str0[0]
+        if str0.__len__() >1:
+            stat=str0[1]
+        resp = CommmandQResponse(time.time() * 1000000, mod, dev, stat,"")
+
         return (resp)
 
     def status(self):
         log.debug("GarageDoor status called !")
         self.updateSensor()
 
-        resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] "+self.determineGarageDoorOpenClosedStatus())
+        #resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineGarageDoorOpenClosedStatus())
+        # self.tid,self.module,self.device,self.status,self.text)
+        mod="[DeviceManager]"
+        stat="[STATUS]"
+        str0 = self.determineGarageDoorOpenClosedStatus().split(':')
+        dev=str0[0]
+        if str0.__len__() >1:
+            stat=str0[1]
+        resp = CommmandQResponse(time.time() * 1000000, mod, dev, stat,"")
+
         return (resp)
 
     def clear(self):
-        resp = CommmandQResponse(time.time()*1000000, "Garage alarm cleared" )
+        # resp = CommmandQResponse(time.time()*1000000, "Garage alarm cleared" )
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "Garage alarm cleared")
         return (resp)
 
     def addSensor(self, key,sensor_props):
@@ -349,7 +369,8 @@ class GarageDoor():
             logstr = "open() Garage %s Status = %s Fatal Exception" % (self.g_name, self.g_status)
             log.error(logstr)
             os._exit(-1)
-        resp=CommmandQResponse(0, status_text)
+        # resp=CommmandQResponse(0, status_text)
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", status_text)
         log.warning(status_text)
         return resp
 
@@ -384,7 +405,9 @@ class GarageDoor():
             logstr = "close() Garage %s Status = %s Fatal Exception" % (self.g_name, self.g_status)
             log.error(logstr)
             os._exit(-1)
-        resp=CommmandQResponse(0, status_text)
+        # resp=CommmandQResponse(0, status_text)
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", status_text)
+
         log.warning(status_text)
 
         return resp
@@ -485,5 +508,6 @@ class GarageDoor():
             log.info("OFF")
             sleep(2)
             n += 1
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "test!")
 
-        return CommmandQResponse(0, "testRelay Done")
+        return resp

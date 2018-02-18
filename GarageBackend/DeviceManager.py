@@ -115,13 +115,16 @@ class DeviceManager(metaclass=SingletonMeta):
             except AttributeError:
                 ex_text = "Method %s doesn't exist ! nothing will happen for %s/%s/%s..." % (myservice, mything, myservice, myid)
                 log.exception(ex_text)
-                resp = CommmandQResponse(0, ex_text)
+                resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", ex_text)
+                # resp = CommmandQResponse(0, ex_text)
                 return resp
             resp = thingToCall()
+            log.debug("processDeviceCommand Class Resp String=%s" % resp.getRspPropsToString())
             pass
         else:
             ex_text = "[DeviceManager] Invalid_Command:%s_%s_%s" % (mything, myservice, myid)
-            resp = CommmandQResponse(0, ex_text)
+            #resp = CommmandQResponse(0, ex_text)
+            resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", ex_text)
             log.error(ex_text)
 
         # self.listDevices(self.deviceList)

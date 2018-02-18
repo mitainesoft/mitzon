@@ -121,7 +121,9 @@ class AlertManager(metaclass=SingletonMeta):
             thingToCall = getattr(self, myservice)
             resp = thingToCall()
         except AttributeError:
-            resp = CommmandQResponse(time.time(), "Alert Manager Ok")
+            # self.tid, self.module, self.device, self.status, self.text
+            #resp = CommmandQResponse(time.time(), "Alert Manager Ok")
+            resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "Alert Manager Ok")
         # resp = CommmandQResponse(time.time(),alertlisttxt)
         return (resp)
 
@@ -149,7 +151,8 @@ class AlertManager(metaclass=SingletonMeta):
     def clear(self):
         # Not called  Bug !
         self.clearAllAlert()
-        resp = CommmandQResponse(time.time()*1000000, "AlertManager alarm cleared" )
+        #resp = CommmandQResponse(time.time()*1000000, "AlertManager alarm cleared" )
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "AlertManager alarm cleared" )
         return (resp)
 
     def clearAllAlert(self):
@@ -286,8 +289,9 @@ class AlertManager(metaclass=SingletonMeta):
             log.debug("Alarm List empty Exception!")
 
     def test(self):
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "test AlertManager")
+        return resp
 
-        return CommmandQResponse(0, "test AlertManager")
 
     def status(self):
 
@@ -322,8 +326,8 @@ class AlertManager(metaclass=SingletonMeta):
         except Exception:
             # traceback.print_exc()
             log.error("processDeviceCommand Alarm List empty Exception! Should not be here !")
-
-        resp = CommmandQResponse(time.time(),"[AlertManager] "+ alertlisttxt )
+        #self.tid,self.module,self.device,self.status,self.text
+        resp = CommmandQResponse(time.time() * 1000000,"[AlertManager]","","",alertlisttxt )
         # resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] "+self.determineGarageDoorOpenClosedStatus().getRspPropsToString())
 
         return (resp)

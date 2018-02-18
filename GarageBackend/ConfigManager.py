@@ -121,7 +121,18 @@ class ConfigManager(metaclass=SingletonMeta):
             ['USERS', 'garage_admin'],
             ['USERS', 'garage_users'],
             ['INTERNAL', 'config_file_rev'],
-            ['INTERNAL', 'alert_definition_file']
+            ['INTERNAL', 'alert_definition_file'],
+            ['GARAGE_LOG_LEVEL', 'Garage.AlertManager'],
+            ['GARAGE_LOG_LEVEL', 'Garage.ConfigManager'],
+            ['GARAGE_LOG_LEVEL', 'Garage.DeviceManager'],
+            ['GARAGE_LOG_LEVEL', 'Garage.GarageDoor'],
+            ['GARAGE_LOG_LEVEL', 'Garage.GarageManager'],
+            ['GARAGE_LOG_LEVEL', 'Garage.Light'],
+            ['GARAGE_LOG_LEVEL', 'Garage.NotificationManager'],
+            ['GARAGE_LOG_LEVEL', 'Garage.Sensor'],
+            ['GARAGE_LOG_LEVEL', 'Garage.garageCmdProcessor'],
+            ['GARAGE_LOG_LEVEL', 'nanpy'],
+            ['GARAGE_LOG_LEVEL', 'nanpy.serialmanager']
         ]
 
         try:

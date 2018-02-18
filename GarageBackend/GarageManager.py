@@ -77,7 +77,7 @@ class GarageManager():
             self.alarm_mgr_handler.processAlerts()
 
             if log.isEnabledFor(logging.DEBUG) or i%10000==0:
-                log.info("** garageManager %d **" % (i))
+                log.info("** garageManager heart beat %d **" % (i))
                 self.dev_manager_handler.listDevices()
                 self.alarm_mgr_handler.status()
             sleep(float(self.config_handler.getConfigParam("GARAGE_MANAGER","GARAGE_MANAGER_LOOP_TIMEOUT")))

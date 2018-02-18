@@ -24,7 +24,7 @@ import types
 from time import sleep
 import time
 import datetime
-
+import json
 
 log = logging.getLogger('Garage.garageCmdProcessor')
 
@@ -44,6 +44,8 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         self.config_handler.setConfigFileName("config/garage_backend.config")
         self.dev_manager_handler = DeviceManager()
         self.alert_manager_handler = AlertManager()
+
+        self.NBR_QUEUE=2
 
     @cherrypy.tools.accept(media='text/plain')
     # s.post('http://127.0.0.1:8080/garage/open/g0')
@@ -95,19 +97,33 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         self.dispatch.put(('processDeviceCommand', mything, myservice, myid))
 
         resp_str=""
+        resp_array = {}
+        sub_nbr=0
 
-        for sub_nbr in range(0,1): #  1 only DeviceManager 2 Subscribers are DeviceManager and Alert Manager
+        loopstarttime=time.time()
+        # for sub_nbr in range(0,2): #  1 only DeviceManager 2 Subscribers are DeviceManager and Alert Manager. Not
+        while response_queue.qsize()>0 or ( sub_nbr<self.NBR_QUEUE and (time.time()<(loopstarttime+float(self.config_handler.getConfigParam("THREAD_CONTROL","RESP_TIMEOUT")))) ):
             try:
                 resp=response_queue.get(True, float(self.config_handler.getConfigParam("THREAD_CONTROL","RESP_TIMEOUT")))
-                resp_str = resp_str +  resp.getRspPropsToString()
+                resp_str = resp_str +  resp.getRspPropsToString()+" "
+                resp_array[sub_nbr]=resp.getRspPropsToArray()
+                sub_nbr+=1
             except Empty:
-                resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))
+                log.error("response_queue RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))
+                # resp_str=resp_str + ("RESP_TIMEOUT=%s/%s/%s" %(mything, myservice, myid))
 
-        resp_str += self.alert_manager_handler.status().getRspPropsToString()
+        resp_str=resp_str[:-1]  #remove Trailing space
+        # resp_str += self.alert_manager_handler.status().getRspPropsToString()
 
         if log.isEnabledFor(logging.DEBUG):
             self.dev_manager_handler.listDevices()
+
+        resp_json=json.dumps(resp_array)
+
+        # Uncomment return statement below.
+        #return resp_json
         return resp_str
+
 
     # @cherrypy.expose
     def PUT(self):
@@ -135,12 +151,17 @@ def command_queue_fn(q: Queue, r: Queue):
             log.debug("command_queue_fn isinstance next = %s", next[0].__self__.__class__.__name__)
         if next[0].__self__.__class__.__name__ == "DeviceManager":
             r.put(resp)
-        else:
+        elif next[0].__self__.__class__.__name__ == "AlertManager":
+            r.put(resp)
             if log.isEnabledFor(logging.DEBUG):
-                log.debug("command_queue_fn NOT ADDED TO QUEUE isinstance next = %s", next[0].__self__.__class__.__name__)
-            # r.put(CommmandQResponse(0,next[0].__self__.__class__.__name__))
-        # if hasattr(next[0], '__self__') and isinstance(next[0].__self__, DeviceManager):
-        #     r.put(resp)
+                # log.debug("command_queue_fn NOT ADDED TO QUEUE isinstance next = %s",
+                log.debug("command_queue_fn ADDED TO QUEUE isinstance next = %s",
+                           next[0].__self__.__class__.__name__)
+        else:
+            log.error("Unknown class %s" % (next[0].__self__.__class__.__name__))
+            traceback.print_exc()
+            os._exit(-1)
+
         next = q.get()
 
 # @cherrypy.expose
@@ -362,52 +383,40 @@ if __name__ == '__main__':
     command_queue = Queue()
     response_queue = Queue()
 
-    # dispatch_queue = Queue()
-    # garageHandler = garageURLCmdProcessor(dispatch_queue)
-
-    # pub1 = Pub1(dispatch_queue)
-    sub1 = DeviceManager()
-    sub2 = AlertManager()
-
-    thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,response_queue,))
-    thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue',
-                               args=(dispatch_queue, command_queue, [sub1, sub2]))
-
-    garage_manager_handler = GarageManager()
-    thread_garage_manager = Thread(target=GarageManager.monitor,
-                                   args=(garage_manager_handler,), name='garage_manager',
-                                   daemon=True)
-
-    notification_manager_handler = NotificationManager()
-    thread_notification_manager = Thread(target=NotificationManager.processnotif,
-                                   args=(notification_manager_handler,), name='notification_manager',
-                                   daemon=True)
-
-    thread_command_queue.start()
-    thread_dispatcher.start()
-    thread_garage_manager.start()
-    thread_notification_manager.start()
     try:
         cherrypy.config.update(server_config)
 
-        # cherrypy.quickstart(garageHandler,'/',garage_backend_conf)
-        #cherrypy.quickstart(RootServer())
+        # dispatch_queue = Queue()
+        # garageHandler = garageURLCmdProcessor(dispatch_queue)
 
-        #cherrypy.quickstart(garageHandler)
+        # pub1 = Pub1(dispatch_queue)
+        sub1 = DeviceManager()
+        sub2 = AlertManager()
 
-        #cherrypy.tree.mount(garageURLCmdProcessor(dispatch_queue), script_name='/', config=server_config4)
+        thread_command_queue = Thread(target=command_queue_fn, name='cmd_queue', args=(command_queue,response_queue,))
+        thread_dispatcher = Thread(target=dispatcher_fn, name='dispath_queue',
+                                   args=(dispatch_queue, command_queue, [sub1, sub2]))
+
+        garage_manager_handler = GarageManager()
+        thread_garage_manager = Thread(target=GarageManager.monitor,
+                                       args=(garage_manager_handler,), name='garage_manager',
+                                       daemon=True)
+
+        notification_manager_handler = NotificationManager()
+        thread_notification_manager = Thread(target=NotificationManager.processnotif,
+                                       args=(notification_manager_handler,), name='notification_manager',
+                                       daemon=True)
+
+        thread_command_queue.start()
+        thread_dispatcher.start()
+        thread_garage_manager.start()
+        thread_notification_manager.start()
+
         cherrypy.quickstart(garageHandler, '/',garage_backend_conf)
-
     except Exception:
         log.error("Cherrypy quickstart fail !")
         traceback.print_exc()
         os._exit(-1)
-
-
-
-    # cherrypy.tree.mount(garageHandler, '/backend', garage_backend_conf)
-    # cherrypy.engine.start()
-    # cherrypy.engine.block()
 
     dispatch_queue.put(None)
     command_queue.put(None)
