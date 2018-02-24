@@ -188,6 +188,7 @@
         #delete nohup file
         0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
         0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
+        # Add wakeup_network_internet_curl.sh usefullness unclear
         28 5,9,16,19 * * * /opt/mitainesoft/garage/scripts/wakeup_network_internet_curl.sh
 
         ** Change active version of garage **
@@ -1199,7 +1200,29 @@ a) Raspberry Temperature Overheat !
     # temp below 50C is OK !
 
 
-5. DESIGN ENV SETUP
+8. Networks
+
+    ** Multi AP networks **
+    # Force raspberry to bind to specific AP when ssid is served by several Wifi Access Points
+    # Reference https://wiki.gentoo.org/wiki/Wpa_supplicant
+    su - root
+    cd /etc/wpa_supplicant
+    cp wpa_supplicant.conf wpa_supplicant.conf.orig
+    vi wpa_supplicant.conf
+
+    # Add bssid=00:11:22:33:44:55 to network section for ssid
+    network={
+        bssid=00:11:22:33:44:55
+        ssid="chaussette482"
+        psk="My Wifi password"
+        key_mgmt=WPA-PSK
+    }
+
+
+
+
+
+9. DESIGN ENV SETUP
 
     ** ssh key **
         1. on linux where git will installed.
@@ -1249,12 +1272,12 @@ a) Raspberry Temperature Overheat !
     -
 
 
-8.  Design Env 
+10.  Design Env
     su - pi
     mkdir -p /home/pi/garage/log/
     
     
-9. Stuff
+11. Misc
 
     *** kill proc one shot! ***
     kill -9 `pgrep -f garageURLCmdProcessor`
