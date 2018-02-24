@@ -176,6 +176,8 @@
         # Fix it
         cd /etc/init.d
         perl -i -pe 's/\r\n$/\n/g' garage
+        cd /opt/mitainesoft/garage/scripts
+        perl -i -pe 's/\r\n$/\n/g' wakeup_network_internet_curl.sh
 
         # Try it
         /etc/init.d/garage status
@@ -186,7 +188,7 @@
         #delete nohup file
         0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
         0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
-
+        28 5,9,16,19 * * * /opt/mitainesoft/garage/scripts/wakeup_network_internet_curl.sh
 
         ** Change active version of garage **
         su - mitainesoft
@@ -1084,9 +1086,9 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
         -A INPUT -p tcp -m mac --mac-source YY:YY:YY:YY:YY:YY -m multiport --dports 8050,80,443 -j ACCEPT
 
         #Raspberry itself
-        #gmail
-        -A OUTPUT -p tcp -m multiport --dports 465,587,993 -j ACCEPT
-        -A INPUT  -p tcp -m multiport --sports 465,587,993 -j ACCEPT
+        #gmail & http. http used to wake up network !
+        -A OUTPUT -p tcp -m multiport --dports 465,587,993,80,443 -j ACCEPT
+        -A INPUT  -p tcp -m multiport --sports 465,587,993,80,443 -j ACCEPT
 
 
         #DNS & NTP Raspberry

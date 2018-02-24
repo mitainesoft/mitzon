@@ -12,3 +12,8 @@ else
    $MITAINEGARAGEHOME/garage.bash
 fi
 
+##Force a query to internet. To wake up timer. Kill previous curl !
+#echo Do a https request toward internet to wake up networks...
+#kill -9 `pgrep -f "curl -s -o /dev/null http://jquery.com"` 2>/dev/null
+#nohup curl  -s -o /dev/null https://code.jquery.com &
+
