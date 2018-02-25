@@ -19,11 +19,8 @@
 
 
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-
-    <!--<script>document.createElement("picture");</script>-->
-    <!--<script src="../js/picturefill.min.js" class="picturefill" async="async"></script>-->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.js"></script>
 
 </head>
 
@@ -107,6 +104,7 @@
             doorStatus();
             intervalEvent = setInterval(doorStatus, 30000);
         }
+
 
 
         $(window).on("blur focus", function (e) {
@@ -233,104 +231,136 @@
         }
 
         function parseResponse(data) {
-            console.log("-- parseResponse -------------------------------------------------------\n");
-            if (data == null) return;
+            if (data == null) {
+                console.log("parseResponse: No data!")
+                return;
+            }
+            console.log("-- parseResponse: got data! -------------------------------------------------------\n");
+
             tmpstr = data.toString();
-            var parseResponseArray = tmpstr.match(/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s(\w+)\=(.*)/);
+            //data: '{"0": [1519575694567163.8, "[DeviceManager]", "GARAGE_1", "CLOSED", ""], "1": [1519575694567648.2, "[AlertManager]", "", "", "Alertlist=None"]}'
 
-//            console.log("'" + tmpstr + "'\n");
-            if (parseResponseArray == null) return;
+            // JSON return
+            var parseResponseObject = JSON.parse(data)
 
-            console.log("array:" + parseResponseArray + "\n")
-            for (var i = 0; i <= 7; i++) {
-                console.log(i + ":" + parseResponseArray[i] + "\n");
+            var parseResponseArray = $.map(parseResponseObject, function(value, index) {
+                return [value];
+            });
+            //var parseResponseArray = tmpstr.match(/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s(\w+)\=(.*)/);
+
+            console.log("data: '" + tmpstr + "'\n");
+            if (parseResponseArray == null) {
+                console.log("Unable to parse json response:"+tmpstr);
+                return;
             }
 
-
-            /*  0:tid:00001498254616977432 [DeviceManager] GARAGE_0:CLOSED tid:00000000001498254616 [AlertManager] Alertlist=None
-             1:00001498254616977432
-             2:[DeviceManager]
-             3:GARAGE_0
-             4:CLOSED
-             5:00000000001498254616
-             6:Alertlist
-             7:None */
-            var garagecmdlabel = "";
-            if (/\[DeviceManager\]/.test(parseResponseArray[2])) {
-
-                switch (true) {
-                    case /GARAGE/.test(parseResponseArray[3]):
-                        <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
-                        var deviceArray = parseResponseArray[3].split('_');
-                        if (deviceArray == null || deviceArray.length !== 2) {
-                            console.log("parseResponse::Invalid Device format returned by backend server:" + parseResponseArray[2]);
-                            return;
-                        }
-                        deviceid = deviceArray[1];
-                        //garagestatus1
-                        garagecmdlabel = "garagecmd" + deviceArray[1];
-                        clearClassGarage(garagecmdlabel);
-                        console.log("parseResponse::garagecmdlabel=" + garagecmdlabel);
-                        switch (true) {
-                            case /CLOSED/.test(parseResponseArray[4]):
-                                $('#' + garagecmdlabel).addClass('closeddoorbutton');
-                                break;
-                            case /OPEN/.test(parseResponseArray[4]):
-                                $('#' + garagecmdlabel).addClass('opendoorbutton');
-                                break;
-                            case /ERROR/.test(parseResponseArray[4]):
-                                $('#' + garagecmdlabel).addClass('errordoorbutton');
-                                break;
-                            case /UNKNOWN/.test(parseResponseArray[4]):
-                                $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
-                                break;
-                            default:
-                                $('#' + garagecmdlabel).addClass('programerrorbutton');
-                                console.log("parseResponse Unknown status:" + parseResponseArray[4]);
-                                break;
-                        } // sw Garage Status
-
-                        if (/LOCK/.test(parseResponseArray[4])) {
-                            $('#' + garagecmdlabel).addClass('lockstatusdoorbutton');
-                            $('#garagelock').addClass('lockstatusdoorbutton');
-                        } else {
-                            if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
-                                $('#garagelock').addClass('errordoorbutton');
-                            }
-                        }
-                        break;
-                    default:
-                        console.log("parseResponse::Unknown device command:" + tmpstr);
-                        break;
-                } // sw garage
-            } //if device
-
-
-            if (parseResponseArray[7] == null) {
-                console.log("Alert list is null. (" + tmpstr + ")");
-            }
-
-            alertlistArray = parseResponseArray[7].split(';');
-            if (alertlistArray.length <= 0) {
-                alertlistArray[0] = parseResponseArray[7];
-            }
-
-            if (/^None/.test(alertlistArray[0])) {
-                console.log("No Alerts!");
-                clearAlerts();
-                alertlistArray = null;
-                //link-button nav-button flaticon-garbage
-            } else {
-                var maxsev = "3"
-                for (var i = 0; i < alertlistArray.length; i++) {
-                    var alertparseArray = alertlistArray[i].match(/Alert id\:(.*)\s+dev\:(.*)\s+sev\:(\d)(.*)text\:(.*)workaround\:(.*)time\:(.*)/);
-                    var sevtxt = alertparseArray[3];
-                    console.error(i + ":" + alertlistArray[i] + " (" + sevtxt + ")\n");
-                    if (sevtxt < maxsev) maxsev = sevtxt;
+            var arows=parseResponseArray.length ;
+            var acol=parseResponseArray[0].length ;
+            console.log("array nbr JSON prop rows:" + arows );
+            console.log("array nbr JSON column [0] :" + acol  );
+            var logstr=""
+            /*  array arows:2
+                array acol:5
+                0> 0:1519577933131493.5  1:[DeviceManager]  2:GARAGE_1  3:CLOSED    4:  \
+                1> 0:1519577933131923.8  1:[AlertManager]  2:           3:          4:Alertlist=None  \
+            */
+            for (var i = 0; i < parseResponseArray.length; i++) {
+                for (var j = 0; j < parseResponseArray[i].length; j++) {
+                    if (parseResponseArray[i][j]!=null) tmpj=parseResponseArray[i][j];
+                    else tmpj="NuLL"
+                    logstr += j + ":" + tmpj + "  ";
                 }
-                //Enable alert buttons
-                colorAlertButton(maxsev);
-            }
+                console.log(i + "> " + logstr + "\\");
+                logstr = ""
+
+                var garagecmdlabel = "";
+                if (/\[DeviceManager\]/.test(parseResponseArray[i][1])) {
+
+                    switch (true) {
+                        case /GARAGE/.test(parseResponseArray[i][2]):
+                            <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
+                            var deviceArray = parseResponseArray[i][2].split('_');
+                            if (deviceArray == null || deviceArray.length !== 2) {
+                                console.log("parseResponse::Invalid Device format returned by backend server:" + parseResponseArray[i][1]);
+                                return;
+                            }
+                            deviceid = deviceArray[1];
+                            //garagestatus1
+                            garagecmdlabel = "garagecmd" + deviceArray[1];
+                            clearClassGarage(garagecmdlabel);
+                            console.log("parseResponse::garagecmdlabel=" + garagecmdlabel);
+                            switch (true) {
+                                case /CLOSED/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('closeddoorbutton');
+                                    break;
+                                case /OPEN/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('opendoorbutton');
+                                    break;
+                                case /ERROR/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('errordoorbutton');
+                                    break;
+                                case /UNKNOWN/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
+                                    break;
+                                default:
+                                    $('#' + garagecmdlabel).addClass('programerrorbutton');
+                                    console.log("parseResponse Unknown status:" + parseResponseArray[i][3]);
+                                    break;
+                            } // sw Garage Status
+
+                            if (/LOCK/.test(parseResponseArray[i][3])) {
+                                $('#' + garagecmdlabel).addClass('lockstatusdoorbutton');
+                                $('#garagelock').addClass('lockstatusdoorbutton');
+                            } else {
+                                if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
+                                    $('#garagelock').addClass('errordoorbutton');
+                                }
+                            }
+                            break;
+                        default:
+                            console.log("parseResponse::Unknown device command:" + tmpstr);
+                            break;
+                    } // sw GARAGE
+                } //if DeviceManager
+
+                if (/\[AlertManager\]/.test(parseResponseArray[i][1])) {
+                    console.log("AlertManager properties parsing starts...")
+
+                    if (parseResponseArray[i][4] == null) {
+                        console.log("Alert list is null. (" + tmpstr + ")");
+                    }
+
+                    alertListFieldArray=parseResponseArray[i][4].split('=');
+                    if (alertListFieldArray==null || alertListFieldArray.length<=1) {
+                        console.log("alertListFieldArray="+alertListFieldArray);
+                        continue;
+                    }
+
+                    alertlistArray = alertListFieldArray[1].split(';');
+                    if (alertlistArray.length <= 0) {
+                        alertlistArray[0] = parseResponseArray[i][4];
+                    }
+
+                    if (/^None/.test(alertlistArray[0])) {
+                        console.log("No Alerts!");
+                        clearAlerts();
+                        alertlistArray = null;
+                        //link-button nav-button flaticon-garbage
+                    } else {
+                        var maxsev = "3"
+                        for (var i = 0; i < alertlistArray.length; i++) {
+                            var alertparseArray = alertlistArray[i].match(/Alert id\:(.*)\s+dev\:(.*)\s+sev\:(\d)(.*)text\:(.*)workaround\:(.*)time\:(.*)/);
+
+                            var sevtxt = alertparseArray[3];
+                            console.error(i + ":" + alertlistArray[i] + " (" + sevtxt + ")\n");
+                            if (sevtxt < maxsev) maxsev = sevtxt;
+                        }
+                        //Enable alert buttons
+                        colorAlertButton(maxsev);
+                    }
+                } // AlertManager
+
+            } // for i
         }
 
         function clearClassGarage(labelid) {

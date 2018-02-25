@@ -121,8 +121,8 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         resp_json=json.dumps(resp_array)
 
         # Uncomment return statement below.
-        #return resp_json
-        return resp_str
+        return resp_json
+        #return resp_str
 
 
     # @cherrypy.expose
