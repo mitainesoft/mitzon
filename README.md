@@ -1269,7 +1269,11 @@ a) Raspberry Temperature Overheat !
     - python3-pip
     - git
     - ssh
-    -
+    
+	** Jetbrains pycharm setup **
+	- Use Clone git repositories using ssh for Two-factor authentication to work properly!  if enabled of course !
+	- Use Native ssh 
+		settings-->Version Control-->Git ,and then, In the SSH executable dropdown, choose Native
 
 
 10.  Design Env
