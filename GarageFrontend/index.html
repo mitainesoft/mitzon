@@ -36,8 +36,11 @@
         </div>
         <div data-role="navbar">
             <ul>
-                <li><a class="flaticon-font glyphs-icon glyph flaticon-house-3 ui-btn-active" href="index.html"></a></li>
-                <li><a class="flaticon-font glyphs-icon glyph flaticon-cctv" href="http://ville.montreal.qc.ca/circulation/pierrefonds-roxboro/rue-antoine-faucon-et-boulevard-saint-charles"></a></li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-house-3 ui-btn-active" href="index.html"></a>
+                </li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-cctv"
+                       href="http://ville.montreal.qc.ca/circulation/pierrefonds-roxboro/rue-antoine-faucon-et-boulevard-saint-charles"></a>
+                </li>
                 <li><a class="flaticon-font glyphs-icon glyph flaticon-info" href="about.html"></a></li>
             </ul>
 
@@ -92,19 +95,22 @@
 
         <div class="coffee-span-12">
             <!--<p class="paragraph Footer">Montreal<br> +1 514 594 3818 mitainesoft@gmail.com</p>-->
-            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft 2017 [MITAINESOFT_GARAGE_REVISION]
+            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
+                2017 [MITAINESOFT_GARAGE_REVISION]
             </a>
             </p>
         </div>
     </div><!-- /footer -->
 
     <script>
+        var _NBR_DOOR=2
+        // do s staus on start
+        doorStatus();
         var intervalEvent = setInterval(doorStatus, 60000);
         window.onload = function () {
             doorStatus();
             intervalEvent = setInterval(doorStatus, 30000);
         }
-
 
 
         $(window).on("blur focus", function (e) {
@@ -184,7 +190,7 @@
 
             } //switch
 
-            var cmd = 'https://' + window.location.hostname +':8050/GarageDoor/' + subcmd + '/' + id
+            var cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/' + subcmd + '/' + id
             console.log(cmd);
             var posting = $.post(cmd, function (data) {
                 parseResponse(data);
@@ -194,21 +200,20 @@
 
         function doorLock() {
             $('#garagelock').removeClass('errordoorbutton');
-            if ($('#garagelock').hasClass('lockstatusdoorbutton')){
+            if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
                 $('#garagelock').removeClass('lockstatusdoorbutton');
             } else {
                 $('#garagelock').addClass('lockstatusdoorbutton');
             }
 
-            for (count = 0; count <= 1; count++) {
-
+            for (count = 0; count < _NBR_DOOR; count++) {
                 // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
-                if ( ($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) &&
-                     !($('#garagelock').hasClass('lockstatusdoorbutton')&& $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
-                    console.log("Lock button Desync garagecmd"+ count +" ! so resync!");
+                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) &&
+                    !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                    console.log("Lock button Desync garagecmd" + count + " ! so resync!");
                 } else {
-                    console.log("Lock button In Sync garagecmd"+ count +" !  ")
-                    cmd = 'https://' + window.location.hostname +':8050/GarageDoor/lock/' + count
+                    console.log("Lock button In Sync garagecmd" + count + " !  ")
+                    cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/lock/' + count
                     console.log(cmd);
 
                     garageid = "garagestatus" + count;
@@ -217,17 +222,28 @@
                     }, null, "text")
                 }
             }
+
+
         }
 
         function doorStatus() {
-            for (count = 0; count <= 1; count++) {
-                cmd = 'https://' + window.location.hostname +':8050/GarageDoor/status/' + count
+            var parseResponseArray = null
+            for (count = 0; count < _NBR_DOOR; count++) {
+                cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/status/' + count
                 console.log(cmd);
                 garageid = "garagestatus" + count;
                 posting = $.post(cmd, function (data) {
                     parseResponse(data, status)
+                    return parseResponseArray;
                 }, null, "text")
+
+                 // Only check statu son last door
+                if (count == (_NBR_DOOR-1)) {
+                    updateLockButton();
+                }
             }
+
+
         }
 
         function parseResponse(data) {
@@ -238,27 +254,25 @@
             console.log("-- parseResponse: got data! -------------------------------------------------------\n");
 
             tmpstr = data.toString();
-            //data: '{"0": [1519575694567163.8, "[DeviceManager]", "GARAGE_1", "CLOSED", ""], "1": [1519575694567648.2, "[AlertManager]", "", "", "Alertlist=None"]}'
 
             // JSON return
             var parseResponseObject = JSON.parse(data)
 
-            var parseResponseArray = $.map(parseResponseObject, function(value, index) {
+            var parseResponseArray = $.map(parseResponseObject, function (value, index) {
                 return [value];
             });
-            //var parseResponseArray = tmpstr.match(/tid\:(\d+)\s+(\[DeviceManager\])\s+(\w+)\:(\w+)\s+tid\:(\d+)\s+\[AlertManager\]\s(\w+)\=(.*)/);
 
             console.log("data: '" + tmpstr + "'\n");
             if (parseResponseArray == null) {
-                console.log("Unable to parse json response:"+tmpstr);
-                return;
+                console.log("Unable to parse json response:" + tmpstr);
+                return null;
             }
 
-            var arows=parseResponseArray.length ;
-            var acol=parseResponseArray[0].length ;
-            console.log("array nbr JSON prop rows:" + arows );
-            console.log("array nbr JSON column [0] :" + acol  );
-            var logstr=""
+            var arows = parseResponseArray.length;
+            var acol = parseResponseArray[0].length;
+            console.log("array nbr JSON prop rows:" + arows);
+            console.log("array nbr JSON column [0] :" + acol);
+            var logstr = ""
             /*  array arows:2
                 array acol:5
                 0> 0:1519577933131493.5  1:[DeviceManager]  2:GARAGE_1  3:CLOSED    4:  \
@@ -266,8 +280,8 @@
             */
             for (var i = 0; i < parseResponseArray.length; i++) {
                 for (var j = 0; j < parseResponseArray[i].length; j++) {
-                    if (parseResponseArray[i][j]!=null) tmpj=parseResponseArray[i][j];
-                    else tmpj="NuLL"
+                    if (parseResponseArray[i][j] != null) tmpj = parseResponseArray[i][j];
+                    else tmpj = "NuLL"
                     logstr += j + ":" + tmpj + "  ";
                 }
                 console.log(i + "> " + logstr + "\\");
@@ -282,7 +296,7 @@
                             var deviceArray = parseResponseArray[i][2].split('_');
                             if (deviceArray == null || deviceArray.length !== 2) {
                                 console.log("parseResponse::Invalid Device format returned by backend server:" + parseResponseArray[i][1]);
-                                return;
+                                return null;
                             }
                             deviceid = deviceArray[1];
                             //garagestatus1
@@ -313,7 +327,7 @@
                                 $('#garagelock').addClass('lockstatusdoorbutton');
                             } else {
                                 if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
-                                    $('#garagelock').addClass('errordoorbutton');
+                                    $('#garagelock').removeClass('lockstatusdoorbutton');
                                 }
                             }
                             break;
@@ -330,9 +344,9 @@
                         console.log("Alert list is null. (" + tmpstr + ")");
                     }
 
-                    alertListFieldArray=parseResponseArray[i][4].split('=');
-                    if (alertListFieldArray==null || alertListFieldArray.length<=1) {
-                        console.log("alertListFieldArray="+alertListFieldArray);
+                    alertListFieldArray = parseResponseArray[i][4].split('=');
+                    if (alertListFieldArray == null || alertListFieldArray.length <= 1) {
+                        console.log("alertListFieldArray=" + alertListFieldArray);
                         continue;
                     }
 
@@ -361,6 +375,34 @@
                 } // AlertManager
 
             } // for i
+
+
+            return ;
+        }
+
+
+        function updateLockButton() {
+            var logstr = ""
+            console.log("Parse door status. Check lock button label." );
+            var lockcount=0;
+
+            for (count = 0; count < _NBR_DOOR; count++) {
+                // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
+                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) &&
+                    !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                    console.log("updateLockButton garagecmd. Increase lockcount " + count + ".");
+                    lockcount++;
+                    // debugger;
+                } else {
+
+                }
+            }
+
+            if ((lockcount % _NBR_DOOR != 0)) {
+                $('#garagelock').addClass('errordoorbutton');
+                console.log("ERROR: Lock button desync !");
+            }
+
         }
 
         function clearClassGarage(labelid) {
