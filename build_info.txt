@@ -1,5 +1,5 @@
 [BUILDINFO]
 mgs.major = 1
-mgs.minor = 4
-mgs.patch = 1
+mgs.minor = 5
+mgs.patch = 0
 

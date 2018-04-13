@@ -3,19 +3,15 @@
 
 <head>
     <meta charset="utf-8">
-    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-    <!--<meta name="generator" content="Responsive Site Designer 1.5.1390">-->
     <title>Mitaine Garage</title>
 
-    <!--<script src="../js/jquery-3.2.1.js"></script>-->
-    <!--<script src="../js/jquery.mobile-1.4.5.min.js"></script>-->
-
-    <link rel="stylesheet" href="../css/coffeegrinder.min.css">
-    <link rel="stylesheet" href="../css/wireframe-theme.min.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="./images_v1/css/coffeegrinder.min.css">
+    <link rel="stylesheet" href="./images_v1/css/wireframe-theme.min.css">
+    <link rel="stylesheet" href="./images_v1/css/main.css">
 
     <!--<link href="http://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" type="text/css"/>-->
-    <link rel="stylesheet" href="../css/flaticon.css">
+    <link rel="stylesheet" href="./images_v1/css/flaticon.css">
+    <link rel="stylesheet" href="./images/110884-mechanicons/font/flaticon.css">
 
 
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
@@ -48,18 +44,19 @@
 
     </div><!-- /header -->
 
-
-    <div role="main" class="ui-content coffee-span-12 call-out">
+    <!--<div role="main" class="ui-content coffee-span-12 call-out">-->
+    <div role="main" class="coffee-span-12 call-out">
         <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
 
-        <a id="garagecmd0" class="unknownstatusdoorbutton link-button nav-button flaticon-garage" href="#"
-           onclick="proceed('trigger','0');">0</a>
+         <!--Font size is in a.link-button-->
+        <a id="garagecmd0" class="unknownstatusdoorbutton link-button nav-button flaticon2-car-in-a-garage" href="#"
+           onclick="proceed('trigger','0');"<br></br>xhxx</a>
 
-        <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button flaticon-garage" href="#"
-           onclick="proceed('trigger','1');">1</a>
+        <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button flaticon2-car-inside-a-garage" href="#"
+           onclick="proceed('trigger','1');"<br></br>yhyy</a>
 
         <br></br>
-        <a id="garagelock" class="link-button nav-button flaticon-lock" href="#"
+        <a id="garagelock" class="link-button nav-button flaticon2-car-and-padlock" href="#"
            onclick="doorLock();">1</a>
 
         <br></br>
@@ -67,7 +64,10 @@
         <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');">Alarmes</a>
         <a id="alertlist" class="link-button nav-button flaticon-safebox" href="#" onclick="displayAlert();"></a>
 
+
+
     </div><!-- /content -->
+
 
 
     <div data-role="footer">
