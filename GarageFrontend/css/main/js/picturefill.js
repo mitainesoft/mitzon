@@ -181,8 +181,8 @@
 	}
 
 	/**
-	 * gets a mediaquery and returns a boolean or gets a main length and returns a number
-	 * @param main mediaqueries or main length
+	 * gets a mediaquery and returns a boolean or gets a coffee length and returns a number
+	 * @param coffee mediaqueries or coffee length
 	 * @returns {boolean|number}
 	 *
 	 * based on: https://gist.github.com/jonathantneal/db4f77009b155f083738
@@ -216,7 +216,7 @@
 				//calc value
 				/calc([^)]+)/g, "($1)",
 
-				// interpret main values
+				// interpret coffee values
 				/(\d+[\.]*[\d]*)([a-z]+)/g, "($1 * e.$2)",
 				//make eval less evil
 				/^(?!(e.[a-z]|[0-9\.&=|><\+\-\*\(\)\/])).*/ig, ""
@@ -768,7 +768,7 @@
 	 * E.g. "(max-width: 30em) 100vw, (max-width: 50em) 70vw, 100vw"
 	 * or "(min-width: 30em), calc(30vw - 15px)" or just "30vw"
 	 *
-	 * Returns the first valid <main-length> with a media condition that evaluates to true,
+	 * Returns the first valid <coffee-length> with a media condition that evaluates to true,
 	 * or "100vw" if all valid media conditions evaluate to false.
 	 *
 	 */
@@ -1043,7 +1043,7 @@
 	};
 
 	/**
-	 * Returns the calculated length in main pixel from the given sourceSizeValue
+	 * Returns the calculated length in coffee pixel from the given sourceSizeValue
 	 * http://dev.w3.org/csswg/css-values-3/#length-value
 	 * intended Spec mismatches:
 	 * * Does not check for invalid use of CSS functions
@@ -1090,7 +1090,7 @@
 	};
 
 	/**
-	 * returns 1em in main px for html/body default size
+	 * returns 1em in coffee px for html/body default size
 	 * function taken from respondjs
 	 * @returns {*|number}
 	 */
@@ -1141,9 +1141,9 @@
 
 	/**
 	 * Takes a candidate object with a srcset property in the form of url/
-	 * ex. "main/pic-medium.png 1x, main/pic-medium-2x.png 2x" or
-	 *     "main/pic-medium.png 400w, main/pic-medium-2x.png 800w" or
-	 *     "main/pic-small.png"
+	 * ex. "coffee/pic-medium.png 1x, coffee/pic-medium-2x.png 2x" or
+	 *     "coffee/pic-medium.png 400w, coffee/pic-medium-2x.png 800w" or
+	 *     "coffee/pic-small.png"
 	 * Get an array of image candidates in the form of
 	 *      {url: "/foo/bar.png", resolution: 1}
 	 * where resolution is http://dev.w3.org/csswg/css-values-3/#resolution-value
