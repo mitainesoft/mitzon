@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="css/main/coffee/main.css">
 
 
-
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.js"></script>
@@ -52,26 +51,25 @@
     <div role="main" class="coffee-span-12 call-out">
         <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
 
-         <!--Font size is in a.link-button-->
+        <!--Font size is in a.link-button-->
         <a id="garagecmd0" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
-           onclick="proceed('trigger','0');" <br> </br>xhxx </a>
+           onclick="proceed('trigger','0');"<br></br></a>
 
         <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
-           onclick="proceed('trigger','1');" <br> </br>yhyy</a>
+           onclick="proceed('trigger','1');"<br></br></a>
 
         <br></br>
-        <a id="garagelock" class="link-button nav-button flaticon2-car-and-padlock" href="#"
-           onclick="doorLock();">1</a>
+        <a id="garagelock" class="link-button nav-button F110884-car-and-padlock" href="#"
+        onclick="doorLock();"><br></br></a>
 
         <br></br>
         <!--<h1 class="MainTitle3">Alertes</h1>-->
-        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');">Delete</a>
-        <a id="alertlist" class="link-button nav-button flaticon-safebox" href="#" onclick="displayAlert();">Alarme</a>
-
+        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');"></a>
+        <a id="alertlist" class="link-button nav-button F110884-car-front-in-magnifier-glass" href="#"
+           onclick="displayAlert();"></a>
 
 
     </div><!-- /content -->
-
 
 
     <div data-role="footer">
@@ -102,7 +100,7 @@
             <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
                 2017 [MITAINESOFT_GARAGE_REVISION]"
                 <br>
-                    <img class="social-image" src="../images/MitaineSoft.jpg" alt="MitaineSoft Logo">
+                <img class="social-image" src="../images/MitaineSoft.jpg" alt="MitaineSoft Logo">
                 </br>
             </a>
             </p>
@@ -110,7 +108,11 @@
     </div><!-- /footer -->
 
     <script>
-        var _NBR_DOOR=2
+        var _NBR_DOOR = 2;
+        var door_time_status = [];
+        for (count = 0; count < _NBR_DOOR; count++) {
+            door_time_status[count] = "xxxx";
+        }
         // do s staus on start
         doorStatus();
         var intervalEvent = setInterval(doorStatus, 60000);
@@ -215,8 +217,7 @@
 
             for (count = 0; count < _NBR_DOOR; count++) {
                 // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
-                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) &&
-                    !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) && !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
                     console.log("Lock button Desync garagecmd" + count + " ! so resync!");
                 } else {
                     console.log("Lock button In Sync garagecmd" + count + " !  ")
@@ -244,8 +245,8 @@
                     return parseResponseArray;
                 }, null, "text")
 
-                 // Only check statu son last door
-                if (count == (_NBR_DOOR-1)) {
+                // Only check statu son last door
+                if (count == (_NBR_DOOR - 1)) {
                     updateLockButton();
                 }
             }
@@ -259,12 +260,11 @@
                 return;
             }
             console.log("-- parseResponse: got data! -------------------------------------------------------\n");
-
+            var deviceid = 0;
             tmpstr = data.toString();
 
             // JSON return
             var parseResponseObject = JSON.parse(data)
-
             var parseResponseArray = $.map(parseResponseObject, function (value, index) {
                 return [value];
             });
@@ -277,14 +277,14 @@
 
             var arows = parseResponseArray.length;
             var acol = parseResponseArray[0].length;
-            console.log("array nbr JSON prop rows:" + arows);
-            console.log("array nbr JSON column [0] :" + acol);
+//            console.log("array nbr JSON prop rows:" + arows);
+//            console.log("array nbr JSON column [0] :" + acol);
             var logstr = ""
             /*  array arows:2
-                array acol:5
-                0> 0:1519577933131493.5  1:[DeviceManager]  2:GARAGE_1  3:CLOSED    4:  \
-                1> 0:1519577933131923.8  1:[AlertManager]  2:           3:          4:Alertlist=None  \
-            */
+             array acol:5
+             0> 0:1519577933131493.5  1:[DeviceManager]  2:GARAGE_1  3:CLOSED    4:  \
+             1> 0:1519577933131923.8  1:[AlertManager]  2:           3:          4:Alertlist=None  \
+             */
             for (var i = 0; i < parseResponseArray.length; i++) {
                 for (var j = 0; j < parseResponseArray[i].length; j++) {
                     if (parseResponseArray[i][j] != null) tmpj = parseResponseArray[i][j];
@@ -296,6 +296,16 @@
 
                 var garagecmdlabel = "";
                 if (/\[DeviceManager\]/.test(parseResponseArray[i][1])) {
+                    var showtimets=1;
+                    if (parseResponseArray[i][4] != null || parseResponseArray[i][4] != "") {
+                        var garageTimeStatusObject = JSON.parse(parseResponseArray[i][4]);
+                        var garageTimeStatusObject2 = JSON.parse(garageTimeStatusObject);
+                        //> obj={"OPEN": "---", "CLOSED": "10h11", "ERROR": "-----"} / Open=--- / Closed=10h11
+//                        console.log(garagecmdlabel + "> obj=" + garageTimeStatusObject + " / Open=" + garageTimeStatusObject2.OPEN + " / Closed=" + garageTimeStatusObject2.CLOSED);
+                    } else {
+//                        console.log("No time status to parse!")
+                        showtimets=0;
+                    }
 
                     switch (true) {
                         case /GARAGE/.test(parseResponseArray[i][2]):
@@ -313,15 +323,19 @@
                             switch (true) {
                                 case /CLOSED/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('closeddoorbutton');
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
                                     break;
                                 case /OPEN/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('opendoorbutton');
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.OPEN;
                                     break;
                                 case /ERROR/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('errordoorbutton');
+//                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
                                     break;
                                 case /UNKNOWN/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
                                     break;
                                 default:
                                     $('#' + garagecmdlabel).addClass('programerrorbutton');
@@ -337,6 +351,8 @@
                                     $('#garagelock').removeClass('lockstatusdoorbutton');
                                 }
                             }
+
+
                             break;
                         default:
                             console.log("parseResponse::Unknown device command:" + tmpstr);
@@ -384,19 +400,18 @@
             } // for i
 
 
-            return ;
+            return;
         }
 
 
         function updateLockButton() {
             var logstr = ""
-            console.log("Parse door status. Check lock button label." );
-            var lockcount=0;
+            console.log("Parse door status. Check lock button label.");
+            var lockcount = 0;
 
             for (count = 0; count < _NBR_DOOR; count++) {
                 // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
-                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) &&
-                    !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) && !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
                     console.log("updateLockButton garagecmd. Increase lockcount " + count + ".");
                     lockcount++;
                     // debugger;

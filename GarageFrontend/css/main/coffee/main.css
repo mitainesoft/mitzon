@@ -271,7 +271,7 @@ a.link-button.lockstatusdoorbutton.nav-button {
     border-bottom-right-radius: 40px 30px;
     border-bottom-left-radius: 40px 30px;
     background-color: rgba(255, 255, 0, .7);
-    color: #fff;
+    color: #000;
     opacity: 1;
 }
 
@@ -335,7 +335,7 @@ a.link-button.opendoorbutton.nav-button {
     border-bottom-right-radius: 40px 30px;
     border-bottom-left-radius: 40px 30px;
     background-color: rgba(226, 155, 0, .8);
-    color: #fff;
+    color: #000000;
     opacity: 1;
 }
 
@@ -348,7 +348,7 @@ a.link-button.closeddoorbutton.nav-button {
     border-bottom-right-radius: 40px 30px;
     border-bottom-left-radius: 40px 30px;
     background-color: rgba(0, 239, 3, .8);
-    color: #fff;
+    color: #ffffff;
     opacity: 1;
 }
 

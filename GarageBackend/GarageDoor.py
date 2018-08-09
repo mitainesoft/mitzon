@@ -295,6 +295,7 @@ class GarageDoor():
     def status(self):
         log.debug("GarageDoor status called !")
         self.updateSensor()
+        rsptxt=self.getCmdQResponseStatusStr()
 
         #resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineGarageDoorOpenClosedStatus())
         # self.tid,self.module,self.device,self.status,self.text)
@@ -304,9 +305,40 @@ class GarageDoor():
         dev=str0[0]
         if str0.__len__() >1:
             stat=str0[1]
-        resp = CommmandQResponse(time.time() * 1000000, mod, dev, stat,"")
+        resp = CommmandQResponse(time.time() * 1000000, mod, dev, stat,rsptxt)
 
         return (resp)
+
+    def getCmdQResponseStatusStr(self):
+        resp_json=None
+        try:
+            rspstr={}
+            i=0
+
+            if self.g_open_time != None:
+                rspstr[G_OPEN]=time.strftime("%Hh%M", time.localtime(self.g_open_time))
+            else:
+                rspstr[G_OPEN]="---"
+            i+=1
+            if self.g_close_time != None:
+                rspstr[G_CLOSED] = time.strftime("%Hh%M", time.localtime(self.g_close_time))
+            else:
+                rspstr[G_CLOSED]="----"
+            i += 1
+            if self.g_error_time != None:
+                rspstr[G_ERROR] = time.strftime("%Hh%M", time.localtime(self.g_close_time))
+            else:
+                rspstr[G_ERROR]="-----"
+            i += 1
+
+            resp_json = json.dumps(rspstr)
+
+        except Exception:
+            log.error("Bug handling of getCmdQResponseStatusStr JSON convert")
+            traceback.print_exc()
+            resp_json="Error!"
+
+        return json.dumps(resp_json)
 
     def clear(self):
         # resp = CommmandQResponse(time.time()*1000000, "Garage alarm cleared" )
