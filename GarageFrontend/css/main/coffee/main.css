@@ -410,16 +410,24 @@ a.link-button.active-nav.nav-button {
     border-top-color: #8e0b27;
 }
 
+a.link-button span::before {
+
+      content: "\A";
+      white-space: pre-line;
+    color: #52bed8;
+
+}
+
 a.link-button {
     padding-right: 15px;
     padding-left: 15px;
     background-color: transparent;
     color: #4d4d4d;
-    text-transform: uppercase;
     letter-spacing: 3px;
     font-weight: 600;
     font-size: 30px;
     font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
+    }
 }
 
 a.link-button.nav-button {
@@ -444,7 +452,7 @@ a.link-button.opendoorbutton.nav-button:hover {
 }
 
 a.link-button.closeddoorbutton.nav-button:hover {
-    opacity: 1;
+    opacity: .5;
 }
 
 a.link-button.alertcriticalbutton.nav-button:hover {
@@ -500,7 +508,7 @@ body > .row.NavTitle2 {
     margin-bottom: 100px;
     min-height: 500px;
     max-width: none;
-    background-image: url('../../images/ladybug-1005869_1280.jpg');
+    background-image: url('../../../images/ladybug/ladybug-1005869_1280.jpg');
     background-position: right center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -510,7 +518,7 @@ body > .row.NavTitle2 {
 body > .row.NavTitle3 {
     min-height: 500px;
     max-width: none;
-    background-image: url('../../images/ladybug-354521_1280.jpg');
+    background-image: url('../../../images/ladybug/ladybug-354521_1280.jpg');
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;

@@ -323,7 +323,7 @@
                             switch (true) {
                                 case /CLOSED/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('closeddoorbutton');
-                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = " "+garageTimeStatusObject2.CLOSED;
                                     break;
                                 case /OPEN/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('opendoorbutton');
