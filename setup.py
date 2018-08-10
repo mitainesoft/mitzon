@@ -80,11 +80,16 @@ package_name = "mitainesoft_garage_" + version_str
 
 print("GIT Pull, Commit & Push $buildfile... \n")
 
+git_version_str = "v%s_build" %(version_str)
+
 vcscmd_array = [["git", "status"],
                 ["git", "pull"],
                 ["git", "commit", "-n", "-m", package_name, buildfilename],
                 ["git", "status"],
-                ["git", "push"]]
+                ["git", "push"]
+                ["git", "tag", "-a",git_version_str,"-m",package_name],
+                ["git", "push","--tags"]
+                ]
 
 for i in range(len(vcscmd_array)):
     print("%d) VCS cmd=%s" % (i, vcscmd_array[i]))
