@@ -1,0 +1,94 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 22/06/2016 15:02
+  	*/
+
+@font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+  font-family: Flaticon;
+        font-size: 20px;
+font-style: normal;
+margin-left: 20px;
+}
+
+.flaticon-24-hours-home-service:before { content: "\f100"; }
+.flaticon-add-house:before { content: "\f101"; }
+.flaticon-bathtub-with-tab:before { content: "\f102"; }
+.flaticon-board-wood:before { content: "\f103"; }
+.flaticon-bolt-and-nut:before { content: "\f104"; }
+.flaticon-buildings:before { content: "\f105"; }
+.flaticon-buy-house:before { content: "\f106"; }
+.flaticon-buying-a-house-property:before { content: "\f107"; }
+.flaticon-cancel-house:before { content: "\f108"; }
+.flaticon-car-in-a-garage:before { content: "\f109"; }
+.flaticon-chair-for-office:before { content: "\f10a"; }
+.flaticon-door-for-a-building-entrance:before { content: "\f10b"; }
+.flaticon-drop-water-falling-from-a-tap:before { content: "\f10c"; }
+.flaticon-eco-idea:before { content: "\f10d"; }
+.flaticon-family-home:before { content: "\f10e"; }
+.flaticon-favorite-home:before { content: "\f10f"; }
+.flaticon-gardening-in-home:before { content: "\f110"; }
+.flaticon-greenhouse:before { content: "\f111"; }
+.flaticon-hammer:before { content: "\f112"; }
+.flaticon-harvest-bag-of-cereal:before { content: "\f113"; }
+.flaticon-home-approved:before { content: "\f114"; }
+.flaticon-home-button-for-interface:before { content: "\f115"; }
+.flaticon-home-insurance:before { content: "\f116"; }
+.flaticon-home-oven:before { content: "\f117"; }
+.flaticon-home-sale:before { content: "\f118"; }
+.flaticon-home-security-unlocked:before { content: "\f119"; }
+.flaticon-home-with-like-heart-symbol:before { content: "\f11a"; }
+.flaticon-home-with-locked-padlock:before { content: "\f11b"; }
+.flaticon-home-with-zoom-tool:before { content: "\f11c"; }
+.flaticon-hospital-nurse:before { content: "\f11d"; }
+.flaticon-house-for-sale:before { content: "\f11e"; }
+.flaticon-house-keys:before { content: "\f11f"; }
+.flaticon-house-price-symbol:before { content: "\f120"; }
+.flaticon-house-reforms:before { content: "\f121"; }
+.flaticon-house-search:before { content: "\f122"; }
+.flaticon-house-visiting:before { content: "\f123"; }
+.flaticon-house-with-spercentage-off:before { content: "\f124"; }
+.flaticon-key-home:before { content: "\f125"; }
+.flaticon-kings-size-bed:before { content: "\f126"; }
+.flaticon-kitchen-furniture:before { content: "\f127"; }
+.flaticon-light-bulb-on:before { content: "\f128"; }
+.flaticon-like-house:before { content: "\f129"; }
+.flaticon-livingroom-sofa:before { content: "\f12a"; }
+.flaticon-lock-home:before { content: "\f12b"; }
+.flaticon-padlock-with-paint-drop:before { content: "\f12c"; }
+.flaticon-paint-roller-of-small-size:before { content: "\f12d"; }
+.flaticon-pin-a-property-for-buy-or-rent:before { content: "\f12e"; }
+.flaticon-plant-in-pot:before { content: "\f12f"; }
+.flaticon-private-house:before { content: "\f130"; }
+.flaticon-rss-house:before { content: "\f131"; }
+.flaticon-sale-signal:before { content: "\f132"; }
+.flaticon-screwdriver-single:before { content: "\f133"; }
+.flaticon-searching-for-a-house:before { content: "\f134"; }
+.flaticon-shower-head-with-water:before { content: "\f135"; }
+.flaticon-sleep-in-bed:before { content: "\f136"; }
+.flaticon-sold-house:before { content: "\f137"; }
+.flaticon-stool:before { content: "\f138"; }
+.flaticon-tiles:before { content: "\f139"; }
+.flaticon-tiny-flower:before { content: "\f13a"; }
+.flaticon-tree-shape:before { content: "\f13b"; }
+.flaticon-two-houses:before { content: "\f13c"; }
+.flaticon-vintage-tv-screen:before { content: "\f13d"; }
+.flaticon-web-house:before { content: "\f13e"; }

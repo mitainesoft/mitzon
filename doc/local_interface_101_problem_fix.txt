@@ -1,0 +1,7 @@
+**************************************************************
+** Hot to fix 192.168.56.101 Not showing up on windows side **
+**************************************************************
+/etc/init.d/networking stop
+/etc/init.d/network-manager stop
+/etc/init.d/network-manager start
+/etc/init.d/networking start

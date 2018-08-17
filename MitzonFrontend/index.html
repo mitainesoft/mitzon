@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Mitaine Garage</title>
+    <link rel="stylesheet" href="css/main/coffee/flaticon.css">
+
+    <!--<link rel="stylesheet" type="text/css" href="css/110884-mechanicons/font/flaticon.css">-->
+    <link rel="stylesheet" type="text/css" href="css/F110884-mechanicons/font/F110884.css">
+
+
+    <link rel="stylesheet" href="css/main/coffee/coffeegrinder.min.css">
+    <link rel="stylesheet" href="css/main/coffee/wireframe-theme.min.css">
+    <link rel="stylesheet" href="css/main/coffee/main.css">
+
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.js"></script>
+
+</head>
+
+<body>
+
+<div data-role="page" id="foo" class="row NavPicture">
+
+    <div data-role="header">
+
+        <div class="coffee-span-12 coffee-670-span-12">
+            <h1 class="MainTitle">Mitaine Garage</h1>
+            <h3>Anti-Mule Systeme</h3>
+        </div>
+        <div data-role="navbar">
+            <ul>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-house-3 ui-btn-active" href="index.html"></a>
+                </li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-cctv"
+                       href="http://ville.montreal.qc.ca/circulation/pierrefonds-roxboro/rue-antoine-faucon-et-boulevard-saint-charles"></a>
+                </li>
+                <li><a class="flaticon-font glyphs-icon glyph flaticon-info" href="about.html"></a></li>
+            </ul>
+
+        </div>
+
+    </div><!-- /header -->
+
+
+    <!--<div role="coffee" class="ui-content coffee-span-12 call-out">-->
+    <div role="main" class="coffee-span-12 call-out">
+        <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
+
+        <!--Font size is in a.link-button-->
+        <a id="garagecmd0" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
+           onclick="proceed('trigger','0');"<br></br></a>
+
+        <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
+           onclick="proceed('trigger','1');"<br></br></a>
+
+        <br></br>
+        <a id="garagelock" class="link-button nav-button F110884-car-and-padlock" href="#"
+        onclick="doorLock();"><br></br></a>
+
+        <br></br>
+        <!--<h1 class="MainTitle3">Alertes</h1>-->
+        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');"></a>
+        <a id="alertlist" class="link-button nav-button F110884-car-front-in-magnifier-glass" href="#"
+           onclick="displayAlert();"></a>
+
+
+    </div><!-- /content -->
+
+
+    <div data-role="footer">
+
+        <div class="coffee-span-8">
+
+            <div class="coffee-span-12">
+                <a href="https://www.facebook.com/jeanluc.cyr" target="_blank" class="social-image socialicon">
+                    <img class="facebook-icon" src="../images/socialicons/webicon-facebook.png" alt="Social Icon"></a>
+
+                <!--               <a href="https://www.facebook.com/jeanluc.cyr" target="_blank" class="social-image socialicon">
+                                   <img class="instagram-icon" src="../socialicons/webicon-instagram.png" alt="Social Icon"></a>-->
+
+                <a href="https://twitter.com/lmcjecy" target="_blank" class="social-image socialicon">
+                    <img class="twitter-icon" src="../images/socialicons/webicon-twitter.png" alt="Social Icon"></a>
+
+                <!--                <a href="#" target="_blank" class="social-image socialicon">
+                                    <img class="googleplus-icon" src="../socialicons/webicon-googleplus.png" alt="Social Icon"></a>-->
+
+                <a href="https://www.linkedin.com/in/jlfcyr/" target="_blank" class="social-image socialicon">
+                    <img class="linkedin-icon" src="../images/socialicons/webicon-linkedin.png" alt="Social Icon"></a>
+            </div>
+        </div>
+
+
+        <div class="coffee-span-12">
+            <!--<p class="paragraph Footer">Montreal<br> +1 514 594 3818 mitainesoft@gmail.com</p>-->
+            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
+                2017 [MITAINESOFT_GARAGE_REVISION]"
+                <br>
+                <img class="social-image" src="../images/MitaineSoft.jpg" alt="MitaineSoft Logo">
+                </br>
+            </a>
+            </p>
+        </div>
+    </div><!-- /footer -->
+
+    <script>
+        var _NBR_DOOR = 2;
+        var door_time_status = [];
+        for (count = 0; count < _NBR_DOOR; count++) {
+            door_time_status[count] = "xxxx";
+        }
+        // do s staus on start
+        doorStatus();
+        var intervalEvent = setInterval(doorStatus, 60000);
+        window.onload = function () {
+            doorStatus();
+            intervalEvent = setInterval(doorStatus, 30000);
+        }
+
+
+        $(window).on("blur focus", function (e) {
+            var prevType = $(this).data("prevType");
+
+            if (prevType != e.type) {   //  reduce double fire issues
+                switch (e.type) {
+                    case "blur":
+                        clearInterval(intervalEvent);
+                        break;
+                    case "focus":
+                        intervalEvent = setInterval(doorStatus, 3000);
+                        break;
+                }
+            }
+
+            $(this).data("prevType", e.type);
+        })
+
+        function proceed(subcmd, id) {
+
+            var garagecmdlabel = "garagecmd" + id;
+            var prevstatus = "UNKNOWN";
+            var status = "UNKNOWN";
+            var alertlistArray = null;
+
+            switch (true) {
+                case /^clear/.test(subcmd):
+                    clearAlerts();
+                    break;
+                case /^trigger/.test(subcmd):
+                    /* Check current button status to make sure status of
+                     door was correct in the UI especially if operations are
+                     done remote!
+                     */
+                    <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
+                    if ($('#garagecmd' + id).hasClass('closeddoorbutton')) {
+                        prevstatus = "CLOSED";
+                        subcmd = "open";
+                        intervalEvent = setInterval(doorStatus, 3000);
+                        console.log("Command is now 'open'!");
+                    } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
+                        prevstatus = "OPEN";
+                        subcmd = "close";
+                        intervalEvent = setInterval(doorStatus, 3000);
+                        console.log("Command is now 'close'!");
+                    } else {
+                        console.log("proceed::Door will not be trigger denied ! ");
+                        alert("Door will not be triggered denied ! ");
+                        return;
+                    }
+                    //Check real door status
+                    doorStatus();
+                    var status = "UNKNOWN";
+                    if ($('#garagecmd' + id).hasClass('closeddoorbutton')) {
+                        status = "CLOSED";
+                    } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
+                        status = "OPEN";
+                    } else {
+                        console.log("proceed::Door will not be triggered due to current status UNKNOWN, LOCK or ERROR!");
+                        alert("Door will not be triggered due to current status LOCK, UNKNOWN or ERROR!");
+                        return;
+                    }
+
+                    if (status !== prevstatus) {
+                        console.log("proceed::Door will not be triggered due to UI display not refreshed!  Try again ! ");
+                        alert("Door will not be triggered due to UI display not refreshed!  Try again ! ");
+
+                        return;
+                    } else {
+
+                    }
+                    break;
+                default:
+                    console.log("proceed::Invalid command:" + subcmd)
+                    break;
+
+            } //switch
+
+            var cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/' + subcmd + '/' + id
+            console.log(cmd);
+            var posting = $.post(cmd, function (data) {
+                parseResponse(data);
+            })
+
+        }
+
+        function doorLock() {
+            $('#garagelock').removeClass('errordoorbutton');
+            if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
+                $('#garagelock').removeClass('lockstatusdoorbutton');
+            } else {
+                $('#garagelock').addClass('lockstatusdoorbutton');
+            }
+
+            for (count = 0; count < _NBR_DOOR; count++) {
+                // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
+                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) && !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                    console.log("Lock button Desync garagecmd" + count + " ! so resync!");
+                } else {
+                    console.log("Lock button In Sync garagecmd" + count + " !  ")
+                    cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/lock/' + count
+                    console.log(cmd);
+
+                    garageid = "garagestatus" + count;
+                    posting = $.post(cmd, function (data) {
+                        parseResponse(data, status)
+                    }, null, "text")
+                }
+            }
+
+
+        }
+
+        function doorStatus() {
+            var parseResponseArray = null
+            for (count = 0; count < _NBR_DOOR; count++) {
+                cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/status/' + count
+                console.log(cmd);
+                garageid = "garagestatus" + count;
+                posting = $.post(cmd, function (data) {
+                    parseResponse(data, status)
+                    return parseResponseArray;
+                }, null, "text")
+
+                // Only check statu son last door
+                if (count == (_NBR_DOOR - 1)) {
+                    updateLockButton();
+                }
+            }
+
+
+        }
+
+        function parseResponse(data) {
+            if (data == null) {
+                console.log("parseResponse: No data!")
+                return;
+            }
+            console.log("-- parseResponse: got data! -------------------------------------------------------\n");
+            var deviceid = 0;
+            tmpstr = data.toString();
+
+            // JSON return
+            var parseResponseObject = JSON.parse(data)
+            var parseResponseArray = $.map(parseResponseObject, function (value, index) {
+                return [value];
+            });
+
+            console.log("data: '" + tmpstr + "'\n");
+            if (parseResponseArray == null) {
+                console.log("Unable to parse json response:" + tmpstr);
+                return null;
+            }
+
+            var arows = parseResponseArray.length;
+            var acol = parseResponseArray[0].length;
+//            console.log("array nbr JSON prop rows:" + arows);
+//            console.log("array nbr JSON column [0] :" + acol);
+            var logstr = ""
+            /*  array arows:2
+             array acol:5
+             0> 0:1519577933131493.5  1:[DeviceManager]  2:GARAGE_1  3:CLOSED    4:  \
+             1> 0:1519577933131923.8  1:[AlertManager]  2:           3:          4:Alertlist=None  \
+             */
+            for (var i = 0; i < parseResponseArray.length; i++) {
+                for (var j = 0; j < parseResponseArray[i].length; j++) {
+                    if (parseResponseArray[i][j] != null) tmpj = parseResponseArray[i][j];
+                    else tmpj = "NuLL"
+                    logstr += j + ":" + tmpj + "  ";
+                }
+                console.log(i + "> " + logstr + "\\");
+                logstr = ""
+
+                var garagecmdlabel = "";
+                if (/\[DeviceManager\]/.test(parseResponseArray[i][1])) {
+                    var showtimets=1;
+                    if (parseResponseArray[i][4] != null || parseResponseArray[i][4] != "") {
+                        var garageTimeStatusObject = JSON.parse(parseResponseArray[i][4]);
+                        var garageTimeStatusObject2 = JSON.parse(garageTimeStatusObject);
+                        //> obj={"OPEN": "---", "CLOSED": "10h11", "ERROR": "-----"} / Open=--- / Closed=10h11
+//                        console.log(garagecmdlabel + "> obj=" + garageTimeStatusObject + " / Open=" + garageTimeStatusObject2.OPEN + " / Closed=" + garageTimeStatusObject2.CLOSED);
+                    } else {
+//                        console.log("No time status to parse!")
+                        showtimets=0;
+                    }
+
+                    switch (true) {
+                        case /GARAGE/.test(parseResponseArray[i][2]):
+                            <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
+                            var deviceArray = parseResponseArray[i][2].split('_');
+                            if (deviceArray == null || deviceArray.length !== 2) {
+                                console.log("parseResponse::Invalid Device format returned by backend server:" + parseResponseArray[i][1]);
+                                return null;
+                            }
+                            deviceid = deviceArray[1];
+                            //garagestatus1
+                            garagecmdlabel = "garagecmd" + deviceArray[1];
+                            clearClassGarage(garagecmdlabel);
+                            console.log("parseResponse::garagecmdlabel=" + garagecmdlabel);
+                            switch (true) {
+                                case /CLOSED/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('closeddoorbutton');
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = " "+garageTimeStatusObject2.CLOSED;
+                                    break;
+                                case /OPEN/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('opendoorbutton');
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.OPEN;
+                                    break;
+                                case /ERROR/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('errordoorbutton');
+//                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
+                                    break;
+                                case /UNKNOWN/.test(parseResponseArray[i][3]):
+                                    $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
+                                    break;
+                                default:
+                                    $('#' + garagecmdlabel).addClass('programerrorbutton');
+                                    console.log("parseResponse Unknown status:" + parseResponseArray[i][3]);
+                                    break;
+                            } // sw Garage Status
+
+                            if (/LOCK/.test(parseResponseArray[i][3])) {
+                                $('#' + garagecmdlabel).addClass('lockstatusdoorbutton');
+                                $('#garagelock').addClass('lockstatusdoorbutton');
+                            } else {
+                                if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
+                                    $('#garagelock').removeClass('lockstatusdoorbutton');
+                                }
+                            }
+
+
+                            break;
+                        default:
+                            console.log("parseResponse::Unknown device command:" + tmpstr);
+                            break;
+                    } // sw GARAGE
+                } //if DeviceManager
+
+                if (/\[AlertManager\]/.test(parseResponseArray[i][1])) {
+                    console.log("AlertManager properties parsing starts...")
+
+                    if (parseResponseArray[i][4] == null) {
+                        console.log("Alert list is null. (" + tmpstr + ")");
+                    }
+
+                    alertListFieldArray = parseResponseArray[i][4].split('=');
+                    if (alertListFieldArray == null || alertListFieldArray.length <= 1) {
+                        console.log("alertListFieldArray=" + alertListFieldArray);
+                        continue;
+                    }
+
+                    alertlistArray = alertListFieldArray[1].split(';');
+                    if (alertlistArray.length <= 0) {
+                        alertlistArray[0] = parseResponseArray[i][4];
+                    }
+
+                    if (/^None/.test(alertlistArray[0])) {
+                        console.log("No Alerts!");
+                        clearAlerts();
+                        alertlistArray = null;
+                        //link-button nav-button flaticon-garbage
+                    } else {
+                        var maxsev = "3"
+                        for (var i = 0; i < alertlistArray.length; i++) {
+                            var alertparseArray = alertlistArray[i].match(/Alert id\:(.*)\s+dev\:(.*)\s+sev\:(\d)(.*)text\:(.*)workaround\:(.*)time\:(.*)/);
+
+                            var sevtxt = alertparseArray[3];
+                            console.error(i + ":" + alertlistArray[i] + " (" + sevtxt + ")\n");
+                            if (sevtxt < maxsev) maxsev = sevtxt;
+                        }
+                        //Enable alert buttons
+                        colorAlertButton(maxsev);
+                    }
+                } // AlertManager
+
+            } // for i
+
+
+            return;
+        }
+
+
+        function updateLockButton() {
+            var logstr = ""
+            console.log("Parse door status. Check lock button label.");
+            var lockcount = 0;
+
+            for (count = 0; count < _NBR_DOOR; count++) {
+                // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
+                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) && !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
+                    console.log("updateLockButton garagecmd. Increase lockcount " + count + ".");
+                    lockcount++;
+                    // debugger;
+                } else {
+
+                }
+            }
+
+            if ((lockcount % _NBR_DOOR != 0)) {
+                $('#garagelock').addClass('errordoorbutton');
+                console.log("ERROR: Lock button desync !");
+            }
+
+        }
+
+        function clearClassGarage(labelid) {
+            $('#' + labelid).removeClass('opendoorbutton');
+            $('#' + labelid).removeClass('errordoorbutton');
+            $('#' + labelid).removeClass('closeddoorbutton');
+            $('#' + labelid).removeClass('unknownstatusdoorbutton');
+            $('#' + labelid).removeClass('lockstatusdoorbutton');
+        }
+
+        function clearAlerts() {
+            $('#alertlist').removeClass('errordoorbutton');
+            $('#alertlist').removeClass('alertcriticalbutton');
+            $('#alertlist').removeClass('alertmajorbutton');
+            $('#alertlist').removeClass('alertminorbutton');
+
+            $('#alertclear').removeClass('link-butto');
+            $('#alertclear').removeClass('nav-button');
+            $('#alertclear').removeClass('flaticon-garbage');
+            $('#alertclear').removeClass('alertcriticalbutton');
+            $('#alertclear').removeClass('alertmajorbutton');
+            $('#alertclear').removeClass('alertminorbutton');
+        }
+
+        function colorAlertButton(sev) {
+
+            switch (true) {
+                case /^1/.test(sev):
+                    $('#alertlist').addClass('alertcriticalbutton');
+                    $('#alertclear').addClass('alertcriticalbutton');
+                    break;
+                case /^2/.test(sev):
+                    $('#alertlist').addClass('alertmajorbutton');
+                    $('#alertclear').addClass('alertmajorbutton');
+                    break;
+                case /^3/.test(sev):
+                    $('#alertlist').addClass('alertminorbutton');
+                    $('#alertclear').addClass('alertminorbutton');
+                    break;
+                default:
+                    console.log("colorAlertButton def:" + sev);
+                    $('#alertlist').addClass('unknownstatusdoorbutton');
+                    $('#alertclear').addClass('unknownstatusdoorbutton');
+                    break;
+
+            }
+            $('#alertclear').addClass('link-butto');
+            $('#alertclear').addClass('nav-button');
+            $('#alertclear').addClass('flaticon-garbage');
+        }
+
+        function displayAlert() {
+            /*   7:Alert id:GCD01 dev:GARAGE_0 sev:1 cat:GARAGE_LOCK text:Fermeture automatique déactivé workaround:Verifiez la porte et les logs!
+             time:20170624-092526 ;Alert id:HW002 dev:GARAGE_0 sev:1 cat:HARDWARE text:Command sent but nothing happened! workaround:Check
+             the door ! time:20170624-092508 ;Alert id:GS001 dev:GARAGE_0_sensor_1 sev:1 cat:SENSOR text:problème avec un senseur sur la porte
+             workaround:La fermeture est peut-être bloquée par de la neige ou un des senseurs ne fonctionne plus! time:20170624-092526
+             */
+            if (alertlistArray == null) {
+                console.log("displayAlert is null !");
+                alert("OK !");
+            } else {
+                alerttxt = "";
+                for (var i = 0; i < alertlistArray.length; i++) {
+                    var alertparseArray = alertlistArray[i].match(/Alert id\:(.*)\s+dev\:(.*)\s+sev\:(\d)(.*)text\:(.*)workaround\:(.*)time\:(.*)/);
+                    alerttxt = alerttxt + alertparseArray[1] + ":" + alertparseArray[2] + " " + alertparseArray[5] + ". " + alertparseArray[6] + "\n";
+                }
+                alert(alerttxt);
+            }
+        }
+    </script>
+</div><!-- /page -->
+</body>
+
+</html>

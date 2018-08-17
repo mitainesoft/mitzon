@@ -1,0 +1,37 @@
+""" Constant Global
+Import with
+    from xxx.Constants import *
+"""
+
+"""
+Garage constants
+"""
+G_OPEN = "OPEN"
+G_CLOSED = "CLOSED"
+G_UNKNOWN = "UNKNOWN"
+G_ERROR = "ERROR"
+G_MOVING = "MOVING"
+G_LOCK = "LOCK"
+G_LOCKOPEN = G_LOCK + G_OPEN
+G_LOCKCLOSED =  G_LOCK + G_CLOSED
+G_TEST= "TEST"
+
+"""
+Sensors constants
+"""
+S_OPEN = "OPEN"
+S_CLOSED = "CLOSED"
+S_UNKNOWN = "UNKNOWN"
+S_ERROR = "ERROR"
+S_WARNING="WARNING"
+S_TEST = "TEST"
+S_SENSOR_STATUS_LIST = [S_OPEN,S_CLOSED,S_UNKNOWN,S_ERROR,S_WARNING, S_TEST]
+
+"""
+ALERT STATUS
+"""
+A_OK="OK"
+A_ERROR="ERROR"
+
+"""GENERAL """
+THREAD_TIMEOUTS=3

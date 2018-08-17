@@ -1,0 +1,66 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          garage
+# Default-Start:     1 2 3 4 5
+# Short-Description: Starts mitainesoft garage
+# Description:       Starts mitainesoft garage
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+. /lib/init/vars.sh
+
+MITAINEGARAGEHOME=/opt/mitainesoft/garage
+MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+
+do_start () {
+	exec sudo -u mitainesoft /opt/mitainesoft/garage/watchdog_mitaine_garage.bash
+}
+
+do_status () {
+	MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+	if [ -n "$MITAINE_GARAGE_PROC" ]
+	then
+   		echo "Mitainesoft Garage Running :) PID='$MITAINE_GARAGE_PROC'"
+	else
+   		echo "Mitainesoft Garage NOT Running :("
+	fi
+
+	/opt/vc/bin/vcgencmd measure_temp
+
+    cat /opt/mitainesoft/garage/build_info.txt
+
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  restart|reload|force-reload)
+	echo "Error: argument '$1' not supported" >&2
+	exit 3
+	;;
+  stop)
+	# No-op
+	if [ -n "$MITAINE_GARAGE_PROC" ]
+	then
+   		echo "Mitainesoft stopping... PID='$MITAINE_GARAGE_PROC'"
+   		kill $MITAINE_GARAGE_PROC 2&>1
+   		kill -9 $MITAINE_GARAGE_PROC 2&>1
+	else
+   		echo "Mitainesoft Garage already NOT Running..."
+   		exit 6
+	fi
+	echo "Process will restart unless comment out the launch in mitainesoft crontab!  "
+	exit 4
+	;;
+  status)
+	do_status
+	exit $?
+	;;
+  *)
+	echo "Usage: garage [start|stop|status]" >&2
+	exit 3
+	;;
+esac
+
+:

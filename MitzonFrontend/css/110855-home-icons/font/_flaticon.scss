@@ -1,0 +1,165 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 22/06/2016 15:02
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-24-hours-home-service:before { content: "\f100"; }
+.flaticon-add-house:before { content: "\f101"; }
+.flaticon-bathtub-with-tab:before { content: "\f102"; }
+.flaticon-board-wood:before { content: "\f103"; }
+.flaticon-bolt-and-nut:before { content: "\f104"; }
+.flaticon-buildings:before { content: "\f105"; }
+.flaticon-buy-house:before { content: "\f106"; }
+.flaticon-buying-a-house-property:before { content: "\f107"; }
+.flaticon-cancel-house:before { content: "\f108"; }
+.flaticon-car-in-a-garage:before { content: "\f109"; }
+.flaticon-chair-for-office:before { content: "\f10a"; }
+.flaticon-door-for-a-building-entrance:before { content: "\f10b"; }
+.flaticon-drop-water-falling-from-a-tap:before { content: "\f10c"; }
+.flaticon-eco-idea:before { content: "\f10d"; }
+.flaticon-family-home:before { content: "\f10e"; }
+.flaticon-favorite-home:before { content: "\f10f"; }
+.flaticon-gardening-in-home:before { content: "\f110"; }
+.flaticon-greenhouse:before { content: "\f111"; }
+.flaticon-hammer:before { content: "\f112"; }
+.flaticon-harvest-bag-of-cereal:before { content: "\f113"; }
+.flaticon-home-approved:before { content: "\f114"; }
+.flaticon-home-button-for-interface:before { content: "\f115"; }
+.flaticon-home-insurance:before { content: "\f116"; }
+.flaticon-home-oven:before { content: "\f117"; }
+.flaticon-home-sale:before { content: "\f118"; }
+.flaticon-home-security-unlocked:before { content: "\f119"; }
+.flaticon-home-with-like-heart-symbol:before { content: "\f11a"; }
+.flaticon-home-with-locked-padlock:before { content: "\f11b"; }
+.flaticon-home-with-zoom-tool:before { content: "\f11c"; }
+.flaticon-hospital-nurse:before { content: "\f11d"; }
+.flaticon-house-for-sale:before { content: "\f11e"; }
+.flaticon-house-keys:before { content: "\f11f"; }
+.flaticon-house-price-symbol:before { content: "\f120"; }
+.flaticon-house-reforms:before { content: "\f121"; }
+.flaticon-house-search:before { content: "\f122"; }
+.flaticon-house-visiting:before { content: "\f123"; }
+.flaticon-house-with-spercentage-off:before { content: "\f124"; }
+.flaticon-key-home:before { content: "\f125"; }
+.flaticon-kings-size-bed:before { content: "\f126"; }
+.flaticon-kitchen-furniture:before { content: "\f127"; }
+.flaticon-light-bulb-on:before { content: "\f128"; }
+.flaticon-like-house:before { content: "\f129"; }
+.flaticon-livingroom-sofa:before { content: "\f12a"; }
+.flaticon-lock-home:before { content: "\f12b"; }
+.flaticon-padlock-with-paint-drop:before { content: "\f12c"; }
+.flaticon-paint-roller-of-small-size:before { content: "\f12d"; }
+.flaticon-pin-a-property-for-buy-or-rent:before { content: "\f12e"; }
+.flaticon-plant-in-pot:before { content: "\f12f"; }
+.flaticon-private-house:before { content: "\f130"; }
+.flaticon-rss-house:before { content: "\f131"; }
+.flaticon-sale-signal:before { content: "\f132"; }
+.flaticon-screwdriver-single:before { content: "\f133"; }
+.flaticon-searching-for-a-house:before { content: "\f134"; }
+.flaticon-shower-head-with-water:before { content: "\f135"; }
+.flaticon-sleep-in-bed:before { content: "\f136"; }
+.flaticon-sold-house:before { content: "\f137"; }
+.flaticon-stool:before { content: "\f138"; }
+.flaticon-tiles:before { content: "\f139"; }
+.flaticon-tiny-flower:before { content: "\f13a"; }
+.flaticon-tree-shape:before { content: "\f13b"; }
+.flaticon-two-houses:before { content: "\f13c"; }
+.flaticon-vintage-tv-screen:before { content: "\f13d"; }
+.flaticon-web-house:before { content: "\f13e"; }
+    
+    $font-Flaticon-24-hours-home-service: "\f100";
+    $font-Flaticon-add-house: "\f101";
+    $font-Flaticon-bathtub-with-tab: "\f102";
+    $font-Flaticon-board-wood: "\f103";
+    $font-Flaticon-bolt-and-nut: "\f104";
+    $font-Flaticon-buildings: "\f105";
+    $font-Flaticon-buy-house: "\f106";
+    $font-Flaticon-buying-a-house-property: "\f107";
+    $font-Flaticon-cancel-house: "\f108";
+    $font-Flaticon-car-in-a-garage: "\f109";
+    $font-Flaticon-chair-for-office: "\f10a";
+    $font-Flaticon-door-for-a-building-entrance: "\f10b";
+    $font-Flaticon-drop-water-falling-from-a-tap: "\f10c";
+    $font-Flaticon-eco-idea: "\f10d";
+    $font-Flaticon-family-home: "\f10e";
+    $font-Flaticon-favorite-home: "\f10f";
+    $font-Flaticon-gardening-in-home: "\f110";
+    $font-Flaticon-greenhouse: "\f111";
+    $font-Flaticon-hammer: "\f112";
+    $font-Flaticon-harvest-bag-of-cereal: "\f113";
+    $font-Flaticon-home-approved: "\f114";
+    $font-Flaticon-home-button-for-interface: "\f115";
+    $font-Flaticon-home-insurance: "\f116";
+    $font-Flaticon-home-oven: "\f117";
+    $font-Flaticon-home-sale: "\f118";
+    $font-Flaticon-home-security-unlocked: "\f119";
+    $font-Flaticon-home-with-like-heart-symbol: "\f11a";
+    $font-Flaticon-home-with-locked-padlock: "\f11b";
+    $font-Flaticon-home-with-zoom-tool: "\f11c";
+    $font-Flaticon-hospital-nurse: "\f11d";
+    $font-Flaticon-house-for-sale: "\f11e";
+    $font-Flaticon-house-keys: "\f11f";
+    $font-Flaticon-house-price-symbol: "\f120";
+    $font-Flaticon-house-reforms: "\f121";
+    $font-Flaticon-house-search: "\f122";
+    $font-Flaticon-house-visiting: "\f123";
+    $font-Flaticon-house-with-spercentage-off: "\f124";
+    $font-Flaticon-key-home: "\f125";
+    $font-Flaticon-kings-size-bed: "\f126";
+    $font-Flaticon-kitchen-furniture: "\f127";
+    $font-Flaticon-light-bulb-on: "\f128";
+    $font-Flaticon-like-house: "\f129";
+    $font-Flaticon-livingroom-sofa: "\f12a";
+    $font-Flaticon-lock-home: "\f12b";
+    $font-Flaticon-padlock-with-paint-drop: "\f12c";
+    $font-Flaticon-paint-roller-of-small-size: "\f12d";
+    $font-Flaticon-pin-a-property-for-buy-or-rent: "\f12e";
+    $font-Flaticon-plant-in-pot: "\f12f";
+    $font-Flaticon-private-house: "\f130";
+    $font-Flaticon-rss-house: "\f131";
+    $font-Flaticon-sale-signal: "\f132";
+    $font-Flaticon-screwdriver-single: "\f133";
+    $font-Flaticon-searching-for-a-house: "\f134";
+    $font-Flaticon-shower-head-with-water: "\f135";
+    $font-Flaticon-sleep-in-bed: "\f136";
+    $font-Flaticon-sold-house: "\f137";
+    $font-Flaticon-stool: "\f138";
+    $font-Flaticon-tiles: "\f139";
+    $font-Flaticon-tiny-flower: "\f13a";
+    $font-Flaticon-tree-shape: "\f13b";
+    $font-Flaticon-two-houses: "\f13c";
+    $font-Flaticon-vintage-tv-screen: "\f13d";
+    $font-Flaticon-web-house: "\f13e";

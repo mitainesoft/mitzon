@@ -1,0 +1,10 @@
+recursive-include doc *
+recursive-include config *
+recursive-include config *.*
+recursive-include GarageFrontend *
+recursive-include scripts *
+recursive-include scripts *.*
+include *.bash
+include *.txt
+include *.md
+exclude test/*

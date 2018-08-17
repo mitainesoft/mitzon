@@ -1,0 +1,180 @@
+##############################################################
+# Mitainesodt Garage Config file
+# Generated for revision [MITAINESOFT_GARAGE_REVISION]
+##############################################################
+
+[GARAGE_MANAGER]
+GARAGE_MANAGER_LOOP_TIMEOUT = 5
+
+# SENSOR_DEFECT_ASSESSMENT_TIME failures used for sensors.
+SENSOR_DEFECT_ASSESSMENT_TIME = 60
+GARAGE_NAME_FOR_TEST=GARAGE_0
+
+[THREAD_CONTROL]
+RESP_TIMEOUT = 2
+
+[GARAGE_COMMON]
+#nbr seconds before warning is sent #
+# Test = 40 default=780
+GarageOpenTriggerWarningElapsedTime = 720
+
+#nbr seconds before door will attempt to close #900
+# Test = 90  default=600
+GarageOpenTriggerCloseDoorElapsedTime = 900
+
+#LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=20
+LightGarageOpenTriggerCloseDoorPreWarningBeforeClose=45
+
+#Nbr seconds to trigger an alarm when door is LOCK OPEN
+GarageLockOpenTriggerAlarmElapsedTime=7200
+
+# Time it  takes to consider door closed. Used in context of alarm reset
+GarageDoorAssumedClosedTime = 20
+
+# Garage Automatic close. How long to simulate pressing button.
+TimeToKeepButtonPressedMilliSec = 1000
+
+
+# Time Before Auto Retry Close Door for automatic close or manual open or close!  need t fix!
+TimeBeforeAutoRetryCloseDoor = 120
+
+#Time Between Button Manual Pressed
+TimeBetweenButtonManualPressed=2
+
+#Minimum Time between commands. Compare current time vs last cmd sent time
+GarageElapsedTimeForStatusChange=10
+
+#Relay Outputs List where LOW means Enable or Trigger relay
+GarageRelayLOWEnable=2,3,12,13
+
+[GARAGE_0]
+SuperviseThisGarage = True
+GarageBoardPin = 7
+GarageSensorsBoardPin = 8,9
+GarageGreenLightBoardPin=2
+GarageRedLightBoardPin=3
+GarageWhiteLightBoardPin=12
+
+[GARAGE_1]
+SuperviseThisGarage = True
+GarageBoardPin = 6
+GarageSensorsBoardPin = 10,11
+GarageGreenLightBoardPin=4
+GarageRedLightBoardPin=5
+GarageWhiteLightBoardPin=13
+
+[GARAGE_2]
+SuperviseThisGarage = False
+GarageBoardPin = -1
+GarageSensorsBoardPin = -1,-1
+
+[GARAGE_3]
+SuperviseThisGarage = False
+GarageBoardPin = -1
+GarageSensorsBoardPin = -1,-1
+
+[ALERT]
+#TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
+TimeBetweenAlerts=120
+
+#Alarm in AlertAutoClearList will cleared automatically after "AlertDefaultClearInterval"
+AlertDefaultClearInterval=15
+
+#These alarms will auto clear if True
+AlertAutoClearList=GLO01
+
+
+########################
+## Notification ########
+########################
+[NOTIFICATION_COMMON]
+
+#Set to True to enable notif to email configured below
+NotificationEnabled = False
+
+########################
+# DEFAULT_LANGUAGE=
+#   Fr = Francais
+#   En = English
+# Hint: Add section in event_list to add extra language
+DEFAULT_LANGUAGE=Fr
+
+
+# Send Mail to gmail
+# import smtplib
+# server = smtplib.SMTP('smtp.gmail.com', 587)
+#
+# Log in to the server
+# server.login("myEmail@gmail.com","myPassword")
+#
+# Send mail
+# msg = "\nHello!"
+#server.sendmail("myEmail@gmail.com","recipient@gmail.com", msg)
+#
+[EMAIL_ACCOUNT_INFORMATION]
+SMTP_SERVER=smtp.Xmail.com
+USER=myEmail@gmail.com
+EMAIL_SENDER_NAME=myEmailName
+PASSWORD=myPassword
+
+
+#Separate myReceivers with ,
+# Specify language if different from default with ;
+# Example1:
+#  allo@hotmail.com,myhello@yahoo.ca
+# Example2:
+#  allo@hotmail.com,myhello@yahoo.ca+En,hello@xmail.ca+FrMule;
+RECIPIENTLIST=myReceivers
+
+[NOTIFICATION_MANAGER]
+NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15
+
+#NOTIFICATION_ALERT_SEVERITY_FILTER
+# Show alert of severy 1 & 2 with =1,2
+NOTIFICATION_ALERT_SEVERITY_FILTER=1
+
+#INTERVAL_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL
+#Time Interval between the same alert can be emailed or sent again for the same device.
+TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL=3600
+
+
+# Not Used! -> NOTIFICATION_MANAGER_MAX_FAILURE
+#NOTIFICATION_MANAGER_MAX_FAILURE = 1
+
+###########################################
+#Users Admin to generate iptables entries
+###########################################
+# @TODO !  2017-08-05 Not implemented yet
+[USERS]
+#Admin: -A INPUT -p tcp -m mac --mac-source XX:XX:XX:XX:XX:XX  -m multiport --dports 22,8050,80,443 -j ACCEPT
+GARAGE_ADMIN=Add MAC Addresses here separated by colun ','
+#Users: -A INPUT -p tcp -m mac --mac-source XX:XX:XX:XX:XX:XX -m multiport --dports 8050,80,443 -j ACCEPT
+GARAGE_USERS=Add MAC Addresses here separated by colun ','
+#
+
+###########################################
+
+[INTERNAL]
+CONFIG_FILE_REV=[MITAINESOFT_GARAGE_REVISION]
+ALERT_DEFINITION_FILE=config/event_list.json
+
+
+[GARAGE_LOG_LEVEL]
+#  Level	    Numeric value
+#  CRITICAL	    50
+#  ERROR	    40
+#  WARNING	    30
+#  INFO	        20
+#  DEBUG	    10
+#  NOTSET	    0
+Garage.AlertManager=INFO
+Garage.ConfigManager=INFO
+Garage.DeviceManager=INFO
+Garage.GarageDoor=INFO
+Garage.GarageManager=INFO
+Garage.Light=INFO
+Garage.NotificationManager=INFO
+Garage.Sensor=INFO
+Garage.garageCmdProcessor=INFO
+nanpy=CRITICAL
+nanpy.serialmanager=CRITICAL

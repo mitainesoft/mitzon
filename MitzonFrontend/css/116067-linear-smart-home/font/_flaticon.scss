@@ -1,0 +1,139 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 22/06/2016 15:31
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-alarm:before { content: "\f100"; }
+.flaticon-apartment:before { content: "\f101"; }
+.flaticon-cctv:before { content: "\f102"; }
+.flaticon-cctv-1:before { content: "\f103"; }
+.flaticon-coffee-maker:before { content: "\f104"; }
+.flaticon-control-panel:before { content: "\f105"; }
+.flaticon-control-panel-1:before { content: "\f106"; }
+.flaticon-cooling:before { content: "\f107"; }
+.flaticon-door-key:before { content: "\f108"; }
+.flaticon-door-key-1:before { content: "\f109"; }
+.flaticon-electricity:before { content: "\f10a"; }
+.flaticon-fire-alarm:before { content: "\f10b"; }
+.flaticon-fire-alarm-1:before { content: "\f10c"; }
+.flaticon-furniture:before { content: "\f10d"; }
+.flaticon-garage:before { content: "\f10e"; }
+.flaticon-garbage:before { content: "\f10f"; }
+.flaticon-hood:before { content: "\f110"; }
+.flaticon-light:before { content: "\f111"; }
+.flaticon-recycle-bin:before { content: "\f112"; }
+.flaticon-remote-control:before { content: "\f113"; }
+.flaticon-remote-control-1:before { content: "\f114"; }
+.flaticon-remote-control-2:before { content: "\f115"; }
+.flaticon-remote-control-3:before { content: "\f116"; }
+.flaticon-remote-control-4:before { content: "\f117"; }
+.flaticon-security:before { content: "\f118"; }
+.flaticon-security-system:before { content: "\f119"; }
+.flaticon-smart-home:before { content: "\f11a"; }
+.flaticon-smart-home-1:before { content: "\f11b"; }
+.flaticon-smart-home-2:before { content: "\f11c"; }
+.flaticon-smart-home-3:before { content: "\f11d"; }
+.flaticon-smart-home-4:before { content: "\f11e"; }
+.flaticon-smart-home-5:before { content: "\f11f"; }
+.flaticon-smart-home-6:before { content: "\f120"; }
+.flaticon-smart-home-7:before { content: "\f121"; }
+.flaticon-smart-home-8:before { content: "\f122"; }
+.flaticon-smartphone:before { content: "\f123"; }
+.flaticon-smartphone-1:before { content: "\f124"; }
+.flaticon-smartphone-2:before { content: "\f125"; }
+.flaticon-smartphone-3:before { content: "\f126"; }
+.flaticon-smartwatch:before { content: "\f127"; }
+.flaticon-socket:before { content: "\f128"; }
+.flaticon-solar-energy:before { content: "\f129"; }
+.flaticon-television:before { content: "\f12a"; }
+.flaticon-thermostat:before { content: "\f12b"; }
+.flaticon-washing-machine:before { content: "\f12c"; }
+.flaticon-water:before { content: "\f12d"; }
+.flaticon-water-heater:before { content: "\f12e"; }
+.flaticon-water-tap:before { content: "\f12f"; }
+.flaticon-wifi:before { content: "\f130"; }
+.flaticon-window:before { content: "\f131"; }
+    
+    $font-Flaticon-alarm: "\f100";
+    $font-Flaticon-apartment: "\f101";
+    $font-Flaticon-cctv: "\f102";
+    $font-Flaticon-cctv-1: "\f103";
+    $font-Flaticon-coffee-maker: "\f104";
+    $font-Flaticon-control-panel: "\f105";
+    $font-Flaticon-control-panel-1: "\f106";
+    $font-Flaticon-cooling: "\f107";
+    $font-Flaticon-door-key: "\f108";
+    $font-Flaticon-door-key-1: "\f109";
+    $font-Flaticon-electricity: "\f10a";
+    $font-Flaticon-fire-alarm: "\f10b";
+    $font-Flaticon-fire-alarm-1: "\f10c";
+    $font-Flaticon-furniture: "\f10d";
+    $font-Flaticon-garage: "\f10e";
+    $font-Flaticon-garbage: "\f10f";
+    $font-Flaticon-hood: "\f110";
+    $font-Flaticon-light: "\f111";
+    $font-Flaticon-recycle-bin: "\f112";
+    $font-Flaticon-remote-control: "\f113";
+    $font-Flaticon-remote-control-1: "\f114";
+    $font-Flaticon-remote-control-2: "\f115";
+    $font-Flaticon-remote-control-3: "\f116";
+    $font-Flaticon-remote-control-4: "\f117";
+    $font-Flaticon-security: "\f118";
+    $font-Flaticon-security-system: "\f119";
+    $font-Flaticon-smart-home: "\f11a";
+    $font-Flaticon-smart-home-1: "\f11b";
+    $font-Flaticon-smart-home-2: "\f11c";
+    $font-Flaticon-smart-home-3: "\f11d";
+    $font-Flaticon-smart-home-4: "\f11e";
+    $font-Flaticon-smart-home-5: "\f11f";
+    $font-Flaticon-smart-home-6: "\f120";
+    $font-Flaticon-smart-home-7: "\f121";
+    $font-Flaticon-smart-home-8: "\f122";
+    $font-Flaticon-smartphone: "\f123";
+    $font-Flaticon-smartphone-1: "\f124";
+    $font-Flaticon-smartphone-2: "\f125";
+    $font-Flaticon-smartphone-3: "\f126";
+    $font-Flaticon-smartwatch: "\f127";
+    $font-Flaticon-socket: "\f128";
+    $font-Flaticon-solar-energy: "\f129";
+    $font-Flaticon-television: "\f12a";
+    $font-Flaticon-thermostat: "\f12b";
+    $font-Flaticon-washing-machine: "\f12c";
+    $font-Flaticon-water: "\f12d";
+    $font-Flaticon-water-heater: "\f12e";
+    $font-Flaticon-water-tap: "\f12f";
+    $font-Flaticon-wifi: "\f130";
+    $font-Flaticon-window: "\f131";
