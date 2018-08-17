@@ -41,11 +41,17 @@ class garageURLCmdProcessor(metaclass=SingletonMeta):
         '''Create new device hanlder and connect to USB port for arduino'''
 
         self.config_handler = ConfigManager()
-        self.config_handler.setConfigFileName("config/garage_backend.config")
+        self.config_handler.setConfigFileName("config/mitzon_backend.config")
         self.dev_manager_handler = DeviceManager()
         self.alert_manager_handler = AlertManager()
 
         self.NBR_QUEUE=2
+        self.server_socket_host =self.config_handler.getConfigParam("SECURITY", "SERVER_SOCKET_HOST")
+        self.server_socket_port = int(self.config_handler.getConfigParam("SECURITY", "SERVER_SOCKET_PORT"))
+        self.server_ssl_module = self.config_handler.getConfigParam("SECURITY", "SERVER_SSL_MODULE")
+        self.server_ssl_certificate = self.config_handler.getConfigParam("SECURITY", "SERVER_SSL_CERTIFICATE")
+        self.server_ssl_private_key = self.config_handler.getConfigParam("SECURITY", "SERVER_SSL_PRIVATE_KEY")
+
 
     @cherrypy.tools.accept(media='text/plain')
     # s.post('http://127.0.0.1:8080/garage/open/g0')
@@ -213,12 +219,12 @@ if __name__ == '__main__':
     # logrotate_handler.doRollover() #Roolover logs on startup
 
     server_config = {
-            'server.socket_host': '0.0.0.0',
-            'server.socket_port': 8050,
-            'server.ssl_module': 'builtin',
+            'server.socket_host': garageHandler.server_socket_host,
+            'server.socket_port': garageHandler.server_socket_port,
+            'server.ssl_module': garageHandler.server_ssl_module,
             #'server.ssl_module': 'pyopenssl',
-            'server.ssl_certificate': '/opt/mitainesoft/security/mitainesoftsvr.cert.pem',
-            'server.ssl_private_key': '/opt/mitainesoft/security/mitainesoftsvr.key.pem',
+            'server.ssl_certificate': garageHandler.server_ssl_certificate,
+            'server.ssl_private_key': garageHandler.server_ssl_private_key,
             'tools.response_headers.on': False,
             'tools.response_headers.headers': [('Content-Type', 'text/plain'),
                                                ('Strict-Transport-Security', 'max-age=31536000'),

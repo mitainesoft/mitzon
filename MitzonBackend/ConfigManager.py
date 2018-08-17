@@ -132,7 +132,14 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_LOG_LEVEL', 'Garage.Sensor'],
             ['GARAGE_LOG_LEVEL', 'Garage.garageCmdProcessor'],
             ['GARAGE_LOG_LEVEL', 'nanpy'],
-            ['GARAGE_LOG_LEVEL', 'nanpy.serialmanager']
+            ['GARAGE_LOG_LEVEL', 'nanpy.serialmanager'],
+            ['DEVICES', 'GARAGE_SERIAL_MANAGER_DEVICE'],
+            ['DEVICES', 'VALVES_SERIAL_MANAGER_DEVICE'],
+            ['SECURITY','SERVER_SOCKET_HOST'],
+            ['SECURITY', 'SERVER_SOCKET_PORT'],
+            ['SECURITY', 'SERVER_SSL_MODULE'],
+            ['SECURITY', 'SERVER_SSL_CERTIFICATE'],
+            ['SECURITY', 'SERVER_SSL_PRIVATE_KEY']
         ]
 
         try:

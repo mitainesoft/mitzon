@@ -29,7 +29,12 @@
         cd nanpy-firmware
         ./configure.sh
 
-        load and upload nanpy.ino on Arduino
+        #load and upload nanpy.ino on Arduino
+        #  https://www.instructables.com/id/How-to-fix-bad-Chinese-Arduino-clones/
+        #     MEGA 2560 CH340G  --> CH341
+        #     UNO CH341
+        #  CH340/CH341USB to serial port WINDOWS driver, support 32/64 bit Windows 10/8.1/8/7/VISTA/XP,
+        #  SERVER 2016/2012/2008/2003, 2000/ME/98, through Microsoft digital signature authentication, support USB Transfer to 3-wire and 9-wire serial ports for distribution to end users.
         
     ** Linux **
     # In linux Debian or in Oracle VirtualBox,

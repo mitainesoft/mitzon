@@ -152,6 +152,25 @@ GARAGE_ADMIN=Add MAC Addresses here separated by colun ','
 GARAGE_USERS=Add MAC Addresses here separated by colun ','
 #
 
+[DEVICES]
+# SerialManager(device='/dev/ttyUSB0')
+# ArduinoApi Nanpy
+GARAGE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB0
+VALVES_SERIAL_MANAGER_DEVICE=/dev/ttyUSB1
+
+[SECURITY]
+# 'server.socket_host': '0.0.0.0',
+# 'server.socket_port': 8050,
+# 'server.ssl_module': 'builtin',
+#     ##'server.ssl_module': 'pyopenssl',
+# 'server.ssl_certificate': '/opt/mitainesoft/security/mitainesoftsvr.cert.pem',
+# 'server.ssl_private_key': '/opt/mitainesoft/security/mitainesoftsvr.key.pem',
+SERVER_SOCKET_HOST=0.0.0.0
+SERVER_SOCKET_PORT=8050
+SERVER_SSL_MODULE=builtin
+SERVER_SSL_CERTIFICATE=/opt/mitainesoft/security/mitainesoftsvr.cert.pem
+SERVER_SSL_PRIVATE_KEY=/opt/mitainesoft/security/mitainesoftsvr.key.pem
+
 ###########################################
 
 [INTERNAL]
