@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 
+
 <head>
     <meta charset="utf-8">
 
@@ -55,7 +56,7 @@
         <a id="garagecmd0" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
            onclick="proceed('trigger','0');"<br></br></a>
 
-        <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
+        <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage"  href="#"
            onclick="proceed('trigger','1');"<br></br></a>
 
         <br></br>
@@ -327,15 +328,16 @@
                                     break;
                                 case /OPEN/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('opendoorbutton');
-                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.OPEN;
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = "\n" + garageTimeStatusObject2.OPEN;
+//                                     document.getElementById('allo0').innerHTML = "ALLO!"
                                     break;
                                 case /ERROR/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('errordoorbutton');
-//                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
+//                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = "\n" + garageTimeStatusObject2.CLOSED;
                                     break;
                                 case /UNKNOWN/.test(parseResponseArray[i][3]):
                                     $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
-                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = garageTimeStatusObject2.CLOSED;
+                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = "\n" + garageTimeStatusObject2.CLOSED;
                                     break;
                                 default:
                                     $('#' + garagecmdlabel).addClass('programerrorbutton');
@@ -345,6 +347,7 @@
 
                             if (/LOCK/.test(parseResponseArray[i][3])) {
                                 $('#' + garagecmdlabel).addClass('lockstatusdoorbutton');
+                                if (showtimets) document.getElementById('garagelock').innerHTML = garageTimeStatusObject2.LOCK;
                                 $('#garagelock').addClass('lockstatusdoorbutton');
                             } else {
                                 if ($('#garagelock').hasClass('lockstatusdoorbutton')) {

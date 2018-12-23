@@ -3,6 +3,8 @@ from MitzonBackend.Constants import *
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.CommandQResponse import *
 from MitzonBackend.AlertManager import AlertManager
+from MitzonBackend.GarageUtil import *
+
 from nanpy import ArduinoApi, SerialManager
 from time import sleep
 import time
@@ -20,6 +22,7 @@ class GarageDoor():
     def __init__(self,garage_name,usbConnectHandler):
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
+
 
         matchObj = re.findall(r'\d', garage_name, 1)
         garage_id = int(matchObj[0])
@@ -313,23 +316,24 @@ class GarageDoor():
         resp_json=None
         try:
             rspstr={}
-            i=0
-
             if self.g_open_time != None:
-                rspstr[G_OPEN]=time.strftime("%Hh%M", time.localtime(self.g_open_time))
+                rspstr[G_OPEN]=GarageUtil.getTimePrintOut(self,time.time()-self.g_open_time)
+
             else:
-                rspstr[G_OPEN]="---"
-            i+=1
-            if self.g_close_time != None:
-                rspstr[G_CLOSED] = time.strftime("%Hh%M", time.localtime(self.g_close_time))
+                rspstr[G_OPEN]=""
+            if self.g_close_time != None and self.g_open_time != None:
+                rspstr[G_CLOSED] = GarageUtil.getTimePrintOut(self,time.time()-self.g_close_time)
             else:
-                rspstr[G_CLOSED]="----"
-            i += 1
+                rspstr[G_CLOSED]=""
             if self.g_error_time != None:
-                rspstr[G_ERROR] = time.strftime("%Hh%M", time.localtime(self.g_close_time))
+                rspstr[G_ERROR] = GarageUtil.getTimePrintOut(self,time.time()-self.g_close_time)
             else:
-                rspstr[G_ERROR]="-----"
-            i += 1
+                rspstr[G_ERROR]="Check!"
+
+            if self.g_lock_time !=None:
+                rspstr[G_LOCK] = GarageUtil.getTimePrintOut(self,time.time()-self.g_lock_time)
+            else:
+                rspstr[G_LOCK] = ""
 
             resp_json = json.dumps(rspstr)
 
