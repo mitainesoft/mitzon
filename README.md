@@ -1,12 +1,12 @@
 ###################################################################################
-# Mitainesoft Garage (c) 2017                                                     #
-# HW: garage raspberry-pi arduino                                                 #
+# Mitainesoft mitzon (c) 2019                                                     #
+# HW: mitzon raspberry-pi arduino                                                 #
 # Version: [MITAINESOFT_MITZON_REVISION]                                    #
 # Code: Python3 with cherrypy, nanpi                                              #
-# Purpose: Supervise garage door opening. Generate Alarms if required.            #
+# Purpose: Supervise mitzon door opening. Generate Alarms if required.            #
 #          Allow remote open.                                                     #
 #          Security via certificates and other fireall options                    #
-# SCRUM board: https://github.com/mitainesoft/garage/projects                     #
+# SCRUM board: https://github.com/mitainesoft/mitzon/projects                     #
 ###################################################################################
 
 
@@ -15,8 +15,8 @@
 
     ** MITAINESOFT_MITZON_REVISION **
 
-    MITAINESOFT_MITZON_REVISION is replaced by garage-x.y.z in the below instructions
-    which can be found in the README.rst garage-x.y.z tar file.
+    MITAINESOFT_MITZON_REVISION is replaced by mitzon-x.y.z in the below instructions
+    which can be found in the README.rst mitzon-x.y.z tar file.
 
 
     ** Install Arduino Image **
@@ -125,21 +125,21 @@
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
     cd /opt/mitainesoft/
     
-2.  Install or Upgrade garage packages
+2.  Install or Upgrade mitzon packages
 
     su - mitainesoft
 
     # Upload [MITAINESOFT_MITZON_REVISION] package to /opt/mitainesoft as user mitainesoft
-    #   cp /git/garage/dist/[MITAINESOFT_MITZON_REVISION] .
-    #   scp /git/garage/dist/* mitainesoft@192.168.1.xxx:/opt/mitainesoft
+    #   cp /git/mitzon/dist/[MITAINESOFT_MITZON_REVISION] .
+    #   scp /git/mitzon/dist/* mitainesoft@192.168.1.xxx:/opt/mitainesoft
 
     cd /opt/mitainesoft/
     tar -zxvf  [MITAINESOFT_MITZON_REVISION].tar.gz
 
     mkdir -p /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/log
     chmod 700 /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/*.bash
-    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/GarageFrontend -type d -exec chmod 755 {} \;
-    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/GarageFrontend -type f -exec chmod 644 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/mitzonFrontend -type d -exec chmod 755 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/mitzonFrontend -type f -exec chmod 644 {} \;
 
 
     #if untar with other user
@@ -150,8 +150,8 @@
     ** Edit config **
     su - mitainesoft
     cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/config
-    cp garage_backend.template garage_backend.config
-    # cp ../../garage/config/garage_backend.config .
+    cp mitzon_backend.template mitzon_backend.config
+    # cp ../../mitzon/config/mitzon_backend.config .
     cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]
 
     #3 steps below may not be required
@@ -169,52 +169,52 @@
         #IF not done already !
         cd /var/www
         rm html
-        ln -s /opt/mitainesoft/garage/GarageFrontend html
+        ln -s /opt/mitainesoft/mitzon/mitzonFrontend html
 
-     ** Fix garage start boot script
+     ** Fix mitzon start boot script
         cd /etc/init.d
-        cp /opt/mitainesoft/garage/scripts/garage /etc/init.d
-        chmod 755 /etc/init.d/garage
+        cp /opt/mitainesoft/mitzon/scripts/mitzon /etc/init.d
+        chmod 755 /etc/init.d/mitzon
         cd /etc/rc3.d
-        ln -s ../init.d/garage S99garage
+        ln -s ../init.d/mitzon S99mitzon
 
         # Fix it
         cd /etc/init.d
-        perl -i -pe 's/\r\n$/\n/g' garage
-        cd /opt/mitainesoft/garage/scripts
+        perl -i -pe 's/\r\n$/\n/g' mitzon
+        cd /opt/mitainesoft/mitzon/scripts
         perl -i -pe 's/\r\n$/\n/g' wakeup_network_internet_curl.sh
 
         # Try it
-        /etc/init.d/garage status
+        /etc/init.d/mitzon status
 
     ** Edit mitainesoft crontab **
         su - mitainesoft
         crontab -e
         #delete nohup file
-        0 5 * * 1 cp /dev/null /opt/mitainesoft/garage/GarageBackend/nohup.out > /dev/null 2>&1
-        0,15,30,45 * * * * /opt/mitainesoft/garage/watchdog_mitaine_garage.bash  > /dev/null 2>&1
+        0 5 * * 1 cp /dev/null /opt/mitainesoft/mitzon/mitzonBackend/nohup.out > /dev/null 2>&1
+        0,15,30,45 * * * * /opt/mitainesoft/mitzon/watchdog_mitaine_mitzon.bash  > /dev/null 2>&1
         # Add wakeup_network_internet_curl.sh usefullness unclear
-        28 5,9,16,19 * * * /opt/mitainesoft/garage/scripts/wakeup_network_internet_curl.sh
+        28 5,9,16,19 * * * /opt/mitainesoft/mitzon/scripts/wakeup_network_internet_curl.sh
 
-        ** Change active version of garage **
+        ** Change active version of mitzon **
         su - mitainesoft
         cd /opt/mitainesoft/
-        rm garage
-        ln -s [MITAINESOFT_MITZON_REVISION] garage
+        rm mitzon
+        ln -s [MITAINESOFT_MITZON_REVISION] mitzon
 
-        ** Restart garage **
+        ** Restart mitzon **
         #Check status and stop
-        sudo /etc/init.d/garage status
-        sudo /etc/init.d/garage stop
+        sudo /etc/init.d/mitzon status
+        sudo /etc/init.d/mitzon stop
         # Stop could generate a SW error alert being sent by email due to "Cherrypy Web Server Thread Dead" visible in previous version's logs
 
         #Start and check status
-        sudo /etc/init.d/garage start
-        sudo /etc/init.d/garage status
+        sudo /etc/init.d/mitzon start
+        sudo /etc/init.d/mitzon status
 
         #Check logs
-        cd /opt/mitainesoft/garage/log
-        tail -f garage.log
+        cd /opt/mitainesoft/mitzon/log
+        tail -f mitzon.log
 
 
 
@@ -226,56 +226,56 @@
 
 
 3.  Test
-Outputs in main Garage Backend console
+Outputs in main mitzon Backend console
 
 
- curl --cacert /opt/mitainesoft/security/mitainesoftsvr.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
+ curl --cacert /opt/mitainesoft/security/mitainesoftsvr.pem  -X POST -d '' https://192.168.1.83:8050/mitzonDoor/status/0
 
 
 
     a) Test Status
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
+    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/status/0
 
     b) Test Open Close
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/open/0
+    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/close/0
 
     c) Test lock/Unlock
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/lock/0
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/lock/0
+    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/close/0
+    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/open/0
 
 
 
     f) Test Status
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/status/0
 
     g) Test Open Close
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/close/0
 
     h) Test lock/Unlock
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/lock/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/open/0
 
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/lock/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/open/0
 
 
  d)Test Relay
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
 
 
 
 4.  Enable Security on Raspberry PI Raspbian
 
 
- ** Setting up a Mitainesoft Garage (MG) Embedded Certificate Authority **
+ ** Setting up a Mitainesoft mitzon (MG) Embedded Certificate Authority **
 
     This section describes the procedure for implementing an embedded
-    Certificate Authority (CA) in the mitainesoft garage solution (MGS),
+    Certificate Authority (CA) in the mitainesoft mitzon solution (MGS),
     then utilize this CA to generate a server key pair and certificate
     signing request (CSR), and finally have the Rasp+ embedded CA sign the
     CSR. 
@@ -879,7 +879,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
  ** ?!?!??  Combine the private key and the certificate **
     cd /root/ca
-    #cat ./certs/ca.cert.pem  ./private/ca.key.pem > ./certs/garagemobile.pem
+    #cat ./certs/ca.cert.pem  ./private/ca.key.pem > ./certs/mitzonmobile.pem
 
 
 ** Error curl: (60) SSL certificate problem: unable to get local issuer certificate **
@@ -924,7 +924,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 ** test **
     #/root/ca/ is root only
-    sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
+    sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/mitzonDoor/status/0
 
 
     *** Test for Verify return code: 0 (ok) ***
@@ -1080,7 +1080,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 5.  PREVENT OTHER DEVICES TO ACCESS THE RASPBERRY, PERIOD !
 
     #Copy/Paste lines as required.
-    vi /etc/iptables-garage.rule
+    vi /etc/iptables-mitzon.rule
 
         :INPUT ACCEPT [0:0]
         :FORWARD ACCEPT [0:0]
@@ -1113,7 +1113,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     iptables --flush
     
     #Put new list
-    iptables-restore  </etc/iptables-garage.rule
+    iptables-restore  </etc/iptables-mitzon.rule
     #Check new rules list
     iptables --list
     iptables --flush
@@ -1123,7 +1123,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
     cd /etc/network/if-pre-up.d
     vi mitainesoft_iptables
         #!/bin/sh
-        iptables-restore  </etc/iptables-garage.rule
+        iptables-restore  </etc/iptables-mitzon.rule
 
     #Check if it works !
     init 6
@@ -1172,13 +1172,13 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 6.2 Make build
-    #open Linux terminal on garage raspberry pi 
+    #open Linux terminal on mitzon raspberry pi 
     su - root
     iptables --list
     iptables --flush
     #Merge code from development PC!
     su - [git user]
-    cd /git/garage
+    cd /git/mitzon
     git status
     git checkout v1_stable
     git pull
@@ -1187,7 +1187,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
     #restore iptables
     su - root
-    iptables-restore  </etc/iptables-garage.rule
+    iptables-restore  </etc/iptables-mitzon.rule
     #Check iptables rules list
     iptables --list
 
@@ -1283,7 +1283,7 @@ a) Raspberry Temperature Overheat !
 
 10.  Design Env
     su - pi
-    mkdir -p /home/pi/garage/log/
+    mkdir -p /home/pi/mitzon/log/
     
     
 11. Misc
@@ -1300,10 +1300,10 @@ a) Raspberry Temperature Overheat !
         total 12
         drwxr-xr-x  3 root root 4096 Jul 16 16:19 .
         drwxr-xr-x 12 root root 4096 Dec  1  2016 ..
-        lrwxrwxrwx  1 root root   31 Jul 16 16:19 dev_html -> /home/pi/garage/GarageFrontend/
+        lrwxrwxrwx  1 root root   31 Jul 16 16:19 dev_html -> /home/pi/mitzon/mitzonFrontend/
         lrwxrwxrwx  1 root root    8 Jun 28 17:24 html -> dev_html
         drwxr-xr-x  2 root root 4096 Jun  3 16:28 html.orig
-        lrwxrwxrwx  1 root root   38 Jun 28 17:22 pkg_html -> /opt/mitainesoft/garage/GarageFrontend
+        lrwxrwxrwx  1 root root   38 Jun 28 17:22 pkg_html -> /opt/mitainesoft/mitzon/mitzonFrontend
 
 
  ** Notification **
@@ -1328,8 +1328,8 @@ a) Raspberry Temperature Overheat !
 
   ** .bashrc **
     Add to .bashrc:
-    alias llog='less /opt/mitainesoft/garage/log/garage.log'
-    alias log='cd /opt/mitainesoft/garage/log'
-    alias cfg='cd  /opt/mitainesoft/garage/config'
-    alias mit='cd  /opt/mitainesoft/garage/'
+    alias llog='less /opt/mitainesoft/mitzon/log/mitzon.log'
+    alias log='cd /opt/mitainesoft/mitzon/log'
+    alias cfg='cd  /opt/mitainesoft/mitzon/config'
+    alias mit='cd  /opt/mitainesoft/mitzon/'
 
