@@ -24,7 +24,7 @@ from shutil import move
 from os import fdopen, remove
 import codecs
 
-fileListToSearchReplace_MITAINESOFT_GARAGE_REVISION = \
+fileListToSearchReplace_MITAINESOFT_MITZON_REVISION = \
     ['README.md',
      'MitzonFrontend/index.html',
      'config/mitzon_backend.template']
@@ -58,25 +58,25 @@ except IOError:
 buildinfo = configparser.ConfigParser()
 buildinfo.read(buildfilename)
 
-print("Garage current version = %s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch']))
+print("Mitzon current version = %s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch']))
 
 major = int(buildinfo['BUILDINFO']['mgs.major'])
 minor = int(buildinfo['BUILDINFO']['mgs.minor'])
 patch = int(buildinfo['BUILDINFO']['mgs.patch']) + 1
 
-# print ("Garage next version %s.%s.%s" %(major,minor,patch))
+# print ("Mitzon next version %s.%s.%s" %(major,minor,patch))
 
 #buildinfo['BUILDINFO']['build.date'] = nowstr
 buildinfo['BUILDINFO']['mgs.major'] = "%d" % major
 buildinfo['BUILDINFO']['mgs.minor'] = "%d" % minor
 buildinfo['BUILDINFO']['mgs.patch'] = "%d" % patch
-print("Garage next version = %s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch']))
+print("Mitzon next version = %s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch']))
 
 with open(buildfilename, 'w') as buildinfofile:
     buildinfo.write(buildinfofile)
 
 version_str = "%s.%s.%s" % (buildinfo['BUILDINFO']['mgs.major'], buildinfo['BUILDINFO']['mgs.minor'], buildinfo['BUILDINFO']['mgs.patch'])
-package_name = "mitainesoft_garage_" + version_str
+package_name = "mitainesoft_mitzon_" + version_str
 
 git_version_str = "v%s_build" %(version_str)
 
@@ -106,10 +106,10 @@ class sdistPyCommand(setuptools.command.sdist.sdist):
     def make_release_tree(self,base_dir, files ):
         setuptools.command.sdist.sdist.make_release_tree(self,base_dir, files)
 
-        for fileToSearchReplace in fileListToSearchReplace_MITAINESOFT_GARAGE_REVISION:
+        for fileToSearchReplace in fileListToSearchReplace_MITAINESOFT_MITZON_REVISION:
             try:
                 source_file_path=base_dir+'/'+fileToSearchReplace
-                keyw='[MITAINESOFT_GARAGE_REVISION]'
+                keyw='[MITAINESOFT_MITZON_REVISION]'
                 substring = base_dir.upper()
                 if (fileToSearchReplace == "README.md"): #Exception for instructions, not upper() !
                     substring = base_dir
@@ -142,17 +142,17 @@ setuptools.setup(
         # 'build_py': BuildPyCommand,
         'sdist': sdistPyCommand,
     },
-    name='garage',
+    name='mitzon',
     version=version_str,
     packages=find_packages(),
     include_package_data=True,
     install_requires=['nanpy', 'cherrypy'],
-    url='https://github.com/mitainesoft/garage',
-    license='Mitainesoft Garage 2017',
+    url='https://github.com/mitainesoft/mitzon',
+    license='Mitainesoft Mitzon 2019',
     python_requires='~=3.3',
     author='mitainesoft',
     author_email='mitainesoft@gmail.com',
-    description='Monitor and Control Garage Door',
-    long_description='Supervise garage door opening. Generate Alarms if required.  Allow remote open. Security via certificates and other fireall options. SCRUM board: https://github.com/mitainesoft/garage/projects',
+    description='Monitor and Control Sprinklers & Garage Door',
+    long_description='Supervise mitzon door opening. Generate Alarms if required.  Allow remote open. Security via certificates and other fireall options. SCRUM board: https://github.com/mitainesoft/mitzon/projects',
     platforms='Raspberry PI armv7l GNU/Linux 4.9.28-v7+',
 )

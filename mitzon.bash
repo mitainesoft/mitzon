@@ -1,25 +1,25 @@
 #!/bin/bash
 
-MITAINE_GARAGE_PROC=`ps -ef | grep /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/GarageBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 
-if [ -n "$MITAINE_GARAGE_PROC" ]
+if [ -n "$MITAINE_MITZON_PROC" ]
 then
-   echo "garageURLCmdProcessor already running...Stopping PID='$MITAINE_GARAGE_PROC'"
-   kill -9 `pgrep -f  /opt/mitainesoft/garage/GarageBackend/garageURLCmdProcessor.py`
+   echo "mitzonURLCmdProcessor already running...Stopping PID='$MITAINE_MITZON_PROC'"
+   kill -9 `pgrep -f  /opt/mitainesoft/mitzon/GarageBackend/mitzonURLCmdProcessor.py`
 
 else
-   echo "Starting garage..."
+   echo "Starting mitzon..."
 fi
 
 
-MITAINEGARAGEHOME=/opt/mitainesoft/garage
-mkdir -p /opt/mitainesoft/garage/log
+MITAINEMITZONHOME=/opt/mitainesoft/mitzon
+mkdir -p /opt/mitainesoft/mitzon/log
 
-touch /opt/mitainesoft/garage/log/garage.log
-cd $MITAINEGARAGEHOME 
+touch /opt/mitainesoft/mitzon/log/mitzon.log
+cd $MITAINEMITZONHOME 
 export PYTHONUNBUFFERED=1 
-export PYTHONPATH=/opt/mitainesoft/garage/GarageBackend:/opt/mitainesoft/garage:/opt/mitainesoft/garage/GarageFrontend
+export PYTHONPATH=/opt/mitainesoft/mitzon/GarageBackend:/opt/mitainesoft/mitzon:/opt/mitainesoft/mitzon/GarageFrontend
 export PYTHONIOENCODING=UTF-8
 
-nohup /usr/bin/python3 -u $MITAINEGARAGEHOME/GarageBackend/garageURLCmdProcessor.py&
+nohup /usr/bin/python3 -u $MITAINEMITZONHOME/GarageBackend/mitzonURLCmdProcessor.py&
 

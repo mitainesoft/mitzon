@@ -1,7 +1,7 @@
 ###################################################################################
 # Mitainesoft Garage (c) 2017                                                     #
 # HW: garage raspberry-pi arduino                                                 #
-# Version: [MITAINESOFT_GARAGE_REVISION]                                    #
+# Version: [MITAINESOFT_MITZON_REVISION]                                    #
 # Code: Python3 with cherrypy, nanpi                                              #
 # Purpose: Supervise garage door opening. Generate Alarms if required.            #
 #          Allow remote open.                                                     #
@@ -11,11 +11,11 @@
 
 
                                                        
-1. INSTALLATION INSTRUCTIONS [MITAINESOFT_GARAGE_REVISION]
+1. INSTALLATION INSTRUCTIONS [MITAINESOFT_MITZON_REVISION]
 
-    ** MITAINESOFT_GARAGE_REVISION **
+    ** MITAINESOFT_MITZON_REVISION **
 
-    MITAINESOFT_GARAGE_REVISION is replaced by garage-x.y.z in the below instructions
+    MITAINESOFT_MITZON_REVISION is replaced by garage-x.y.z in the below instructions
     which can be found in the README.rst garage-x.y.z tar file.
 
 
@@ -129,17 +129,17 @@
 
     su - mitainesoft
 
-    # Upload [MITAINESOFT_GARAGE_REVISION] package to /opt/mitainesoft as user mitainesoft
-    #   cp /git/garage/dist/[MITAINESOFT_GARAGE_REVISION] .
+    # Upload [MITAINESOFT_MITZON_REVISION] package to /opt/mitainesoft as user mitainesoft
+    #   cp /git/garage/dist/[MITAINESOFT_MITZON_REVISION] .
     #   scp /git/garage/dist/* mitainesoft@192.168.1.xxx:/opt/mitainesoft
 
     cd /opt/mitainesoft/
-    tar -zxvf  [MITAINESOFT_GARAGE_REVISION].tar.gz
+    tar -zxvf  [MITAINESOFT_MITZON_REVISION].tar.gz
 
-    mkdir -p /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/log
-    chmod 700 /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/*.bash
-    find /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/GarageFrontend -type d -exec chmod 755 {} \;
-    find /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/GarageFrontend -type f -exec chmod 644 {} \;
+    mkdir -p /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/log
+    chmod 700 /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/*.bash
+    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/GarageFrontend -type d -exec chmod 755 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/GarageFrontend -type f -exec chmod 644 {} \;
 
 
     #if untar with other user
@@ -149,10 +149,10 @@
 
     ** Edit config **
     su - mitainesoft
-    cd /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]/config
+    cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/config
     cp garage_backend.template garage_backend.config
     # cp ../../garage/config/garage_backend.config .
-    cd /opt/mitainesoft/[MITAINESOFT_GARAGE_REVISION]
+    cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]
 
     #3 steps below may not be required
     su - root
@@ -200,7 +200,7 @@
         su - mitainesoft
         cd /opt/mitainesoft/
         rm garage
-        ln -s [MITAINESOFT_GARAGE_REVISION] garage
+        ln -s [MITAINESOFT_MITZON_REVISION] garage
 
         ** Restart garage **
         #Check status and stop
@@ -1289,7 +1289,7 @@ a) Raspberry Temperature Overheat !
 11. Misc
 
     *** kill proc one shot! ***
-    kill -9 `pgrep -f garageURLCmdProcessor`
+    kill -9 `pgrep -f mitzonURLCmdProcessor`
 
 
     ** Remove ^M Windows transfer dos2unix raspbian **

@@ -1,28 +1,28 @@
 #!/bin/bash
-# To start garage manually. used in test context.
-MITAINEGARAGEHOME=`pwd`
+# To start mitzon manually. used in test context.
+MITAINEMITZONHOME=`pwd`
 
-MITAINE_GARAGE_PROC=`ps -ef | grep garageURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+MITAINE_MITZON_PROC=`ps -ef | grep mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 
-if [ -n "$MITAINE_GARAGE_PROC" ]
+if [ -n "$MITAINE_MITZON_PROC" ]
 then
-   echo "garageURLCmdProcessor already running...Stopping PID='$MITAINE_GARAGE_PROC'"
-   kill -9 `pgrep -f garageURLCmdProcessor.py`
+   echo "mitzonURLCmdProcessor already running...Stopping PID='$MITAINE_MITZON_PROC'"
+   kill -9 `pgrep -f mitzonURLCmdProcessor.py`
 
 else
-   echo "Starting garage for test..."
+   echo "Starting mitzon for test..."
 fi
 
 
 mkdir -p ./log
 
-touch ./log/garage.log
-cd $MITAINEGARAGEHOME 
+touch ./log/mitzon.log
+cd $MITAINEMITZONHOME 
 export PYTHONUNBUFFERED=1 
-export PYTHONPATH=$MITAINEGARAGEHOME/GarageBackend:$MITAINEGARAGEHOME:$MITAINEGARAGEHOME/GarageFrontend
+export PYTHONPATH=$MITAINEMITZONHOME/GarageBackend:$MITAINEMITZONHOME:$MITAINEMITZONHOME/GarageFrontend
 export PYTHONIOENCODING=UTF-8
 
-/usr/bin/python3 -u $MITAINEGARAGEHOME/GarageBackend/garageURLCmdProcessor.py
+/usr/bin/python3 -u $MITAINEMITZONHOME/GarageBackend/mitzonURLCmdProcessor.py
 
 
 

@@ -1,7 +1,7 @@
 recursive-include doc *
 recursive-include config *
 recursive-include config *.*
-recursive-include GarageFrontend *
+recursive-include MitzonFrontend *
 recursive-include scripts *
 recursive-include scripts *.*
 include *.bash

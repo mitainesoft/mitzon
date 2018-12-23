@@ -32,9 +32,9 @@ garage_manager_handler = None #GarageManager()
 notification_manager_handler = None
 
 @cherrypy.expose
-class garageURLCmdProcessor(metaclass=SingletonMeta):
+class mitzonURLCmdProcessor(metaclass=SingletonMeta):
     def __init__(self, dispatch: Queue):
-        log.debug("init garageURLCmdProcessor...")
+        log.debug("init mitzonURLCmdProcessor...")
         #self.deviceList = {}
         self.dispatch = dispatch
         # Read Building Config
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     _csp = '; '.join(_csp_rules)
 
     dispatch_queue = Queue()
-    garageHandler = garageURLCmdProcessor(dispatch_queue)
+    garageHandler = mitzonURLCmdProcessor(dispatch_queue)
 
 
     # ''' @TODO Hardcoded RotatingFileHandler '''
@@ -393,7 +393,7 @@ if __name__ == '__main__':
         cherrypy.config.update(server_config)
 
         # dispatch_queue = Queue()
-        # garageHandler = garageURLCmdProcessor(dispatch_queue)
+        # garageHandler = mitzonURLCmdProcessor(dispatch_queue)
 
         # pub1 = Pub1(dispatch_queue)
         sub1 = DeviceManager()

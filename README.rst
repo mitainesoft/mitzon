@@ -1,3 +1,3 @@
-Mitainesoft Garage (c) 2017                               
+Mitainesoft Mitzon (c) 2019
 See README.md
 /JLC
