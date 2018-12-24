@@ -194,6 +194,6 @@ Garage.GarageManager=INFO
 Garage.Light=INFO
 Garage.NotificationManager=INFO
 Garage.Sensor=INFO
-Garage.garageCmdProcessor=INFO
+Garage.mitzonURLCmdProcessor=INFO
 nanpy=CRITICAL
 nanpy.serialmanager=CRITICAL
