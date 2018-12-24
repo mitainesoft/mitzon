@@ -24,6 +24,9 @@ from shutil import move
 from os import fdopen, remove
 import codecs
 
+#Ensure sdit dir exists!
+os.mkdir ("dist")
+
 fileListToSearchReplace_MITAINESOFT_MITZON_REVISION = \
     ['README.md',
      'MitzonFrontend/index.html',

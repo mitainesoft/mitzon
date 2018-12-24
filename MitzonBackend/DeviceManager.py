@@ -74,7 +74,9 @@ class DeviceManager(metaclass=SingletonMeta):
         # https://pypi.python.org/pypi/nanpy
         # https://github.com/nanpy/nanpy-firmware
         try:
-            connection = SerialManager(device='/dev/ttyUSB0')
+            #connection = SerialManager(device='/dev/ttyUSB0')
+            connection = SerialManager()
+
             self.usbConnectHandler = ArduinoApi(connection=connection)
             log.info("init deviceManager")
         except Exception:

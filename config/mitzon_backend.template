@@ -174,7 +174,7 @@ SERVER_SSL_PRIVATE_KEY=/opt/mitainesoft/security/mitainesoftsvr.key.pem
 ###########################################
 
 [INTERNAL]
-CONFIG_FILE_REV=[MITAINESOFT_GARAGE_REVISION]
+CONFIG_FILE_REV=[MITAINESOFT_MITZON_REVISION]
 ALERT_DEFINITION_FILE=config/event_list.json
 
 

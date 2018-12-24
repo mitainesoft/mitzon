@@ -26,7 +26,7 @@ import time
 import datetime
 import json
 
-log = logging.getLogger('Garage.garageCmdProcessor')
+log = logging.getLogger('Garage.mitzonURLCmdProcessor')
 
 garage_manager_handler = None #GarageManager()
 notification_manager_handler = None
@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
 
     # ''' @TODO Hardcoded RotatingFileHandler '''
-    # logrotate_handler=logging.handlers.RotatingFileHandler("log/garage.log",maxBytes=10485760,backupCount=20,encoding=None, delay=0)
+    # logrotate_handler=logging.handlers.RotatingFileHandler("log/mitzon.log",maxBytes=10485760,backupCount=20,encoding=None, delay=0)
     # logging.basicConfig(level=logging.INFO,
     #                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     #                     handlers=[logrotate_handler,
@@ -267,11 +267,11 @@ if __name__ == '__main__':
             },
         },
          'handlers': {
-             'Garage': { #{"log/garage.log", maxBytes=, backupCount=20, encoding=None,delay=0, logging.handlers.RotatingFileHandler
+             'Garage': { #{"log/mitzon.log", maxBytes=, backupCount=20, encoding=None,delay=0, logging.handlers.RotatingFileHandler
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
                 'formatter': 'standard',
-                'filename': 'log/garage.log',
+                'filename': 'log/mitzon.log',
                 'maxBytes': 10485760,
                 'backupCount': 20,
                 'encoding': 'utf8'

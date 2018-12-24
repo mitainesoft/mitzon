@@ -19,7 +19,7 @@ mkdir -p ./log
 touch ./log/mitzon.log
 cd $MITAINEMITZONHOME 
 export PYTHONUNBUFFERED=1 
-export PYTHONPATH=$MITAINEMITZONHOME/MitzonBackend:$MITAINEMITZONHOME:$MITAINEMITZONHOME/GarageFrontend
+export PYTHONPATH=$MITAINEMITZONHOME/MitzonBackend:$MITAINEMITZONHOME:$MITAINEMITZONHOME/MitzonFrontend
 export PYTHONIOENCODING=UTF-8
 
 /usr/bin/python3 -u $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py
