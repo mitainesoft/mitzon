@@ -138,8 +138,8 @@
 
     mkdir -p /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/log
     chmod 700 /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/*.bash
-    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/mitzonFrontend -type d -exec chmod 755 {} \;
-    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/mitzonFrontend -type f -exec chmod 644 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/MitzonFrontend -type d -exec chmod 755 {} \;
+    find /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/MitzonFrontend -type f -exec chmod 644 {} \;
 
 
     #if untar with other user
@@ -169,11 +169,11 @@
         #IF not done already !
         cd /var/www
         rm html
-        ln -s /opt/mitainesoft/mitzon/mitzonFrontend html
+        ln -s /opt/mitainesoft/mitzon/MitzonFrontend html
 
      ** Fix mitzon start boot script
         cd /etc/init.d
-        cp /opt/mitainesoft/mitzon/scripts/mitzon /etc/init.d
+        cp /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/scripts/mitzon /etc/init.d
         chmod 755 /etc/init.d/mitzon
         cd /etc/rc3.d
         ln -s ../init.d/mitzon S99mitzon
@@ -181,7 +181,7 @@
         # Fix it
         cd /etc/init.d
         perl -i -pe 's/\r\n$/\n/g' mitzon
-        cd /opt/mitainesoft/mitzon/scripts
+        cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/scripts
         perl -i -pe 's/\r\n$/\n/g' wakeup_network_internet_curl.sh
 
         # Try it
@@ -191,7 +191,7 @@
         su - mitainesoft
         crontab -e
         #delete nohup file
-        0 5 * * 1 cp /dev/null /opt/mitainesoft/mitzon/mitzonBackend/nohup.out > /dev/null 2>&1
+        0 5 * * 1 cp /dev/null /opt/mitainesoft/mitzon/MitzonBackend/nohup.out > /dev/null 2>&1
         0,15,30,45 * * * * /opt/mitainesoft/mitzon/watchdog_mitaine_mitzon.bash  > /dev/null 2>&1
         # Add wakeup_network_internet_curl.sh usefullness unclear
         28 5,9,16,19 * * * /opt/mitainesoft/mitzon/scripts/wakeup_network_internet_curl.sh
@@ -1300,10 +1300,10 @@ a) Raspberry Temperature Overheat !
         total 12
         drwxr-xr-x  3 root root 4096 Jul 16 16:19 .
         drwxr-xr-x 12 root root 4096 Dec  1  2016 ..
-        lrwxrwxrwx  1 root root   31 Jul 16 16:19 dev_html -> /home/pi/mitzon/mitzonFrontend/
+        lrwxrwxrwx  1 root root   31 Jul 16 16:19 dev_html -> /home/pi/mitzon/MitzonFrontend/
         lrwxrwxrwx  1 root root    8 Jun 28 17:24 html -> dev_html
         drwxr-xr-x  2 root root 4096 Jun  3 16:28 html.orig
-        lrwxrwxrwx  1 root root   38 Jun 28 17:22 pkg_html -> /opt/mitainesoft/mitzon/mitzonFrontend
+        lrwxrwxrwx  1 root root   38 Jun 28 17:22 pkg_html -> /opt/mitainesoft/mitzon/MitzonFrontend
 
 
  ** Notification **

@@ -10,14 +10,14 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 . /lib/init/vars.sh
 
 MITAINEMITZONHOME=/opt/mitainesoft/mitzon
-MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/GarageBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/MitzonBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 
 do_start () {
 	exec sudo -u mitainesoft /opt/mitainesoft/mitzon/watchdog_mitaine_mitzon.bash
 }
 
 do_status () {
-	MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/GarageBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+	MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/MitzonBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 	if [ -n "$MITAINE_MITZON_PROC" ]
 	then
    		echo "Mitainesoft Garage Running :) PID='$MITAINE_MITZON_PROC'"
