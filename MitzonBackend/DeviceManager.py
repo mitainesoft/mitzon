@@ -22,7 +22,7 @@ class DeviceManager(metaclass=SingletonMeta):
         self.defaultgarage = self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_NAME_FOR_TEST")
         self.mypin = int(self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin"))
         self.usbConnectHandler = None
-
+        self.serialdevicename="Any";
         self.connectUSB()
 
         # replace by config
@@ -75,13 +75,13 @@ class DeviceManager(metaclass=SingletonMeta):
         # https://github.com/nanpy/nanpy-firmware
         try:
             #connection = SerialManager(device='/dev/ttyUSB0')
-            garagedev=self.config_handler.getConfigParam("DEVICES", "GARAGE_SERIAL_MANAGER_DEVICE")
-            tmplog = ("Garage Device : %s" % garagedev)
-            log.debug(tmplog)
-            if garagedev.upper() == "ANY":
+            self.serialdevicename ==self.config_handler.getConfigParam("DEVICES", "GARAGE_SERIAL_MANAGER_DEVICE")
+            tmplog = ("Garage Device configured : %s" % self.serialdevicename)
+            log.info(tmplog)
+            if self.serialdevicename.upper() == "ANY":
                 connection = SerialManager()
             else:
-                connection = SerialManager(garagedev)
+                connection = SerialManager(self.serialdevicename)
             self.usbConnectHandler = ArduinoApi(connection=connection)
             tmplog="Garage Device: %s" % self.usbConnectHandler.connection.device
             log.info(tmplog)
@@ -151,3 +151,6 @@ class DeviceManager(metaclass=SingletonMeta):
                 log.error("typedef %s not found!" % (obj.__class__.__name__))
             devlistidx = devlistidx + 1
         return
+
+    def get_serialdevicename(self):
+        return self.serialdevicename

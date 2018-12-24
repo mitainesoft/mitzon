@@ -62,9 +62,9 @@ class GarageDoor():
         self.g_statusEventList=[]
 
         self.usbConnectHandler=usbConnectHandler
-
         self.initBoardPinModeOutput(int(self.config_handler.getConfigParam(self.g_name,"GarageBoardPin")))
-
+        tmplog = "Garage Serial Device: %s pin %d" % (self.usbConnectHandler.connection.device, int(self.config_handler.getConfigParam(self.g_name,"GarageBoardPin")))
+        log.info(tmplog)
 
     def isGarageOpen(self,mything,myservice,myid):
         return self.g_status==G_OPEN
@@ -547,3 +547,9 @@ class GarageDoor():
         resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "test!")
 
         return resp
+
+    def get_serialdevicename(self):
+        return self.usbConnectHandler.connection.device
+
+    def get_g_name(self):
+        return self.g_name
