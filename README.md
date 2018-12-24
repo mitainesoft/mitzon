@@ -1165,8 +1165,8 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
     #Fix build_info.txt
     VCS->Git->Branches->Checkout release
     VCS->Git->Pull
-    VCS->Git->Merge
-    VCS->Git->Commit
+    VCS->Git->Merge   (remote master)
+    VCS->Git->Commit   (nothing here probably)
     VCS->Git->Push
     VCS->Git->Branches->Checkout master
 
