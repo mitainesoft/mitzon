@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MITAINEMITZONHOME=/opt/mitainesoft/mitzon
-MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/GarageBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
+MITAINE_MITZON_PROC=`ps -ef | grep /opt/mitainesoft/mitzon/MitzonBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 
 if [ -n "$MITAINE_MITZON_PROC" ]
 then
