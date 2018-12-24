@@ -25,7 +25,11 @@ from os import fdopen, remove
 import codecs
 
 #Ensure sdit dir exists!
-os.mkdir ("dist")
+try:
+    os.mkdir ("dist")
+except os.error:
+    print ("dist dir exists...")
+
 
 fileListToSearchReplace_MITAINESOFT_MITZON_REVISION = \
     ['README.md',

@@ -130,7 +130,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_LOG_LEVEL', 'Garage.Light'],
             ['GARAGE_LOG_LEVEL', 'Garage.NotificationManager'],
             ['GARAGE_LOG_LEVEL', 'Garage.Sensor'],
-            ['GARAGE_LOG_LEVEL', 'Garage.garageCmdProcessor'],
+            ['GARAGE_LOG_LEVEL', 'Garage.mitzonURLCmdProcessor'],
             ['GARAGE_LOG_LEVEL', 'nanpy'],
             ['GARAGE_LOG_LEVEL', 'nanpy.serialmanager'],
             ['DEVICES', 'GARAGE_SERIAL_MANAGER_DEVICE'],
