@@ -171,12 +171,27 @@
         rm html
         ln -s /opt/mitainesoft/mitzon/MitzonFrontend html
 
-     ** Fix mitzon start boot script
+
+    ** Fix garage start boot script
+        su - root
         cd /etc/init.d
-        cp /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/scripts/mitzon /etc/init.d
+        cp /opt/mitainesoft/mitzon/scripts/mitzon /etc/init.d
         chmod 755 /etc/init.d/mitzon
+        update-rc.d  -f mitzon defaults
         cd /etc/rc3.d
-        ln -s ../init.d/mitzon S99mitzon
+        ls -l *mitzon*
+        #Check for something like S18mitzon
+        # To delete existing:
+        #    update-rc.d  -f mitzon remove
+
+        #Dev:
+            # root@nomiberry:/etc/init.d#         update-rc.d  -f mitzon defaults
+            # insserv: Script mitzon is broken: incomplete LSB comment.
+            # insserv: missing `Required-Start:' entry: please add even if empty.
+            # insserv: missing `Required-Stop:'  entry: please add even if empty.
+            # insserv: missing `Default-Stop:'   entry: please add even if empty.
+            # insserv: Default-Stop  undefined, assuming empty stop  runlevel(s) for script `mitzon'
+
 
         # Fix it
         cd /etc/init.d
