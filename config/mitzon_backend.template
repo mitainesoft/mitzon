@@ -154,8 +154,12 @@ GARAGE_USERS=Add MAC Addresses here separated by colun ','
 
 [DEVICES]
 # SerialManager(device='/dev/ttyUSB0')
+# /dev/ttyUSB0... or /dev/ttyACM0...
 # ArduinoApi Nanpy
-GARAGE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB0
+#
+#GARAGE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB0
+GARAGE_SERIAL_MANAGER_DEVICE=Any
+#
 VALVES_SERIAL_MANAGER_DEVICE=/dev/ttyUSB1
 
 [SECURITY]

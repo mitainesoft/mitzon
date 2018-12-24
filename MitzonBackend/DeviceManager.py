@@ -75,10 +75,17 @@ class DeviceManager(metaclass=SingletonMeta):
         # https://github.com/nanpy/nanpy-firmware
         try:
             #connection = SerialManager(device='/dev/ttyUSB0')
-            connection = SerialManager()
-
+            garagedev=self.config_handler.getConfigParam("DEVICES", "GARAGE_SERIAL_MANAGER_DEVICE")
+            tmplog = ("Garage Device : %s" % garagedev)
+            log.debug(tmplog)
+            if garagedev.upper() == "ANY":
+                connection = SerialManager()
+            else:
+                connection = SerialManager(garagedev)
             self.usbConnectHandler = ArduinoApi(connection=connection)
-            log.info("init deviceManager")
+            tmplog="Garage Device: %s" % self.usbConnectHandler.connection.device
+            log.info(tmplog)
+            pass
         except Exception:
             log.info("USB Device Not found !")
             # os._exit(-1)
