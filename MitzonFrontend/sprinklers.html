@@ -3,10 +3,14 @@
 <html>
 <head>
 	<title>Sprinkler 482</title>
-      <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-      <link href="style.css" rel="stylesheet" type="text/css"/>
+        <!--Slider-->
+        <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+        <script src="./dist/jQuery-Plugin-For-Sliding-Toggle-Switches-LC/lc_switch.js"></script>
+        <link rel="stylesheet" href="./dist/jQuery-Plugin-For-Sliding-Toggle-Switches-LC/lc_switch.css">
+
 </head>
 
 <body>
@@ -36,9 +40,78 @@
   #zone7 .ui-slider-handle { border-color: #848484; width: 35px;}
   #zone8 .ui-slider-range { background: #0B610B; }
   #zone8 .ui-slider-handle { border-color: #0B610B; width: 35px;}
+
+    body * {
+        font-family: Arial, Helvetica, sans-serif;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+    h1 {
+        margin-bottom: 10px;
+        padding-left: 35px;
+        background: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAIBAQEBAQIBAQECAgICAgQDAgICAgUEBAMEBgUGBgYFBgYGBwkIBgcJBwYGCAsICQoKCgoKBggLDAsKDAkKCgr/2wBDAQICAgICAgUDAwUKBwYHCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/wAARCAAZABkDAUEAAhEBAxEB/8QAGgAAAgIDAAAAAAAAAAAAAAAABgcECAADBf/EADQQAAAFBAADAwkJAAAAAAAAAAECAwQFAAYHEQgSIRMxVhQVFhg3cXaz0TM4QUKTlJW04f/EABcBAAMBAAAAAAAAAAAAAAAAAAIFBgD/xAAiEQABAwMDBQAAAAAAAAAAAAABAAIRAwQhBhIxBRMUIkH/2gAMAwEAAhEDEQA/AL52nHcRlzcUcFc1629dipAvVqo5VcMXIIIoFdlEwdS8pUilD3AFNK5WOX4jN8rOW/Fz5NXIuZBZFqsJDpiuYS9waMUS66d2qk52i8qoZtl5u2o24OUF0jNHTJFYS6BImuUxQ1oBD8KPPT/iR8MP/wCGP9KndHC5Gm6Hkgh/sTukGS9xzOUv6WKgsGdyZzM88lLrGGZ8pI5fjYtzekg7bPZxNs5avXBlSdmoqBTaKYR5dAOw1rVW3qqedcr5MtLNswlB3rJNUWyyXk7QFzCiUOyIb7M2yCAj17utHPrL5D8Ktf0VPrVLAkpgcIVxzxOZYd5TYW7cEui/ZP5dNmZA7NJMUynVAgGKYhQHYb313Wu6uKLK9pZVl48ZVFzGMJtwgSPUZpgAokVMUCgYpQNvlDvEamZj4jMr2Ll+Ug4OcS83sl0wSYrMkjEMApkMICblA/URN+ajP1sE/CBv3P8AlYtQ7gkZYH3gIr4sS/sBWZc9u038QH+ZXR4qfblM+5v8glMCjKH4v//Z') no-repeat 0px 5px transparent;
+    }
+    a {
+        color: #888;
+        text-decoration: none;
+    }
+    small {
+        font-size: 13px;
+        font-weight: normal;
+        padding-left: 10px;
+    }
+
+    #first_div {
+        width: 90%;
+        max-width: 600px;
+         min-width: 340px;
+         margin: 70px auto 0;
+         color: #444;
+    }
+    #second_div{
+        width: 90%;
+        max-width: 600px;
+        min-width: 340px;
+        margin: 50px auto 0;
+        background: #f3f3f3;
+        border: 6px solid #eaeaea;
+        padding: 20px 40px 40px;
+        text-align: center;
+        border-radius: 2px;
+    }
+    #third_div {
+        width: 90%;
+        max-width: 600px;
+        min-width: 340px;
+        margin: 30px auto 0;
+    }
+	#third_div small {
+		float: right;
+		color: #aaa;
+		cursor: pointer;
+		padding-top: 5px;
+	}
+	#third_div ul {
+		padding-left: 12px;
+		max-height: 200px;
+		overflow: auto;
+	}
+	#third_div li {
+		color: #777;
+		font-size: 14px;
+		line-height: normal;
+		margin: 7px 0;
+	}
+	#third_div li em {
+		display: inline-block;
+		width: 130px;
+		color: #555;
+		font-style: normal;
+	}
 </style>
 
 <!-- HTML SECTION  -->
+<form>
 
 <div>
   <span id="zone1">  <a id="#zone1" style="border:0; margin-left: 10%"></id> </a></span>
@@ -51,6 +124,17 @@
   <span id="zone8">  <a id="#zone8" style="border:0; margin-left: 10%"></id> </a></span>
 </div>
 
+
+ <div style="float: right; width: 50%;">
+            <p style="padding-bottom: 13px;"><em>Radio</em></p>
+
+            <p><input type="radio" name="radio-1" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+
+            <p><input type="radio" name="radio-1" value="2" class="lcs_check lcs_tt2" disabled="disabled" autocomplete="off" /></p>
+
+            <p><input type="radio" name="radio-1" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+</div>
+</form>
 <!-- JAVASCRIPT SECTION  -->
 <script type="text/javascript">
   function hexFromRGB(r, g, b) {
@@ -95,22 +179,60 @@ $(function() {
   $( zonearray ).slider({
     orientation: "vertical",
     range: "min",
-    max: 60,
-    value: 20,
+    max: 30,
+    value: 5,
     animate: true,
     slide: refreshSwatch,
     change: refreshSwatch
   });
-  $( "#zone1" ).slider( "value", 20 );
+  $( "#zone1" ).slider( "value", 25 );
   $( "#zone2" ).slider( "value", 20 );
   $( "#zone3" ).slider( "value", 20 );
-  $( "#zone4" ).slider( "value", 20 );
-  $( "#zone5" ).slider( "value", 20 );
-  $( "#zone6" ).slider( "value", 20 );
-  $( "#zone7" ).slider( "value", 20 );
-  $( "#zone8" ).slider( "value", 20 );
+  $( "#zone4" ).slider( "value", 10 );
+  $( "#zone5" ).slider( "value", 7 );
+  $( "#zone6" ).slider( "value", 15 );
+  $( "#zone7" ).slider( "value", 25 );
+  $( "#zone8" ).slider( "value", 5 );
 });
 
+//  Button
+      $(document).ready(function(e) {
+        $('input').lc_switch();
+
+        // triggered each time a field changes status
+        $(document).on('lcs-statuschange', '.lcs_check', function() {
+            var status 	= ($(this).is(':checked')) ? 'checked' : 'unchecked',
+				subj 	= ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+				num		= $(this).val();
+
+			$('#third_div ul').prepend('<li><em>[lcs-statuschange]</em>'+ subj + num +' changed status: '+ status +'</li>');
+        });
+
+
+        // triggered each time a field is checked
+        $(document).on('lcs-on', '.lcs_check', function() {
+			var subj 	= ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+				num		= $(this).val();
+
+			$('#third_div ul').prepend('<li><em>[lcs-on]</em>'+ subj + num +' is checked</li>');
+        });
+
+
+        // triggered each time a is unchecked
+        $(document).on('lcs-off', '.lcs_check', function() {
+            var subj 	= ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+				num		= $(this).val();
+
+			$('#third_div ul').prepend('<li><em>[lcs-off]</em>'+ subj + num +' is unchecked</li>');
+        });
+    });
+
+
+
+	// clean events log
+	$('#third_div small').click(function() {
+		$('#third_div ul').empty();
+	});
 
 </script>
 
