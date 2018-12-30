@@ -16,6 +16,7 @@ log = logging.getLogger('Garage.DeviceManager')
 
 class DeviceManager(metaclass=SingletonMeta):
     def __init__(self):
+        log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         # self.deviceList=deviceList = {}
         self.deviceList = {}

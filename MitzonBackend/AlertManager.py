@@ -20,6 +20,7 @@ log = logging.getLogger('Garage.AlertManager')
 
 class AlertManager(metaclass=SingletonMeta):
     def __init__(self):
+        log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         self.notif_handler = NotificationManager()
         self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!--https://www.webcodegeeks.com/javascript/jquery/jquery-ui-slider-example/-->
+<html>
+<head>
+	<title>Sprinkler 482</title>
+      <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+      <link href="style.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+
+<!-- STYLE SECTION  -->
+<style type="text/css">
+#red, #green, #blue {
+  height:120px;
+  float:left;
+  margin:15px
+}
+  /*#swatch {*/
+    /*width: 120px;*/
+    /*height: 100px;*/
+    /*margin-left: 350px;*/
+    /*background-image: none;*/
+  /*}*/
+  #red .ui-slider-range { background: #ef2929; }
+  #red .ui-slider-handle { border-color: #ef2929; }
+  #green .ui-slider-range { background: #8ae234; }
+  #green .ui-slider-handle { border-color: #8ae234; }
+  #blue .ui-slider-range { background: #729fcf; }
+  #blue .ui-slider-handle { border-color: #729fcf; }
+</style>
+
+<!-- HTML SECTION  -->
+
+<div>
+  <span id="red">  <a id="#red"></id> </a></span>
+  <span id="green">  <a id="#green"></id> </a></span>
+  <span id="blue">  <a id="#blue"></id> </a></span>
+</div>
+
+<!-- JAVASCRIPT SECTION  -->
+<script type="text/javascript">
+  function hexFromRGB(r, g, b) {
+  var hex = [
+    r.toString( 16 ),
+    g.toString( 16 ),
+    b.toString( 16 )
+  ];
+  $.each( hex, function( nr, val ) {
+    if ( val.length === 1 ) {
+      hex[ nr ] = "0" + val;
+    }
+  });
+  return hex.join( "" ).toUpperCase();
+}
+function refreshSwatch() {
+  var red = $( "#red" ).slider( "value" ),
+    green = $( "#green" ).slider( "value" ),
+    blue = $( "#blue" ).slider( "value" ),
+    redcolor = hexFromRGB( red, 128, 128 ),
+    hex = hexFromRGB( red, green, blue );
+
+  document.getElementById('#red').innerHTML = red;
+  document.getElementById('#green').innerHTML = green;
+  document.getElementById('#blue').innerHTML = blue;
+  $( "#swatch" ).css( "background-color", "#" + hex );
+//  $( "#red" ).css(  "background"  , "#" + redcolor );
+}
+$(function() {
+  $( "#red, #green, #blue" ).slider({
+    orientation: "vertical",
+    range: "min",
+    max: 60,
+    value: 20,
+    animate: true,
+    slide: refreshSwatch,
+    change: refreshSwatch
+  });
+  $( "#red" ).slider( "value", 20 );
+  $( "#green" ).slider( "value", 20 );
+  $( "#blue" ).slider( "value", 20 );
+});
+
+
+</script>
+
+</body>
+</html>

@@ -20,9 +20,9 @@ log = logging.getLogger('Garage.GarageDoor')
 class GarageDoor():
 
     def __init__(self,garage_name,usbConnectHandler):
+        log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
-
 
         matchObj = re.findall(r'\d', garage_name, 1)
         garage_id = int(matchObj[0])
