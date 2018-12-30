@@ -13,31 +13,42 @@
 
 <!-- STYLE SECTION  -->
 <style type="text/css">
-#red, #green, #blue {
-  height:120px;
+#zone1, #zone2, #zone3, #zone4, #zone5, #zone6, #zone7, #zone8 {
+  height:240px;
+  width: 30px;
   float:left;
   margin:15px
 }
-  /*#swatch {*/
-    /*width: 120px;*/
-    /*height: 100px;*/
-    /*margin-left: 350px;*/
-    /*background-image: none;*/
-  /*}*/
-  #red .ui-slider-range { background: #ef2929; }
-  #red .ui-slider-handle { border-color: #ef2929; }
-  #green .ui-slider-range { background: #8ae234; }
-  #green .ui-slider-handle { border-color: #8ae234; }
-  #blue .ui-slider-range { background: #729fcf; }
-  #blue .ui-slider-handle { border-color: #729fcf; }
+
+  #zone1 .ui-slider-range { background: #FF0000; }
+  #zone1 .ui-slider-handle { border-color: #FF0000; width: 35px; }
+  #zone2 .ui-slider-range { background: #FF7F00; }
+  #zone2 .ui-slider-handle { border-color: #FF7F00; width: 35px; }
+  #zone3 .ui-slider-range { background: #FFFF00; }
+  #zone3 .ui-slider-handle { border-color: #FFFF00; width: 35px;}
+  #zone4 .ui-slider-range { background: #00FF00; }
+  #zone4 .ui-slider-handle { border-color: #00FF00; width: 35px;}
+  #zone5 .ui-slider-range { background: #0000FF; }
+  #zone5 .ui-slider-handle { border-color: #0000FF; width: 35px;}
+  #zone6 .ui-slider-range { background: #8B00FF; }
+  #zone6 .ui-slider-handle { border-color: #8B00FF; width: 35px;}
+  #zone7 .ui-slider-range { background: #848484; }
+  #zone7 .ui-slider-handle { border-color: #848484; width: 35px;}
+  #zone8 .ui-slider-range { background: #0B610B; }
+  #zone8 .ui-slider-handle { border-color: #0B610B; width: 35px;}
 </style>
 
 <!-- HTML SECTION  -->
 
 <div>
-  <span id="red">  <a id="#red"></id> </a></span>
-  <span id="green">  <a id="#green"></id> </a></span>
-  <span id="blue">  <a id="#blue"></id> </a></span>
+  <span id="zone1">  <a id="#zone1" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone2">  <a id="#zone2" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone3">  <a id="#zone3" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone4">  <a id="#zone4" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone5">  <a id="#zone5" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone6">  <a id="#zone6" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone7">  <a id="#zone7" style="border:0; margin-left: 10%"></id> </a></span>
+  <span id="zone8">  <a id="#zone8" style="border:0; margin-left: 10%"></id> </a></span>
 </div>
 
 <!-- JAVASCRIPT SECTION  -->
@@ -56,20 +67,32 @@
   return hex.join( "" ).toUpperCase();
 }
 function refreshSwatch() {
-  var red = $( "#red" ).slider( "value" ),
-    green = $( "#green" ).slider( "value" ),
-    blue = $( "#blue" ).slider( "value" ),
-    redcolor = hexFromRGB( red, 128, 128 ),
-    hex = hexFromRGB( red, green, blue );
+  var zone1 = $( "#zone1" ).slider( "value" ),
+    zone2 = $( "#zone2" ).slider( "value" ),
+    zone3 = $( "#zone3" ).slider( "value" ),
+    zone4 = $( "#zone4" ).slider( "value" ),
+    zone5 = $( "#zone5" ).slider( "value" ),
+    zone6 = $( "#zone6" ).slider( "value" ),
+    zone7 = $( "#zone7" ).slider( "value" ),
+    zone8 = $( "#zone8" ).slider( "value" ),
+    zone1color = hexFromRGB( zone1, 128, 128 ),
+    hex = hexFromRGB( zone1, zone2, zone3 );
 
-  document.getElementById('#red').innerHTML = red;
-  document.getElementById('#green').innerHTML = green;
-  document.getElementById('#blue').innerHTML = blue;
-  $( "#swatch" ).css( "background-color", "#" + hex );
-//  $( "#red" ).css(  "background"  , "#" + redcolor );
+  document.getElementById('#zone1').innerHTML = zone1;
+  document.getElementById('#zone2').innerHTML = zone2;
+  document.getElementById('#zone3').innerHTML = zone3;
+  document.getElementById('#zone4').innerHTML = zone4;
+  document.getElementById('#zone5').innerHTML = zone5;
+  document.getElementById('#zone6').innerHTML = zone6;
+  document.getElementById('#zone7').innerHTML = zone7;
+  document.getElementById('#zone8').innerHTML = zone8;
+//  document.getElementById('#zone1').style.color("zone2");
+//  $( "#zone1" ).css( "color", "#" + hex );
+//  $( "#zone1" ).css(  "background"  , "#" + zone1color );
 }
 $(function() {
-  $( "#red, #green, #blue" ).slider({
+    var zonearray = ("#zone1, #zone2, #zone3, #zone4, #zone5, #zone6, #zone7, #zone8");
+  $( zonearray ).slider({
     orientation: "vertical",
     range: "min",
     max: 60,
@@ -78,9 +101,14 @@ $(function() {
     slide: refreshSwatch,
     change: refreshSwatch
   });
-  $( "#red" ).slider( "value", 20 );
-  $( "#green" ).slider( "value", 20 );
-  $( "#blue" ).slider( "value", 20 );
+  $( "#zone1" ).slider( "value", 20 );
+  $( "#zone2" ).slider( "value", 20 );
+  $( "#zone3" ).slider( "value", 20 );
+  $( "#zone4" ).slider( "value", 20 );
+  $( "#zone5" ).slider( "value", 20 );
+  $( "#zone6" ).slider( "value", 20 );
+  $( "#zone7" ).slider( "value", 20 );
+  $( "#zone8" ).slider( "value", 20 );
 });
 
 
