@@ -19,27 +19,54 @@
 <style type="text/css">
 #zone1, #zone2, #zone3, #zone4, #zone5, #zone6, #zone7, #zone8 {
   height:240px;
-  width: 30px;
-  float:left;
-  margin:15px
+  width: 70px;
+  float: inherit;
+  /*margin: 5px;*/
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  /*grid-gap: 10px;*/
+  /*background-color: #2196F3;*/
+  /*padding: 10px;*/
+}
+
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  /*text-align: center;*/
+  /*padding: 20px 0;*/
+  /*font-size: 30px;*/
+}
+
+.item1 {
+  grid-row-end: 8;
+}
+
+.item2 {
+  grid-row-end: 8;
+}
+
+.item3 {
+  grid-row-end: 8;
 }
 
   #zone1 .ui-slider-range { background: #FF0000; }
-  #zone1 .ui-slider-handle { border-color: #FF0000; width: 35px; }
+  #zone1 .ui-slider-handle { border-color: #FF0000; width: 80px; }
   #zone2 .ui-slider-range { background: #FF7F00; }
-  #zone2 .ui-slider-handle { border-color: #FF7F00; width: 35px; }
+  #zone2 .ui-slider-handle { border-color: #FF7F00; width: 80px; }
   #zone3 .ui-slider-range { background: #FFFF00; }
-  #zone3 .ui-slider-handle { border-color: #FFFF00; width: 35px;}
+  #zone3 .ui-slider-handle { border-color: #FFFF00; width: 80px;}
   #zone4 .ui-slider-range { background: #00FF00; }
-  #zone4 .ui-slider-handle { border-color: #00FF00; width: 35px;}
+  #zone4 .ui-slider-handle { border-color: #00FF00; width: 80px;}
   #zone5 .ui-slider-range { background: #0000FF; }
-  #zone5 .ui-slider-handle { border-color: #0000FF; width: 35px;}
+  #zone5 .ui-slider-handle { border-color: #0000FF; width: 80px;}
   #zone6 .ui-slider-range { background: #8B00FF; }
-  #zone6 .ui-slider-handle { border-color: #8B00FF; width: 35px;}
+  #zone6 .ui-slider-handle { border-color: #8B00FF; width: 80px;}
   #zone7 .ui-slider-range { background: #848484; }
-  #zone7 .ui-slider-handle { border-color: #848484; width: 35px;}
+  #zone7 .ui-slider-handle { border-color: #848484; width: 80px;}
   #zone8 .ui-slider-range { background: #0B610B; }
-  #zone8 .ui-slider-handle { border-color: #0B610B; width: 35px;}
+  #zone8 .ui-slider-handle { border-color: #0B610B; width: 80px;}
 
     body * {
         font-family: Arial, Helvetica, sans-serif;
@@ -52,88 +79,98 @@
         background: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAIBAQEBAQIBAQECAgICAgQDAgICAgUEBAMEBgUGBgYFBgYGBwkIBgcJBwYGCAsICQoKCgoKBggLDAsKDAkKCgr/2wBDAQICAgICAgUDAwUKBwYHCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/wAARCAAZABkDAUEAAhEBAxEB/8QAGgAAAgIDAAAAAAAAAAAAAAAABgcECAADBf/EADQQAAAFBAADAwkJAAAAAAAAAAECAwQFAAYHEQgSIRMxVhQVFhg3cXaz0TM4QUKTlJW04f/EABcBAAMBAAAAAAAAAAAAAAAAAAIFBgD/xAAiEQABAwMDBQAAAAAAAAAAAAABAAIRAwQhBhIxBRMUIkH/2gAMAwEAAhEDEQA/AL52nHcRlzcUcFc1629dipAvVqo5VcMXIIIoFdlEwdS8pUilD3AFNK5WOX4jN8rOW/Fz5NXIuZBZFqsJDpiuYS9waMUS66d2qk52i8qoZtl5u2o24OUF0jNHTJFYS6BImuUxQ1oBD8KPPT/iR8MP/wCGP9KndHC5Gm6Hkgh/sTukGS9xzOUv6WKgsGdyZzM88lLrGGZ8pI5fjYtzekg7bPZxNs5avXBlSdmoqBTaKYR5dAOw1rVW3qqedcr5MtLNswlB3rJNUWyyXk7QFzCiUOyIb7M2yCAj17utHPrL5D8Ktf0VPrVLAkpgcIVxzxOZYd5TYW7cEui/ZP5dNmZA7NJMUynVAgGKYhQHYb313Wu6uKLK9pZVl48ZVFzGMJtwgSPUZpgAokVMUCgYpQNvlDvEamZj4jMr2Ll+Ug4OcS83sl0wSYrMkjEMApkMICblA/URN+ajP1sE/CBv3P8AlYtQ7gkZYH3gIr4sS/sBWZc9u038QH+ZXR4qfblM+5v8glMCjKH4v//Z') no-repeat 0px 5px transparent;
     }
     a {
-        color: #888;
+        color: #000;
         text-decoration: none;
     }
-    small {
+     slidebarfont {
+        color: #000;
+        font-size: 30px;
+        text-decoration: none;
+         margin: 15px;
+
+    }
+    small > div {
         font-size: 13px;
         font-weight: normal;
-        padding-left: 10px;
+        /*padding-left: 10px;*/
     }
 
-    #first_div {
-        width: 90%;
-        max-width: 600px;
-         min-width: 340px;
-         margin: 70px auto 0;
-         color: #444;
-    }
-    #second_div{
-        width: 90%;
-        max-width: 600px;
-        min-width: 340px;
-        margin: 50px auto 0;
-        background: #f3f3f3;
-        border: 6px solid #eaeaea;
-        padding: 20px 40px 40px;
-        text-align: center;
-        border-radius: 2px;
-    }
-    #third_div {
-        width: 90%;
-        max-width: 600px;
-        min-width: 340px;
-        margin: 30px auto 0;
-    }
-	#third_div small {
-		float: right;
-		color: #aaa;
-		cursor: pointer;
-		padding-top: 5px;
-	}
-	#third_div ul {
-		padding-left: 12px;
-		max-height: 200px;
-		overflow: auto;
-	}
-	#third_div li {
-		color: #777;
-		font-size: 14px;
-		line-height: normal;
-		margin: 7px 0;
-	}
-	#third_div li em {
-		display: inline-block;
-		width: 130px;
-		color: #555;
-		font-style: normal;
-	}
+
 </style>
 
 <!-- HTML SECTION  -->
 <form>
 
-<div>
-  <span id="zone1">  <a id="#zone1" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone2">  <a id="#zone2" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone3">  <a id="#zone3" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone4">  <a id="#zone4" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone5">  <a id="#zone5" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone6">  <a id="#zone6" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone7">  <a id="#zone7" style="border:0; margin-left: 10%"></id> </a></span>
-  <span id="zone8">  <a id="#zone8" style="border:0; margin-left: 10%"></id> </a></span>
-</div>
+  <div class="grid-container">
+      <small>Zone 1</small>
+      <small>Zone 2</small>
+      <small>Zone 3</small>
+      <small>Zone 4</small>
+      <small>Zone 5</small>
+      <small>Zone 6</small>
+      <small>Zone 7</small>
+      <small>Zone 8</small>
+  </div>
 
+  <div class="grid-container">
+      <div id="zone1">  <slidebarfont id="#zone1" ></id> </slidebarfont></div>
+      <div id="zone2">  <slidebarfont id="#zone2" ></id> </slidebarfont></div>
+      <div id="zone3">  <slidebarfont id="#zone3" ></id> </slidebarfont></div>
+      <div id="zone4">  <slidebarfont id="#zone4" ></id> </slidebarfont></div>
+      <div id="zone5">  <slidebarfont id="#zone5" ></id> </slidebarfont></div>
+      <div id="zone6">  <slidebarfont id="#zone6" ></id> </slidebarfont></div>
+      <div id="zone7">  <slidebarfont id="#zone7" ></id> </slidebarfont></div>
+      <div id="zone8">  <slidebarfont id="#zone8" ></id> </slidebarfont></div>
+   </div>
 
- <div style="float: right; width: 50%;">
-            <p style="padding-bottom: 13px;"><em>Radio</em></p>
-
-            <p><input type="radio" name="radio-1" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
-
-            <p><input type="radio" name="radio-1" value="2" class="lcs_check lcs_tt2" disabled="disabled" autocomplete="off" /></p>
-
-            <p><input type="radio" name="radio-1" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
-</div>
+  <div class="grid-container">
+      <div>
+        <p><input type="radio" name="radio-1" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-1" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-1" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-2" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-2" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-2" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-3" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-3" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-3" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-4" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-4" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-4" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-5" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-5" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-5" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-6" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-6" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-6" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-7" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-7" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-7" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-8" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-8" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-8" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+  </div>
+ <!--<div style="float: right; width: 50%;">-->
+            <!--<p style="padding-bottom: 13px;"><em>Radio</em></p>-->
+            <!--<p><input type="radio" name="radio-1" value="1" class="lcs_check lcs_tt2" autocomplete="off" /></p>-->
+            <!--<p><input type="radio" name="radio-1" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>-->
+            <!--<p><input type="radio" name="radio-1" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>-->
+<!--</div>-->
 </form>
 <!-- JAVASCRIPT SECTION  -->
 <script type="text/javascript">
