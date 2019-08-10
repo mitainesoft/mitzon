@@ -428,7 +428,6 @@ a.link-button {
     font-size: 30px;
     font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
     }
-}
 
 a.link-button.nav-button {
     color: #fff;
@@ -544,9 +543,9 @@ body > .row > [class*='coffee-span-'].introduction {
 
 body > .row > [class*='coffee-span-'].flex-column {
     display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: -o-flex;
+    /*display: -moz-flex;*/
+    /*display: -ms-flex;*/
+    /*display: -o-flex;*/
     display: flex;
 }
 
@@ -629,9 +628,9 @@ div.responsive-picture.newsfeed.newspic {
 
 .row > [class*='coffee-span-'] > .container.flex-card {
     display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: -o-flex;
+    /*display: -moz-flex;*/
+    /*display: -ms-flex;*/
+    /*display: -o-flex;*/
     display: flex;
     -webkit-flex-direction: column;
     -moz-flex-direction: column;
@@ -644,9 +643,9 @@ div.responsive-picture.newsfeed.newspic {
 
 .row > [class*='coffee-span-'] > .container.achievements-wrapper {
     display: -webkit-flex;
-    display: -moz-flex;
-    display: -ms-flex;
-    display: -o-flex;
+    /*display: -moz-flex;*/
+    /*display: -ms-flex;*/
+    /*display: -o-flex;*/
     display: flex;
     margin-bottom: 60px;
 }
