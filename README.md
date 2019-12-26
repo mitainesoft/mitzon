@@ -10,7 +10,7 @@
 ###################################################################################
 
 
-                                                       
+'''
 1. INSTALLATION INSTRUCTIONS [MITAINESOFT_MITZON_REVISION]
 
     ** MITAINESOFT_MITZON_REVISION **
@@ -1168,7 +1168,12 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
 
 6.1 Merge & Push code with pyCharm
 
-    Fix are done in Master
+    # Commmit and push code on master
+    VCS->Git->Branches->Checkout master
+    VCS->Git->Commit-> "all Files "
+    Push
+
+    Fixes +code are done in Master
     #Fix build_info.txt
     VCS->Git->Branches->Checkout release
     VCS->Git->Pull
@@ -1340,3 +1345,26 @@ a) Raspberry Temperature Overheat !
     alias cfg='cd  /opt/mitainesoft/mitzon/config'
     alias mit='cd  /opt/mitainesoft/mitzon/'
 
+
+Installing Node.js
+
+Here's the abbreviated guide, highlighting the major steps:
+
+Open the official page for Node.js downloads and download Node.js for Windows by clicking the "Windows Installer" option
+Run the downloaded Node.js .msi Installer - including accepting the license, selecting the destination, and authenticating for the install.
+This requires Administrator privileges, and you may need to authenticate
+To ensure Node.js has been installed, run node -v in your terminal - you should get something like v6.9.5
+Update your version of npm with npm install npm --global
+This requires Administrator privileges, and you may need to authenticate
+Congratulations - you've now got Node.js installed, and are ready to start building!
+
+
+C:\Users\user>node -v
+v10.15.0
+
+C:\Users\user>npm install npm --global
+
+C:\Users\user>npm install npm typescript -g
+
+C:\Users\user>
+'''

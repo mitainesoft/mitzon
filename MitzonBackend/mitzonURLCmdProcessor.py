@@ -383,7 +383,7 @@ if __name__ == '__main__':
     log=logging.getLogger('Garage.mitzonURLCmdProcessor')
     logh=logging._handlers.get('Garage')
     logh.doRollover()
-    log.info("Starting garage...")
+    log.info("Starting Mitzon...")
 
     '''Subscriber - Dispatcher '''
     command_queue = Queue()

@@ -1,5 +1,6 @@
 import logging
 from MitzonBackend.GarageDoor import GarageDoor
+from MitzonBackend.SprinklerControl import SprinklerControl
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.Sensor import Sensor
 from MitzonBackend.Light import Light
@@ -16,17 +17,22 @@ log = logging.getLogger('Garage.DeviceManager')
 
 class DeviceManager(metaclass=SingletonMeta):
     def __init__(self):
+        log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         # self.deviceList=deviceList = {}
         self.deviceList = {}
         self.defaultgarage = self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_NAME_FOR_TEST")
+        self.defaultsprinkler = self.config_handler.getConfigParam("SPRINKLER_MANAGER", "SPRINKLER_NAME_FOR_TEST")
         self.mypin = int(self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin"))
         self.usbConnectHandler = None
-
+        self.serialdevicename="Any";
         self.connectUSB()
 
-        # replace by config
+        self.createGarageObj()
+        self.createSprinklerObj()
 
+    def createGarageObj(self):
+        # replace by config
         for garageNameKey in self.config_handler.GARAGE_NAME:
             matchObj = re.findall(r'\d', garageNameKey, 1)
             garage_id = int(matchObj[0])
@@ -69,16 +75,40 @@ class DeviceManager(metaclass=SingletonMeta):
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1
 
+    def createSprinklerObj(self):
+        # replace by config
+        for sprinklerNameKey in self.config_handler.SPRINKLER_NAME:
+            matchObj = re.findall(r'\d', sprinklerNameKey, 1)
+            sprinkler_id = int(matchObj[0])
+            logging.info(
+                'Initialize board sprinkler_id %s ** Control Board Pin %s' % (
+                    sprinklerNameKey, self.config_handler.getConfigParam(self.defaultsprinkler, "BoardPin")))
+            obj = SprinklerControl(sprinklerNameKey, self.usbConnectHandler)
+
+            obj.turnOffLight('WHITE')
+            obj.turnOffLight('GREEN')
+            obj.turnOffLight('RED')
+            obj_key = "SprinklerControl_%d" % sprinkler_id
+            self.deviceList[obj_key] = obj
+            sprinkler_id = sprinkler_id + 1
+
     def connectUSB(self):
         log.info("Rapberry Arduino connection Started...")
         # https://pypi.python.org/pypi/nanpy
         # https://github.com/nanpy/nanpy-firmware
         try:
             #connection = SerialManager(device='/dev/ttyUSB0')
-            connection = SerialManager()
-
+            self.serialdevicename ==self.config_handler.getConfigParam("DEVICES", "GARAGE_SERIAL_MANAGER_DEVICE")
+            tmplog = ("Garage Device configured : %s" % self.serialdevicename)
+            log.info(tmplog)
+            if self.serialdevicename.upper() == "ANY":
+                connection = SerialManager()
+            else:
+                connection = SerialManager(self.serialdevicename)
             self.usbConnectHandler = ArduinoApi(connection=connection)
-            log.info("init deviceManager")
+            tmplog="Garage Device: %s" % self.usbConnectHandler.connection.device
+            log.info(tmplog)
+            pass
         except Exception:
             log.info("USB Device Not found !")
             # os._exit(-1)
@@ -144,3 +174,6 @@ class DeviceManager(metaclass=SingletonMeta):
                 log.error("typedef %s not found!" % (obj.__class__.__name__))
             devlistidx = devlistidx + 1
         return
+
+    def get_serialdevicename(self):
+        return self.serialdevicename

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<!--https://www.webcodegeeks.com/javascript/jquery/jquery-ui-slider-example/-->
+<html>
+<head>
+     <meta charset="utf-8">
+
+	<title>Sprinkler 482</title>
+
+    <link rel="stylesheet" href="css/main/coffee/flaticon.css">
+
+    <link rel="stylesheet" href="css/main/coffee/coffeegrinder.min.css">
+    <link rel="stylesheet" href="css/main/coffee/wireframe-theme.min.css">
+    <link rel="stylesheet" href="css/main/coffee/main.css">
+
+    <!--Slider-->
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <script src="./dist/jQuery-Plugin-For-Sliding-Toggle-Switches-LC/lc_switch.js"></script>
+    <link rel="stylesheet" href="./dist/jQuery-Plugin-For-Sliding-Toggle-Switches-LC/lc_switch.css">
+
+</head>
+
+<body>
+
+<!-- STYLE SECTION  -->
+<style type="text/css">
+#zone1, #zone2, #zone3, #zone4, #zone5, #zone6, #zone7, #zone8 {
+  height:240px;
+  width: 70px;
+  float: inherit;
+  /*margin: 5px;*/
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  /*grid-gap: 10px;*/
+  /*background-color: #2196F3;*/
+  padding: 3px 3px 2px 20px;
+}
+
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  /*text-align: center;*/
+  /*padding: 20px 0;*/
+  /*font-size: 30px;*/
+}
+
+.item1 {
+  grid-row-end: 8;
+}
+
+.item2 {
+  grid-row-end: 8;
+}
+
+.item3 {
+  grid-row-end: 8;
+}
+
+  #zone1 .ui-slider-range { background: #FF0000; }
+  #zone1 .ui-slider-handle { border-color: #FF0000; width: 80px; }
+  #zone2 .ui-slider-range { background: #FF7F00; }
+  #zone2 .ui-slider-handle { border-color: #FF7F00; width: 80px; }
+  #zone3 .ui-slider-range { background: #FFFF00; }
+  #zone3 .ui-slider-handle { border-color: #FFFF00; width: 80px;}
+  #zone4 .ui-slider-range { background: #00FF00; }
+  #zone4 .ui-slider-handle { border-color: #00FF00; width: 80px;}
+  #zone5 .ui-slider-range { background: #0000FF; }
+  #zone5 .ui-slider-handle { border-color: #0000FF; width: 80px;}
+  #zone6 .ui-slider-range { background: #0B610B; }
+  #zone6 .ui-slider-handle { border-color: #0B610B; width: 80px;}
+  #zone7 .ui-slider-range { background: #848484; }
+  #zone7 .ui-slider-handle { border-color: #848484; width: 80px;}
+  #zone8 .ui-slider-range { background: #8B00FF; }
+  #zone8 .ui-slider-handle { border-color: #8B00FF; width: 80px;}
+
+    body * {
+        font-family: Arial, Helvetica, sans-serif;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+    h1 {
+        margin-bottom: 10px;
+        padding-left: 35px;
+        background: url('./images/MitaineSoft.jpg') no-repeat 0px 5px transparent;
+    }
+    a {
+        color: #000;
+        text-decoration: none;
+    }
+     slidebarfont {
+        color: #000;
+        font-size: 30px;
+        text-decoration: none;
+         margin: 15px;
+
+    }
+    small  {
+        font-size: 13px;
+        font-weight: normal;
+        padding-left: 10px;
+    }
+
+    #first_div {
+        width: 90%;
+        max-width: 600px;
+         min-width: 340px;
+         margin: 70px auto 0;
+         color: #444;
+    }
+    #second_div{
+        width: 90%;
+        max-width: 600px;
+        min-width: 340px;
+        margin: 50px auto 0;
+        background: #f3f3f3;
+        border: 6px solid #eaeaea;
+        padding: 20px 40px 40px;
+        text-align: center;
+        border-radius: 2px;
+    }
+    #third_div {
+        width: 90%;
+        max-width: 600px;
+        min-width: 340px;
+        margin: 30px auto 0;
+    }
+	#third_div small {
+		float: right;
+		color: #aaa;
+		cursor: pointer;
+		padding-top: 5px;
+	}
+	#third_div ul {
+		padding-left: 12px;
+		max-height: 200px;
+		overflow: auto;
+	}
+	#third_div li {
+		color: #777;
+		font-size: 14px;
+		line-height: normal;
+		margin: 7px 0;
+	}
+	#third_div li em {
+		display: inline-block;
+		width: 130px;
+		color: #555;
+		font-style: normal;
+	}
+
+</style>
+
+<!-- HTML SECTION  -->
+<div class="coffee-span-12 coffee-670-span-12">
+    <h1 class="MainTitle">Mitaine Mitzon</h1>
+    <h3>Anti-Mule Gazon Systeme</h3>
+</div>
+
+<form>
+
+  <div class="grid-container">
+      <small>Zone 1</small>
+      <small>Zone 2</small>
+      <small>Zone 3</small>
+      <small>Zone 4</small>
+      <small>Zone 5</small>
+      <small>Zone 6</small>
+      <small>Zone 7</small>
+      <small>Zone 8</small>
+  </div>
+
+  <div class="grid-container">
+      <div id="zone1">  <slidebarfont id="#zone1" ></id> </slidebarfont></div>
+      <div id="zone2">  <slidebarfont id="#zone2" ></id> </slidebarfont></div>
+      <div id="zone3">  <slidebarfont id="#zone3" ></id> </slidebarfont></div>
+      <div id="zone4">  <slidebarfont id="#zone4" ></id> </slidebarfont></div>
+      <div id="zone5">  <slidebarfont id="#zone5" ></id> </slidebarfont></div>
+      <div id="zone6">  <slidebarfont id="#zone6" ></id> </slidebarfont></div>
+      <div id="zone7">  <slidebarfont id="#zone7" ></id> </slidebarfont></div>
+      <div id="zone8">  <slidebarfont id="#zone8" ></id> </slidebarfont></div>
+   </div>
+
+  <div class="grid-container">
+      <div>
+        <p><input type="radio" name="radio-1" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-1" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-1" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-2" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-2" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-2" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-3" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-3" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-3" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-4" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-4" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-4" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-5" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-5" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-5" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-6" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-6" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-6" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-7" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-7" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-7" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+      </div>
+      <div>
+        <p><input type="radio" name="radio-8" value="1" class="lcs_check lcs_tt2" checked="checked" autocomplete="off" /></p>
+        <p><input type="radio" name="radio-8" value="2" class="lcs_check lcs_tt2" checked="checked" autocomplete="even" /></p>
+        <p><input type="radio" name="radio-8" value="3" class="lcs_check lcs_tt2" checked="checked" autocomplete="odd" /></p>
+      </div>
+  </div>
+
+    <hr />
+
+    <div id="third_div">
+    	<h3>
+        	Events log:
+        	<small>(clean)</small>
+        </h3>
+        <ul></ul>
+    </div>
+
+
+</form>
+<!-- JAVASCRIPT SECTION  -->
+<script type="text/javascript">
+  function hexFromRGB(r, g, b) {
+  var hex = [
+    r.toString( 16 ),
+    g.toString( 16 ),
+    b.toString( 16 )
+  ];
+  $.each( hex, function( nr, val ) {
+    if ( val.length === 1 ) {
+      hex[ nr ] = "0" + val;
+    }
+  });
+  return hex.join( "" ).toUpperCase();
+}
+function refreshSwatch() {
+  var zone1 = $( "#zone1" ).slider( "value" ),
+    zone2 = $( "#zone2" ).slider( "value" ),
+    zone3 = $( "#zone3" ).slider( "value" ),
+    zone4 = $( "#zone4" ).slider( "value" ),
+    zone5 = $( "#zone5" ).slider( "value" ),
+    zone6 = $( "#zone6" ).slider( "value" ),
+    zone7 = $( "#zone7" ).slider( "value" ),
+    zone8 = $( "#zone8" ).slider( "value" ),
+    zone1color = hexFromRGB( zone1, 128, 128 ),
+    hex = hexFromRGB( zone1, zone2, zone3 );
+
+  document.getElementById('#zone1').innerHTML = zone1;
+  document.getElementById('#zone2').innerHTML = zone2;
+  document.getElementById('#zone3').innerHTML = zone3;
+  document.getElementById('#zone4').innerHTML = zone4;
+  document.getElementById('#zone5').innerHTML = zone5;
+  document.getElementById('#zone6').innerHTML = zone6;
+  document.getElementById('#zone7').innerHTML = zone7;
+  document.getElementById('#zone8').innerHTML = zone8;
+//  document.getElementById('#zone1').style.color("zone2");
+//  $( "#zone1" ).css( "color", "#" + hex );
+//  $( "#zone1" ).css(  "background"  , "#" + zone1color );
+}
+$(function() {
+    var zonearray = ("#zone1, #zone2, #zone3, #zone4, #zone5, #zone6, #zone7, #zone8");
+  $( zonearray ).slider({
+    orientation: "vertical",
+    range: "min",
+    max: 30,
+    value: 5,
+    animate: true,
+    slide: refreshSwatch,
+    change: refreshSwatch
+  });
+  $( "#zone1" ).slider( "value", 21 );
+  $( "#zone2" ).slider( "value", 20 );
+  $( "#zone3" ).slider( "value", 17 );
+  $( "#zone4" ).slider( "value", 10 );
+  $( "#zone5" ).slider( "value", 7 );
+  $( "#zone6" ).slider( "value", 15 );
+  $( "#zone7" ).slider( "value", 25 );
+  $( "#zone8" ).slider( "value", 5 );
+});
+
+//  Button
+      $(document).ready(function(e) {
+
+        $('input').lc_switch(['OFF','ON','EVEN','Even','ODD','Odd','DAY','Day']);
+
+        // triggered each time a field changes status
+        $(document).on('lcs-statuschange', '.lcs_check', function() {
+            var status 	= ($(this).is(':checked')) ? 'checked' : 'unchecked',
+				subj 	= ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+				num		= $(this).val(),
+                name    = ($(this).attr('name'));
+
+			$('#third_div ul').prepend('<li><em>[lcs-statuschange]</em>' + name+' ' + num +' changed status: '+ status +'</li>');
+        });
+
+        // triggered each time a field is checked
+        $(document).on('lcs-on', '.lcs_check', function() {
+			var subj 	= ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+				num		= $(this).val(),
+                name    = ($(this).attr('name'));
+
+			$('#third_div ul').prepend('<li><em>[lcs-on]</em>' + name+' ' + num +' is checked</li>');
+        });
+
+
+        // triggered each time a is unchecked
+        $(document).on('lcs-off', '.lcs_check', function() {
+            var subj 	= ($(this).attr('type') == 'radio') ? 'radio #' : 'checkbox #',
+				num		= $(this).val(),
+                name    = ($(this).attr('name'));
+
+			$('#third_div ul').prepend('<li><em>[lcs-off]</em>' + name + ' ' +  num +' is unchecked</li>');
+        });
+    });
+
+
+
+	// clean events log
+	$('#third_div small').click(function() {
+		$('#third_div ul').empty();
+	});
+
+</script>
+
+</body>
+</html>

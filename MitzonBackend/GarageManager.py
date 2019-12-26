@@ -19,6 +19,7 @@ log = logging.getLogger('Garage.GarageManager')
 class GarageManager():
 
     def __init__(self):
+        log.setLevel(logging.INFO)
         log.info("GarageManager Starting")
         self.garage_manager_start_time=time.time()
         self.config_handler = ConfigManager()
@@ -66,11 +67,9 @@ class GarageManager():
                     obj.updateSensor()
                     obj.determineGarageDoorOpenClosedStatus()
                     self.checkGaragePolicy(obj)
-
-                    # obj.g_light_list[obj.g_name + '_GREEN'].turnOnLight()
-                    # sleep(1.00)
-                    # obj.g_light_list[obj.g_name + '_GREEN'].turnOffLight()
-                    # sleep(0.500)
+                    if log.isEnabledFor(logging.DEBUG) or i % 100000 == 0:
+                        tmplog = "%s Device: %s" % (obj.get_g_name(), obj.get_serialdevicename())
+                        log.info(tmplog)
                 else:
                     log.info("typedef not found!")
 

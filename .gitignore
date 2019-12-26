@@ -1,2 +1,5 @@
 .idea
 .git
+.vscode
+mitzon.code-workspace
+MitzonFrontend/dist

@@ -10,6 +10,10 @@ GARAGE_MANAGER_LOOP_TIMEOUT = 5
 SENSOR_DEFECT_ASSESSMENT_TIME = 60
 GARAGE_NAME_FOR_TEST=GARAGE_0
 
+[SPRINKLER_MANAGER]
+SPRINKLER_MANAGER_LOOP_TIMEOUT = 5
+SPRINKLER_NAME_FOR_TEST=SPRINKLER_0
+
 [THREAD_CONTROL]
 RESP_TIMEOUT = 2
 
@@ -48,7 +52,7 @@ GarageElapsedTimeForStatusChange=10
 GarageRelayLOWEnable=2,3,12,13
 
 [GARAGE_0]
-SuperviseThisGarage = True
+SuperviseThisDevice = True
 GarageBoardPin = 7
 GarageSensorsBoardPin = 8,9
 GarageGreenLightBoardPin=2
@@ -56,7 +60,7 @@ GarageRedLightBoardPin=3
 GarageWhiteLightBoardPin=12
 
 [GARAGE_1]
-SuperviseThisGarage = True
+SuperviseThisDevice = True
 GarageBoardPin = 6
 GarageSensorsBoardPin = 10,11
 GarageGreenLightBoardPin=4
@@ -64,14 +68,28 @@ GarageRedLightBoardPin=5
 GarageWhiteLightBoardPin=13
 
 [GARAGE_2]
-SuperviseThisGarage = False
+SuperviseThisDevice = False
 GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 [GARAGE_3]
-SuperviseThisGarage = False
+SuperviseThisDevice = False
 GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
+
+[SPRINKLER_0]
+SuperviseThisDevice = False
+BoardPin = 7
+GreenLightBoardPin=2
+RedLightBoardPin=3
+WhiteLightBoardPin=12
+
+[SPRINKLER_1]
+SuperviseThisDevice = False
+BoardPin = 6
+GreenLightBoardPin=4
+RedLightBoardPin=5
+WhiteLightBoardPin=13
 
 [ALERT]
 #TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
@@ -154,8 +172,12 @@ GARAGE_USERS=Add MAC Addresses here separated by colun ','
 
 [DEVICES]
 # SerialManager(device='/dev/ttyUSB0')
+# /dev/ttyUSB0... or /dev/ttyACM0...
 # ArduinoApi Nanpy
-GARAGE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB0
+#
+#GARAGE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB0
+GARAGE_SERIAL_MANAGER_DEVICE=Any
+#
 VALVES_SERIAL_MANAGER_DEVICE=/dev/ttyUSB1
 
 [SECURITY]
