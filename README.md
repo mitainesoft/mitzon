@@ -10,7 +10,7 @@
 ###################################################################################
 
 
-                                                       
+'''
 1. INSTALLATION INSTRUCTIONS [MITAINESOFT_MITZON_REVISION]
 
     ** MITAINESOFT_MITZON_REVISION **
@@ -1168,7 +1168,12 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
 
 6.1 Merge & Push code with pyCharm
 
-    Fix are done in Master
+    # Commmit and push code on master
+    VCS->Git->Branches->Checkout master
+    VCS->Git->Commit-> "all Files "
+    Push
+
+    Fixes +code are done in Master
     #Fix build_info.txt
     VCS->Git->Branches->Checkout release
     VCS->Git->Pull
@@ -1362,3 +1367,4 @@ C:\Users\user>npm install npm --global
 C:\Users\user>npm install npm typescript -g
 
 C:\Users\user>
+'''

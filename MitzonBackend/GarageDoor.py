@@ -13,6 +13,7 @@ import datetime
 from time import sleep
 import time
 import datetime
+import re
 from MitzonBackend.ConfigManager import *
 
 log = logging.getLogger('Garage.GarageDoor')
@@ -206,6 +207,18 @@ class GarageDoor():
             log_status_text=self.g_name + " change from " + self.g_prevstatus + " to " + self.g_status
             log.info(log_status_text)
 
+            # Check if previously locked but same status
+
+
+            if ("LOCK" in self.g_prevstatus and "LOCK" in self.g_status):
+                    #or ("LOCK" in self.g_status and "LOCK" not in self.g_prevstatus):
+                self.g_open_time = time.time()
+                self.g_close_time = time.time()
+                self.g_lock_time = time.time()
+                log_status_text = self.g_name + " Reset open/close timers " + "PrevStatus:" +  self.g_prevstatus + " Status:"+self.g_status
+                log.info(log_status_text)
+
+
             self.g_prevstatus = self.g_status
             if self.g_status == G_OPEN:
                 self.g_open_time = time.time()
@@ -280,6 +293,7 @@ class GarageDoor():
         else:
             self.g_manual_force_lock_garage_open_close_cmd = False
             tmptxt="%s Garage UnLock requested" % (self.g_name)
+            self.g_lock_time = None
             # self.g_lock_time=None
         log.info(tmptxt)
 
@@ -501,6 +515,10 @@ class GarageDoor():
             printct = datetime.datetime.fromtimestamp(self.g_close_time).strftime("%Y%m%d-%H%M%S")
         else:
             printct = "None"
+        if self.g_lock_time != None:
+            printlock = datetime.datetime.fromtimestamp(self.g_lock_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printlock = "None"
         if self.g_error_time != None:
             printerrt = datetime.datetime.fromtimestamp(self.g_error_time).strftime("%Y%m%d-%H%M%S")
         else:
@@ -510,7 +528,7 @@ class GarageDoor():
         else:
             printlast = "None"
         try:
-            logstr = logstr + sensor_status_str + "updte=" + printut + " opn=" + printot + " clse=" + printct + " err=" + printerrt + " Alert=" + printlast + " Lights:" + all_light_status
+            logstr = logstr + sensor_status_str + "updte=" + printut + " opn=" + printot + " clse=" + printct + " lock=" + printlock + " err=" + printerrt + " Alert=" + printlast + " Lights:" + all_light_status
             log.info(logstr)
         except Exception:
             log.error("Time Stamp print error ?!?  print to stdout ")

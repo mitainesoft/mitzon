@@ -1,5 +1,6 @@
 import logging
 from MitzonBackend.GarageDoor import GarageDoor
+from MitzonBackend.SprinklerControl import SprinklerControl
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.Sensor import Sensor
 from MitzonBackend.Light import Light
@@ -21,13 +22,17 @@ class DeviceManager(metaclass=SingletonMeta):
         # self.deviceList=deviceList = {}
         self.deviceList = {}
         self.defaultgarage = self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_NAME_FOR_TEST")
+        self.defaultsprinkler = self.config_handler.getConfigParam("SPRINKLER_MANAGER", "SPRINKLER_NAME_FOR_TEST")
         self.mypin = int(self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin"))
         self.usbConnectHandler = None
         self.serialdevicename="Any";
         self.connectUSB()
 
-        # replace by config
+        self.createGarageObj()
+        self.createSprinklerObj()
 
+    def createGarageObj(self):
+        # replace by config
         for garageNameKey in self.config_handler.GARAGE_NAME:
             matchObj = re.findall(r'\d', garageNameKey, 1)
             garage_id = int(matchObj[0])
@@ -69,6 +74,23 @@ class DeviceManager(metaclass=SingletonMeta):
             obj_key = "GarageDoor_%d" % garage_id
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1
+
+    def createSprinklerObj(self):
+        # replace by config
+        for sprinklerNameKey in self.config_handler.SPRINKLER_NAME:
+            matchObj = re.findall(r'\d', sprinklerNameKey, 1)
+            sprinkler_id = int(matchObj[0])
+            logging.info(
+                'Initialize board sprinkler_id %s ** Control Board Pin %s' % (
+                    sprinklerNameKey, self.config_handler.getConfigParam(self.defaultsprinkler, "BoardPin")))
+            obj = SprinklerControl(sprinklerNameKey, self.usbConnectHandler)
+
+            obj.turnOffLight('WHITE')
+            obj.turnOffLight('GREEN')
+            obj.turnOffLight('RED')
+            obj_key = "SprinklerControl_%d" % sprinkler_id
+            self.deviceList[obj_key] = obj
+            sprinkler_id = sprinkler_id + 1
 
     def connectUSB(self):
         log.info("Rapberry Arduino connection Started...")

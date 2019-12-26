@@ -20,6 +20,9 @@ class ConfigManager(metaclass=SingletonMeta):
         self.configSections = []
         self.NBR_GARAGE=0 #Calculated value
         self.GARAGE_NAME = [] # ["GARAGE_0", "GARAGE_1", "GARAGE_2", "GARAGE_3"]
+        self.NBR_SPRINKLER=0 #Calculated value
+        self.SPRINKLER_NAME = [] # ["SPRINKLER_0", "SPRINKLER_1", "SPRINKLER_2", "SPRINKLER_3"]
+
 
     def setConfigFileName(self,filename):
         log.debug("Set config file name...")
@@ -40,7 +43,7 @@ class ConfigManager(metaclass=SingletonMeta):
                 if ("GARAGE_" in keySections):
                     matchObj=re.match("GARAGE_\d",keySections,2)
                     if matchObj:
-                        if (self.getConfigParam(keySections, "SuperviseThisGarage").upper() == "TRUE"):
+                        if (self.getConfigParam(keySections, "SuperviseThisDevice").upper() == "TRUE"):
                             self.GARAGE_NAME.append(keySections)
                             self.NBR_GARAGE+=1
                             log.info("Found garage in config:" + keySections +" ("+self.NBR_GARAGE.__str__()+")")
@@ -48,6 +51,19 @@ class ConfigManager(metaclass=SingletonMeta):
                             log.info("Skip garage in config:" + keySections + ". Should not supervise!")
                     else:
                         log.debug("config file, not garage: " + keySections + "...Skipping" )
+
+                if ("SPRINKLER_" in keySections):
+                    matchObj = re.match("SPRINKLER_\d", keySections, 2)
+                    if matchObj:
+                        if (self.getConfigParam(keySections, "SuperviseThisDevice").upper() == "TRUE"):
+                            self.SPRINKLER_NAME.append(keySections)
+                            self.NBR_SPRINKLER += 1
+                            log.info("Found Sprinkler in config:" + keySections + " (" + self.NBR_SPRINKLER.__str__() + ")")
+                        else:
+                            log.info("Skip Sprinkler in config:" + keySections + ". Should not supervise!")
+                    else:
+                        log.debug("config file, not Sprinkler: " + keySections + "...Skipping")
+
                 for key in self.config[keySections]:
                     log.info(keySections + "/" + key + " = " + self.config[keySections][key])
             self.validateParamsUsed()
@@ -88,22 +104,22 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_COMMON', 'timebetweenbuttonmanualpressed'],
             ['GARAGE_COMMON', 'garageelapsedtimeforstatuschange'],
             ['GARAGE_COMMON', 'garagerelaylowenable'],
-            ['GARAGE_0', 'supervisethisgarage'],
+            ['GARAGE_0', 'SuperviseThisDevice'],
             ['GARAGE_0', 'garageboardpin'],
             ['GARAGE_0', 'garagesensorsboardpin'],
             ['GARAGE_0', 'garagegreenlightboardpin'],
             ['GARAGE_0', 'garageredlightboardpin'],
             ['GARAGE_0', 'garagewhitelightboardpin'],
-            ['GARAGE_1', 'supervisethisgarage'],
+            ['GARAGE_1', 'SuperviseThisDevice'],
             ['GARAGE_1', 'garageboardpin'],
             ['GARAGE_1', 'garagesensorsboardpin'],
             ['GARAGE_1', 'garagegreenlightboardpin'],
             ['GARAGE_1', 'garageredlightboardpin'],
             ['GARAGE_1', 'garagewhitelightboardpin'],
-            ['GARAGE_2', 'supervisethisgarage'],
+            ['GARAGE_2', 'SuperviseThisDevice'],
             ['GARAGE_2', 'garageboardpin'],
             ['GARAGE_2', 'garagesensorsboardpin'],
-            ['GARAGE_3', 'supervisethisgarage'],
+            ['GARAGE_3', 'SuperviseThisDevice'],
             ['GARAGE_3', 'garageboardpin'],
             ['GARAGE_3', 'garagesensorsboardpin'],
             ['ALERT', 'timebetweenalerts'],
