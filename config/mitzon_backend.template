@@ -77,19 +77,43 @@ SuperviseThisDevice = False
 GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
+
+[VALVE_COMMON]
+#Nbr seconds to trigger an alarm when door is LOCK OPEN
+ValveLockOpenTriggerAlarmElapsedTime=7200
+
+#Time Between Button Manual Pressed
+TimeBetweenButtonManualPressed=2
+
+#TimeBeforeAutoRetryClose
+TimeBeforeAutoRetryClose=10
+
+#ValveOpenTriggerWarningElapsedTime
+# defaul=45001 (45min)   test=60
+ValveOpenTriggerWarningElapsedTime=60
+
+#ValveOpenTriggerCriticalElapsedTime
+# defaul=60002 (45min)   test=120
+ValveOpenTriggerCriticalElapsedTime=120
+
+#ValveHardwareResponseTime
+ValveHardwareResponseTime=3
+
 [VALVE_0]
 SuperviseThisDevice = False
-BoardPin = 7
-GreenLightBoardPin=2
-RedLightBoardPin=3
-WhiteLightBoardPin=12
+OutBoardPin = 6
+SensorBoardPin = -1
+#GreenLightBoardPin=2
+#RedLightBoardPin=3
+#WhiteLightBoardPin=12
 
 [VALVE_1]
 SuperviseThisDevice = False
-BoardPin = 6
-GreenLightBoardPin=4
-RedLightBoardPin=5
-WhiteLightBoardPin=13
+OutBoardPin = 6
+SensorBoardPin = -1
+#GreenLightBoardPin=4
+#RedLightBoardPin=5
+#WhiteLightBoardPin=13
 
 [ALERT]
 #TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
@@ -213,11 +237,11 @@ Garage.ConfigManager=INFO
 Garage.DeviceManager=INFO
 Garage.GarageDoor=INFO
 Garage.GarageManager=INFO
-Garage.Valve=INFO
-Garage.ValveManager=INFO
 Garage.Light=INFO
 Garage.NotificationManager=INFO
 Garage.Sensor=INFO
 Garage.mitzonURLCmdProcessor=INFO
 nanpy=CRITICAL
 nanpy.serialmanager=CRITICAL
+Valve.Valve=INFO
+Valve.ValveManager=INFO

@@ -429,7 +429,7 @@ class GarageDoor():
 
         try:
             if self.g_auto_force_ignore_garage_open_close_cmd == True:
-                status_text=self.g_name + " " +  self.alarm_mgr_handler.alertFileListJSON["GCD01"]["text"]+" "
+                status_text=self.g_name + " " +  self.alarm_mgr_handler.alertFileListJSON["Fr"]["GCD01"]["text"]+" "
                 # log.warning(status_text)
             else:
                 if (self.g_status == G_OPEN and self.g_manual_force_lock_garage_open_close_cmd == False):

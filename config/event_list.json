@@ -46,14 +46,14 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "open denied. Too early to retry!",
+      "text": "garage open denied. Too early to retry!",
       "workaround": "Calm down! Wait before trying again!"
     },
     "GTO03": {
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "open denied.",
+      "text": "garage open denied.",
       "workaround": "Calm down! Stop trying !"
     },
     "GTO04": {
@@ -104,6 +104,111 @@
       "category": "SOFTWARE",
       "text": "Software Fault detected",
       "workaround": "Check garage.log !"
+    },
+        "VO001": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_OPEN",
+      "text": "Open Time Expired",
+      "workaround": "Close the valve!"
+    },
+    "VO002": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_OPEN",
+      "text": "Open Warning",
+      "workaround": "Close the valve!"
+    },
+    "VLO01": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_LOCK",
+      "text": "Door Open with Manual Lock expired !",
+      "workaround": "Remove Lock and close the valve!"
+    },
+    "VCD01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_LOCK",
+      "text": "Auto close disabled due to recent alerts!",
+      "workaround": "Check valve!"
+    },
+    "VS001": {
+      "deviceType": "Valve Sensor",
+      "severity": "1",
+      "category": "SENSOR",
+      "text": "Valve Sensor Error",
+      "workaround": "Fix Sensor or valve alignment to sensor!"
+    },
+    "VTO01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "open. Trigger valve !",
+      "workaround": "Vet out of the way!"
+    },
+    "VTO02": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "open denied. Too early to retry!",
+      "workaround": "Calm down! Wait before trying again!"
+    },
+    "VTO03": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "open denied.",
+      "workaround": "Calm down! Stop trying !"
+    },
+    "VTO04": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Valve Locked, open denied.",
+      "workaround": "Calm down! Check why valve is locked and Unlock!"
+    },
+    "VTC01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Valve closing.",
+      "workaround": "-"
+    },
+    "VTC02": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "close denied. Too early to retry!",
+      "workaround": "Calm down! Wait before trying the valve again!"
+    },
+    "VTC03": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "valve close denied.",
+      "workaround": "Calm down! Stop trying !"
+    },
+    "HW101": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "USB Commuucation error",
+      "workaround": "Calm down! Stop trying !"
+    },
+    "HW102": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "Command sent but nothing happened!",
+      "workaround": "Check the valve !"
+    },
+    "SW101": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Software Fault detected",
+      "workaround": "Check mitzon.log !"
     }
   },
   "Fr": {
@@ -211,6 +316,111 @@
       "category": "SOFTWARE",
       "text": "Erreur Logicielle detectée",
       "workaround": "Inspectez garage.log !"
+    },
+        "VO001": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_OPEN",
+      "text": "Temps d'ouverture du robinet expirée!",
+      "workaround": "Fermez le robinet si elle ne se ferme pas toute seule!"
+    },
+    "VO002": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_OPEN",
+      "text": "Attention, robinet ouvert!",
+      "workaround": "Fermez le robinet!"
+    },
+    "VLO01": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_LOCK",
+      "text": "Temps expiré robinet ouvert avec verouillage manuel !",
+      "workaround": "Enlevez l'option vérouillage et fermez le robinet !"
+    },
+    "VCD01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_LOCK",
+      "text": "Fermeture automatique déactivé temporairement à cause de problème récent!",
+      "workaround": "Verifiez le robinet !"
+    },
+    "VS001": {
+      "deviceType": "Valve Sensor",
+      "severity": "1",
+      "category": "SENSOR",
+      "text": "problème avec un senseur sur le robinet",
+      "workaround": "La fermeture est peut-être bloquée par de la neige ou un des senseurs ne fonctionne plus!"
+    },
+    "VTO01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture du robinet !",
+      "workaround": "Eloignez vous de le robinets!"
+    },
+    "VTO02": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture robinet refusée. Déclenchement trop récent!",
+      "workaround": "Attendre un peu avant de re-ouvrir!"
+    },
+    "VTO03": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture robinet refusée.",
+      "workaround": "Arrêtez d'essayer, allez voir se qui se passe !"
+    },
+    "VTO04": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Porte vérouillée, Ouverture refusée.",
+      "workaround": "Arrêtez d'essayer, demandez pourquoi le robinet a été vérouillée !"
+    },
+    "VTC01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Fermeture robinet demandée.",
+      "workaround": "Enlevez tout machin qui nuirait à la fermeture!"
+    },
+    "VTC02": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Fermeture robinet refusée. Déclenchement trop récent!",
+      "workaround": "Attendre un peu avant de refermer!"
+    },
+    "VTC03": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "Fermeture robinet refusée.",
+      "workaround": "Arrêtez d'essayer !"
+    },
+    "HW101": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "USB Commuucation error",
+      "workaround": "Appelez le service technique au 1-800-PLAINTE!"
+    },
+    "HW102": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "Command sent but nothing happened!",
+      "workaround": "Check the valve !"
+    },
+    "SW101": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Erreur Logicielle detectée",
+      "workaround": "Inspectez mitzon.log !"
     }
   },
   "FrMule": {
@@ -295,7 +505,7 @@
       "deviceType": "Garage",
       "severity": "2",
       "category": "GARAGE_COMMAND",
-      "text": "Fermeture refusée.",
+      "text": "Fermeture garage refusée.",
       "workaround": "Calme toi tête de veau! Arrêtes d'essayer !"
     },
     "HW001": {
@@ -318,6 +528,111 @@
       "category": "SOFTWARE",
       "text": "Erreur Logicielle de mule détectée",
       "workaround": "Inspectez garage.log !"
+    },
+        "VO001": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_OPEN",
+      "text": "Temps d'ouverture de la robinette expirée mule!",
+      "workaround": "Ferme la robinette magique mule si elle ne se ferme pas toute seule!"
+    },
+    "VO002": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_OPEN",
+      "text": "Attention, robinette ouverte mule!",
+      "workaround": "Grouille la robinette mule! l'enchanteur la fermera sous peu!"
+    },
+    "VLO01": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "VALVE_LOCK",
+      "text": "La robinette deversoir dans les douves mule !",
+      "workaround": "Enlevez l'option cadenas dans la boite a troubadour et fermez le portail ou soyez maudit !"
+    },
+    "VCD01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_LOCK",
+      "text": "Fermeture automatique déactivée pour les mules qui savent pas se servir d'une robinette!",
+      "workaround": "Verifies le robinet tête de veau !"
+    },
+    "VS001": {
+      "deviceType": "Valve Sensor",
+      "severity": "1",
+      "category": "SENSOR",
+      "text": "problème avec un senseur sur le robinet de mule",
+      "workaround": "La fermeture est peut-être bloquée par une sorciere à cause d'une mule ou un des senseur qui ne fonctionne plus!"
+    },
+    "VTO01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture du robinet mule!",
+      "workaround": "Reste la pour un bon lavement!"
+    },
+    "VTO02": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture de la roninette refusée mule. Déclenchement trop récent!",
+      "workaround": "Calme toi tête de boeuf! Attendre un peu avant de re-ouvrir!"
+    },
+    "VTO03": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture robinette refusée.",
+      "workaround": "Calme toi tête de veau! Arrêtez d'essayer, allez voir se qui se passe mule !"
+    },
+    "VTO04": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Ouverture de la robinette point accordée. ",
+      "workaround": "Calme toi la fripouille! Arrêstez d'essayer mortecouille, Allez quérir au seigneur pourquoi la robinette  n'est point ouvrable !"
+    },
+    "VTC01": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Fermeture robinette demandée par une mule!",
+      "workaround": "Enlève ce qu'il y a dans le chemin de la robinette tête de veau"
+    },
+    "VTC02": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_COMMAND",
+      "text": "Fermeture robinette refusée mule. Déclenchement trop récent!",
+      "workaround": "Calme toi tête de veau! Attendre un peu avant de refermer!"
+    },
+    "VTC03": {
+      "deviceType": "Valve",
+      "severity": "2",
+      "category": "VALVE_COMMAND",
+      "text": "Fermeture robinette refusée.",
+      "workaround": "Calme toi tête de veau! Arrêtes d'essayer la robinette!"
+    },
+    "HW101": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "USB Commuucation error",
+      "workaround": "Appelez le service technique de la robinette pour tête de veau au 1-800-VEAU"
+    },
+    "HW102": {
+      "deviceType": "Valve",
+      "severity": "1",
+      "category": "HARDWARE",
+      "text": "Maudite robinette ne réagit point à la commande!",
+      "workaround": "Demandez audience avec le seigneur des lieux !"
+    },
+     "SW101": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Erreur Logicielle de mule détectée a la robinette",
+      "workaround": "Inspectez mitzon.log !"
     }
   }
 }

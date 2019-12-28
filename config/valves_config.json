@@ -1,0 +1,40 @@
+{
+  "VALVE_DEFAULT": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "start_time": "22:00",
+      "stop_time": "22:02",
+      "calendar": "even",
+      "maxopentime": 60,
+      "description": "default for non configured valve ",
+      "zone": "null",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False"
+    },
+    "WebProperties": {
+      "Color": "0x000000",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  },
+  "VALVE_0": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "start_time": "21:13",
+      "stop_time": "21:15",
+      "calendar": "even",
+      "maxopentime": 30,
+      "description": "Valve 0",
+      "zone": "1",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False"
+    },
+    "WebProperties": {
+      "Color": "0x330033",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  }
+}

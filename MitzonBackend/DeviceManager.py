@@ -82,13 +82,10 @@ class DeviceManager(metaclass=SingletonMeta):
             Valve_id = int(matchObj[0])
             logging.info(
                 'Initialize board Valve_id %s ** Control Board Pin %s' % (
-                    ValveNameKey, self.config_handler.getConfigParam(self.defaultValve, "BoardPin")))
+                    ValveNameKey, self.config_handler.getConfigParam(self.defaultValve, "OutBoardPin")))
             obj = Valve(ValveNameKey, self.usbConnectHandler)
 
-            obj.turnOffLight('WHITE')
-            obj.turnOffLight('GREEN')
-            obj.turnOffLight('RED')
-            obj_key = "ValveControl_%d" % Valve_id
+            obj_key = "Valve_%d" % Valve_id
             self.deviceList[obj_key] = obj
             Valve_id = Valve_id + 1
 
@@ -168,7 +165,7 @@ class DeviceManager(metaclass=SingletonMeta):
             obj = self.deviceList[key]
             sensor_status_str = ""
 
-            if isinstance(obj, GarageDoor):
+            if isinstance(obj, GarageDoor) or isinstance(obj, Valve):
                 obj.printStatus()
             else:
                 log.error("typedef %s not found!" % (obj.__class__.__name__))
