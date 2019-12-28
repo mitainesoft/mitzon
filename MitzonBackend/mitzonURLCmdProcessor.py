@@ -327,6 +327,17 @@ if __name__ == '__main__':
                 'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.GarageManager"),
                 'propagate': True
             },
+            'Garage.Valve': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.Valve"),
+                'propagate': True
+            },
+            'Garage.ValveManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.ValveManager"),
+                'propagate': True
+            },
+
             'Garage.Light': {
                 'handlers': ['Garage'],
                 'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.Light"),

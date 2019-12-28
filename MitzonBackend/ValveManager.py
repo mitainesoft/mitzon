@@ -14,13 +14,13 @@ import datetime
 import cherrypy
 import os, sys, traceback
 
-log = logging.getLogger('Garage.GarageManager')
+log = logging.getLogger('Garage.ValveManager')
 
-class GarageManager():
+class ValveManager():
 
     def __init__(self):
         log.setLevel(logging.INFO)
-        log.info("GarageManager Starting")
+        log.info("ValveManager Starting")
         self.garage_manager_start_time=time.time()
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
@@ -59,7 +59,7 @@ class GarageManager():
                         status_text = self.addAlert("SW001", "RASPBERRY_PI")
                         log.error(status_text)
             else:
-                log.debug("Cherrypy Web server thread monitoring off for 1 min after GarageManager thread startup")
+                log.debug("Cherrypy Web server thread monitoring off for 1 min after ValveManager thread startup")
 
             for key in self.deviceList:
                 sensor_status_str = ""
@@ -206,7 +206,7 @@ class GarageManager():
 
             if (gd.g_status.find(G_CLOSED)>=0):
                 if (gd.g_close_time != None): #Is there an open time stamp ?
-                    # Manage specific case for light when GarageManager was restarted, door lock but door not opened !
+                    # Manage specific case for light when ValveManager was restarted, door lock but door not opened !
                     close_white_light_delay=120
                     opentimelightingstop = gd.g_close_time + close_white_light_delay
                     #Change light status during the close_white_light_delay period and a little more!

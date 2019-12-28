@@ -1184,10 +1184,8 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
 
 
 6.2 Make build
-    #open Linux terminal on mitzon raspberry pi 
-    su - root
-    iptables --list
-    iptables --flush
+'''
+
     #Merge code from development PC!
     su - [git user]
     cd /git/mitzon
@@ -1197,14 +1195,6 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
     python3 setup.py sdist
     #Package is under dist
 
-    #restore iptables
-    su - root
-    iptables-restore  </etc/iptables-mitzon.rule
-    #Check iptables rules list
-    iptables --list
-
-
-7. HW
 
 a) Raspberry Temperature Overheat !
 

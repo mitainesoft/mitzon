@@ -1,6 +1,6 @@
 import logging
 from MitzonBackend.GarageDoor import GarageDoor
-from MitzonBackend.SprinklerControl import SprinklerControl
+from MitzonBackend.Valve import Valve
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.Sensor import Sensor
 from MitzonBackend.Light import Light
@@ -22,14 +22,14 @@ class DeviceManager(metaclass=SingletonMeta):
         # self.deviceList=deviceList = {}
         self.deviceList = {}
         self.defaultgarage = self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_NAME_FOR_TEST")
-        self.defaultsprinkler = self.config_handler.getConfigParam("SPRINKLER_MANAGER", "SPRINKLER_NAME_FOR_TEST")
+        self.defaultValve = self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_NAME_FOR_TEST")
         self.mypin = int(self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin"))
         self.usbConnectHandler = None
         self.serialdevicename="Any";
         self.connectUSB()
 
         self.createGarageObj()
-        self.createSprinklerObj()
+        self.createValveObj()
 
     def createGarageObj(self):
         # replace by config
@@ -75,22 +75,22 @@ class DeviceManager(metaclass=SingletonMeta):
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1
 
-    def createSprinklerObj(self):
+    def createValveObj(self):
         # replace by config
-        for sprinklerNameKey in self.config_handler.SPRINKLER_NAME:
-            matchObj = re.findall(r'\d', sprinklerNameKey, 1)
-            sprinkler_id = int(matchObj[0])
+        for ValveNameKey in self.config_handler.VALVE_NAME:
+            matchObj = re.findall(r'\d', ValveNameKey, 1)
+            Valve_id = int(matchObj[0])
             logging.info(
-                'Initialize board sprinkler_id %s ** Control Board Pin %s' % (
-                    sprinklerNameKey, self.config_handler.getConfigParam(self.defaultsprinkler, "BoardPin")))
-            obj = SprinklerControl(sprinklerNameKey, self.usbConnectHandler)
+                'Initialize board Valve_id %s ** Control Board Pin %s' % (
+                    ValveNameKey, self.config_handler.getConfigParam(self.defaultValve, "BoardPin")))
+            obj = Valve(ValveNameKey, self.usbConnectHandler)
 
             obj.turnOffLight('WHITE')
             obj.turnOffLight('GREEN')
             obj.turnOffLight('RED')
-            obj_key = "SprinklerControl_%d" % sprinkler_id
+            obj_key = "ValveControl_%d" % Valve_id
             self.deviceList[obj_key] = obj
-            sprinkler_id = sprinkler_id + 1
+            Valve_id = Valve_id + 1
 
     def connectUSB(self):
         log.info("Rapberry Arduino connection Started...")

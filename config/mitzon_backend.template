@@ -10,9 +10,9 @@ GARAGE_MANAGER_LOOP_TIMEOUT = 5
 SENSOR_DEFECT_ASSESSMENT_TIME = 60
 GARAGE_NAME_FOR_TEST=GARAGE_0
 
-[SPRINKLER_MANAGER]
-SPRINKLER_MANAGER_LOOP_TIMEOUT = 5
-SPRINKLER_NAME_FOR_TEST=SPRINKLER_0
+[VALVE_MANAGER]
+VALVE_MANAGER_LOOP_TIMEOUT = 5
+VALVE_NAME_FOR_TEST=VALVE_0
 
 [THREAD_CONTROL]
 RESP_TIMEOUT = 2
@@ -77,14 +77,14 @@ SuperviseThisDevice = False
 GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
-[SPRINKLER_0]
+[VALVE_0]
 SuperviseThisDevice = False
 BoardPin = 7
 GreenLightBoardPin=2
 RedLightBoardPin=3
 WhiteLightBoardPin=12
 
-[SPRINKLER_1]
+[VALVE_1]
 SuperviseThisDevice = False
 BoardPin = 6
 GreenLightBoardPin=4
@@ -178,7 +178,7 @@ GARAGE_USERS=Add MAC Addresses here separated by colun ','
 #GARAGE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB0
 GARAGE_SERIAL_MANAGER_DEVICE=Any
 #
-VALVES_SERIAL_MANAGER_DEVICE=/dev/ttyUSB1
+VALVE_SERIAL_MANAGER_DEVICE=/dev/ttyUSB1
 
 [SECURITY]
 # 'server.socket_host': '0.0.0.0',
@@ -213,6 +213,8 @@ Garage.ConfigManager=INFO
 Garage.DeviceManager=INFO
 Garage.GarageDoor=INFO
 Garage.GarageManager=INFO
+Garage.Valve=INFO
+Garage.ValveManager=INFO
 Garage.Light=INFO
 Garage.NotificationManager=INFO
 Garage.Sensor=INFO

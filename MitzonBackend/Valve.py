@@ -15,21 +15,21 @@ import time
 import datetime
 from MitzonBackend.ConfigManager import *
 
-log = logging.getLogger('Garage.SprinklerControl')
+log = logging.getLogger('Garage.Valve')
 
-class SprinklerControl():
+class Valve():
 
-    def __init__(self,sprinkler_name,usbConnectHandler):
+    def __init__(self,valve_name,usbConnectHandler):
         log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
 
-        matchObj = re.findall(r'\d', sprinkler_name, 1)
-        sprinkler_id = int(matchObj[0])
-        self.spkl_id = sprinkler_id
+        matchObj = re.findall(r'\d', valve_name, 1)
+        valve_id = int(matchObj[0])
+        self.spkl_id = valve_id
 
-        self.spkl_name = sprinkler_name
-        self.spkl_board_pin_relay = int(self.config_handler.getConfigParam(self.spkl_name,"GarageBoardPin"))
+        self.spkl_name = valve_name
+        self.spkl_board_pin_relay = int(self.config_handler.getConfigParam(self.spkl_name,"BoardPin"))
 
         self.spkl_status = G_UNKNOWN
         self.spkl_prevstatus = G_UNKNOWN
@@ -51,8 +51,8 @@ class SprinklerControl():
 
         self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
         self.spkl_alert_light_time = None
-        self.spkl_auto_force_ignore_sprinkler_open_close_cmd = False
-        self.spkl_manual_force_lock_sprinkler_open_close_cmd = False
+        self.spkl_auto_force_ignore_valve_open_close_cmd = False
+        self.spkl_manual_force_lock_valve_open_close_cmd = False
         self.spkl_add_alert_time_by_type = {}  #Key is Alert type, data is time()
 
         self.nbrfault=0
@@ -60,8 +60,8 @@ class SprinklerControl():
         self.spkl_statusEventList=[]
 
         self.usbConnectHandler=usbConnectHandler
-        self.initBoardPinModeOutput(int(self.config_handler.getConfigParam(self.spkl_name,"GarageBoardPin")))
-        tmplog = "Garage Serial Device: %s pin %d" % (self.usbConnectHandler.connection.device, int(self.config_handler.getConfigParam(self.spkl_name,"GarageBoardPin")))
+        self.initBoardPinModeOutput(int(self.config_handler.getConfigParam(self.spkl_name,"BoardPin")))
+        tmplog = "Garage Serial Device: %s pin %d" % (self.usbConnectHandler.connection.device, int(self.config_handler.getConfigParam(self.spkl_name,"BoardPin")))
         log.info(tmplog)
 
     def isGarageOpen(self,mything,myservice,myid):
@@ -116,7 +116,7 @@ class SprinklerControl():
 
 
     def updateSensor(self):
-        self.spkl_auto_force_ignore_sprinkler_open_close_cmd = True
+        self.spkl_auto_force_ignore_valve_open_close_cmd = True
         #sensor_status_text=self.addAlert("HW001", self.spkl_name )
         #status_text=self.addAlert("GCD01", self.spkl_name)
         status_text="OK"
@@ -127,21 +127,21 @@ class SprinklerControl():
 
     def lock(self):
         tmptxt=""
-        if self.spkl_manual_force_lock_sprinkler_open_close_cmd==False:
+        if self.spkl_manual_force_lock_valve_open_close_cmd==False:
             tmptxt="%s Garage Lock down requested" % (self.spkl_name)
-            self.spkl_manual_force_lock_sprinkler_open_close_cmd = True
+            self.spkl_manual_force_lock_valve_open_close_cmd = True
             self.spkl_lock_time=time.time()
         else:
-            self.spkl_manual_force_lock_sprinkler_open_close_cmd = False
+            self.spkl_manual_force_lock_valve_open_close_cmd = False
             tmptxt="%s Garage UnLock requested" % (self.spkl_name)
             # self.spkl_lock_time=None
         log.info(tmptxt)
 
-        # resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineSprinklerControlOpenClosedStatus())
+        # resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineValveControlOpenClosedStatus())
         # self.tid,self.module,self.device,self.status,self.text)
         mod="[DeviceManager]"
         stat="[STATUS]"
-        str0 = self.determineSprinklerControlOpenClosedStatus().split(':')
+        str0 = self.determineValveControlOpenClosedStatus().split(':')
         dev=str0[0]
         if str0.__len__() >1:
             stat=str0[1]
@@ -150,15 +150,15 @@ class SprinklerControl():
         return (resp)
 
     def status(self):
-        log.debug("SprinklerControl status called !")
+        log.debug("Valve status called !")
         self.updateSensor()
         rsptxt=self.spkletCmdQResponseStatusStr()
 
-        #resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineSprinklerControlOpenClosedStatus())
+        #resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] " + self.determineValveControlOpenClosedStatus())
         # self.tid,self.module,self.device,self.status,self.text)
         mod="[DeviceManager]"
         stat="[STATUS]"
-        str0 = self.determineSprinklerControlOpenClosedStatus().split(':')
+        str0 = self.determineValveControlOpenClosedStatus().split(':')
         dev=str0[0]
         if str0.__len__() >1:
             stat=str0[1]
@@ -225,12 +225,12 @@ class SprinklerControl():
         status_text="Open"
         self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.spkl_name)
         try:
-            if self.spkl_manual_force_lock_sprinkler_open_close_cmd == False:
+            if self.spkl_manual_force_lock_valve_open_close_cmd == False:
                 if (self.spkl_status  == G_CLOSED ):
                     if time.time() > self.spkl_next_manual_cmd_allowed_time:
-                        # status_text+=" open. Trigger sprinkler door !"
+                        # status_text+=" open. Trigger valve door !"
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.spkl_name)
-                        self.triggerSprinklerControl()
+                        self.triggerValveControl()
                         status_text=self.addAlert("GTO01", self.spkl_name)
                         self.spkl_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBetweenButtonManualPressed"))
                         # self.startLightFlash('GREEN')
@@ -261,16 +261,16 @@ class SprinklerControl():
         status_text = "Close"
 
         try:
-            if self.spkl_auto_force_ignore_sprinkler_open_close_cmd == True:
+            if self.spkl_auto_force_ignore_valve_open_close_cmd == True:
                 status_text=self.spkl_name + " " +  self.alarm_mgr_handler.alertFileListJSON["GCD01"]["text"]+" "
                 # log.warning(status_text)
             else:
-                if (self.spkl_status == G_OPEN and self.spkl_manual_force_lock_sprinkler_open_close_cmd == False):
+                if (self.spkl_status == G_OPEN and self.spkl_manual_force_lock_valve_open_close_cmd == False):
                     if time.time() > self.spkl_next_manual_cmd_allowed_time:
-                        # close. Trigger sprinkler door !
+                        # close. Trigger valve door !
                         self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.spkl_name)
                         status_text = self.addAlert("GTC01", self.spkl_name)
-                        self.triggerSprinklerControl()
+                        self.triggerValveControl()
                         self.spkl_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBetweenButtonManualPressed"))
                         # self.startLightFlash('RED')
                     else:
@@ -299,11 +299,11 @@ class SprinklerControl():
     return True if OK, False if problem.
     OS exit if fatal !
     '''
-    def triggerSprinklerControl(self):
+    def triggerValveControl(self):
 
         #GarageManager Check Policy will not call this because status os LOCKOPEN and OPEN in this mode !
-        if (self.spkl_manual_force_lock_sprinkler_open_close_cmd):
-            logtxt="Trigger sprinkler Door refused because of Manual Override"
+        if (self.spkl_manual_force_lock_valve_open_close_cmd):
+            logtxt="Trigger valve Door refused because of Manual Override"
             log.error(logtxt)
             return False;
 
@@ -319,7 +319,7 @@ class SprinklerControl():
             self.spkl_last_cmd_sent_time=time.time()
             log.info("%s Open/Close door button pressed" % (self.spkl_name))
         except Exception:
-            log.error("triggerSprinklerControl Open or Close button problem !")
+            log.error("triggerValveControl Open or Close button problem !")
             traceback.print_exc()
             os._exit(-1)
 
