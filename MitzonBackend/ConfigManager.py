@@ -41,7 +41,7 @@ class ConfigManager(metaclass=SingletonMeta):
             self.configSections=self.config.sections()
             for keySections in self.configSections:
                 if ("GARAGE_" in keySections):
-                    matchObj=re.match("GARAGE_\d",keySections,2)
+                    matchObj=re.match("GARAGE_\d+",keySections,2)
                     if matchObj:
                         if (self.getConfigParam(keySections, "SuperviseThisDevice").upper() == "TRUE"):
                             self.GARAGE_NAME.append(keySections)
@@ -53,7 +53,7 @@ class ConfigManager(metaclass=SingletonMeta):
                         log.debug("config file, not garage: " + keySections + "...Skipping" )
 
                 if ("VALVE_" in keySections):
-                    matchObj = re.match("VALVE_\d", keySections, 2)
+                    matchObj = re.match("VALVE_\d+", keySections, 2)
                     if matchObj:
                         if (self.getConfigParam(keySections, "SuperviseThisDevice").upper() == "TRUE"):
                             self.VALVE_NAME.append(keySections)

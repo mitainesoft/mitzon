@@ -34,7 +34,7 @@ class DeviceManager(metaclass=SingletonMeta):
     def createGarageObj(self):
         # replace by config
         for garageNameKey in self.config_handler.GARAGE_NAME:
-            matchObj = re.findall(r'\d', garageNameKey, 1)
+            matchObj = re.findall(r'\d+', garageNameKey)
             garage_id = int(matchObj[0])
             logging.info(
                 'Initialize board garage_id %s ** Control Board Pin %s' % (
@@ -78,7 +78,7 @@ class DeviceManager(metaclass=SingletonMeta):
     def createValveObj(self):
         # replace by config
         for ValveNameKey in self.config_handler.VALVE_NAME:
-            matchObj = re.findall(r'\d', ValveNameKey, 1)
+            matchObj = re.findall(r'\d+', ValveNameKey)
             Valve_id = int(matchObj[0])
             logging.info(
                 'Initialize board Valve_id %s ** Control Board Pin %s' % (
@@ -161,7 +161,8 @@ class DeviceManager(metaclass=SingletonMeta):
 
     def listDevices(self):
         devlistidx = 0
-        for key in self.deviceList:
+        for key in sorted(self.deviceList, key=lambda str: int((re.findall("\d+", str))[0])):
+        #for key in sorted(self.deviceList):
             obj = self.deviceList[key]
             sensor_status_str = ""
 

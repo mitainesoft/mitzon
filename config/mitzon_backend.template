@@ -10,10 +10,6 @@ GARAGE_MANAGER_LOOP_TIMEOUT = 5
 SENSOR_DEFECT_ASSESSMENT_TIME = 60
 GARAGE_NAME_FOR_TEST=GARAGE_0
 
-[VALVE_MANAGER]
-VALVE_MANAGER_LOOP_TIMEOUT = 5
-VALVE_NAME_FOR_TEST=VALVE_0
-
 [THREAD_CONTROL]
 RESP_TIMEOUT = 2
 
@@ -51,6 +47,7 @@ GarageElapsedTimeForStatusChange=10
 #Relay Outputs List where LOW means Enable or Trigger relay
 GarageRelayLOWEnable=2,3,12,13
 
+#Arduino UNO Digital GarageBoardPin
 [GARAGE_0]
 SuperviseThisDevice = True
 GarageBoardPin = 7
@@ -78,6 +75,18 @@ GarageBoardPin = -1
 GarageSensorsBoardPin = -1,-1
 
 
+[VALVE_MANAGER]
+VALVE_MANAGER_LOOP_TIMEOUT = 5
+VALVE_NAME_FOR_TEST=VALVE_0
+
+#VALVE DISPLAY OPEN STATUS INTERVAL. A Status change will always be displayed
+VALVE_DISPLAY_OPEN_STATUS_INTERVAL=300
+
+#VALVE DISPLAY ALL STATUS INTERVAL. A Status change will always be displayed
+VALVE_DISPLAY_ALL_STATUS_INTERVAL=3600
+
+
+
 [VALVE_COMMON]
 #Nbr seconds to trigger an alarm when door is LOCK OPEN
 ValveLockOpenTriggerAlarmElapsedTime=7200
@@ -99,21 +108,64 @@ ValveOpenTriggerCriticalElapsedTime=120
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3
 
+
+#arduino mega 2560 sensor shield v2 digital OutBoardPin
 [VALVE_0]
-SuperviseThisDevice = False
-OutBoardPin = 6
+SuperviseThisDevice = True
+OutBoardPin = 14
 SensorBoardPin = -1
-#GreenLightBoardPin=2
-#RedLightBoardPin=3
-#WhiteLightBoardPin=12
 
 [VALVE_1]
-SuperviseThisDevice = False
-OutBoardPin = 6
+SuperviseThisDevice = True
+OutBoardPin = 15
 SensorBoardPin = -1
-#GreenLightBoardPin=4
-#RedLightBoardPin=5
-#WhiteLightBoardPin=13
+
+[VALVE_2]
+SuperviseThisDevice = True
+OutBoardPin = 16
+SensorBoardPin = -1
+
+[VALVE_3]
+SuperviseThisDevice = True
+OutBoardPin = 17
+SensorBoardPin = -1
+
+[VALVE_4]
+SuperviseThisDevice = True
+OutBoardPin = 18
+SensorBoardPin = -1
+
+[VALVE_5]
+SuperviseThisDevice = False
+OutBoardPin = 19
+SensorBoardPin = -1
+
+[VALVE_6]
+SuperviseThisDevice = False
+OutBoardPin = 20
+SensorBoardPin = -1
+
+[VALVE_7]
+SuperviseThisDevice = False
+OutBoardPin = 21
+SensorBoardPin = -1
+
+[VALVE_8]
+SuperviseThisDevice = False
+OutBoardPin = 22
+SensorBoardPin = -1
+
+[VALVE_9]
+SuperviseThisDevice = False
+OutBoardPin = 23
+SensorBoardPin = -1
+
+[VALVE_10]
+SuperviseThisDevice = False
+OutBoardPin = 24
+SensorBoardPin = -1
+
+
 
 [ALERT]
 #TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
@@ -222,6 +274,7 @@ SERVER_SSL_PRIVATE_KEY=/opt/mitainesoft/security/mitainesoftsvr.key.pem
 [INTERNAL]
 CONFIG_FILE_REV=[MITAINESOFT_MITZON_REVISION]
 ALERT_DEFINITION_FILE=config/event_list.json
+VALVE_CONFIG_DEFINITION_FILE=config/valves_config.json
 
 
 [GARAGE_LOG_LEVEL]

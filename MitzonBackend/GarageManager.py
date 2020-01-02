@@ -71,10 +71,10 @@ class GarageManager():
                     if log.isEnabledFor(logging.DEBUG) or i % 100000 == 0:
                         tmplog = "%s Device: %s" % (obj.get_g_name(), obj.get_serialdevicename())
                         log.info(tmplog)
-                else:
-                    if self.error_message_count % 1000 == 0:
-                        log.info("No Garage configured!")
-                    self.error_message_count = self.error_message_count + 1
+                # else:
+                #     if self.error_message_count % 1000 == 0:
+                #         log.info("No Garage configured!")
+                #     self.error_message_count = self.error_message_count + 1
 
             self.alarm_mgr_handler.processAlerts()
 

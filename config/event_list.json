@@ -103,9 +103,16 @@
       "severity": "1",
       "category": "SOFTWARE",
       "text": "Software Fault detected",
-      "workaround": "Check garage.log !"
+      "workaround": "Check mitzon.log !"
     },
-        "VO001": {
+      "SW002": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Config Fault detected",
+      "workaround": "Check mitzon.log !"
+    },
+      "VO001": {
       "deviceType": "Valve",
       "severity": "1",
       "category": "VALVE_OPEN",
@@ -208,6 +215,13 @@
       "severity": "1",
       "category": "SOFTWARE",
       "text": "Software Fault detected",
+      "workaround": "Check mitzon.log !"
+    },
+      "SW102": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Config Fault detected Valve",
       "workaround": "Check mitzon.log !"
     }
   },
@@ -315,7 +329,14 @@
       "severity": "1",
       "category": "SOFTWARE",
       "text": "Erreur Logicielle detectée",
-      "workaround": "Inspectez garage.log !"
+      "workaround": "Inspectez mitzon.log !"
+    },
+    "SW002": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Config Fault detected",
+      "workaround": "Check mitzon.log !"
     },
         "VO001": {
       "deviceType": "Valve",
@@ -421,6 +442,13 @@
       "category": "SOFTWARE",
       "text": "Erreur Logicielle detectée",
       "workaround": "Inspectez mitzon.log !"
+    },
+    "SW102": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Config Fault detected Valve",
+      "workaround": "Check mitzon.log !"
     }
   },
   "FrMule": {
@@ -527,7 +555,14 @@
       "severity": "1",
       "category": "SOFTWARE",
       "text": "Erreur Logicielle de mule détectée",
-      "workaround": "Inspectez garage.log !"
+      "workaround": "Inspectez mitzon.log !"
+    },
+    "SW002": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Config Fault detected",
+      "workaround": "Check mitzon.log !"
     },
         "VO001": {
       "deviceType": "Valve",
@@ -633,6 +668,13 @@
       "category": "SOFTWARE",
       "text": "Erreur Logicielle de mule détectée a la robinette",
       "workaround": "Inspectez mitzon.log !"
+    },
+    "SW102": {
+      "deviceType": "SW",
+      "severity": "1",
+      "category": "SOFTWARE",
+      "text": "Config of mule Fault detected Valve",
+      "workaround": "Check mitzon.log !"
     }
   }
 }

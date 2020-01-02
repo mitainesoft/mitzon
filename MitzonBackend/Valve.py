@@ -50,9 +50,13 @@ class Valve():
 
         self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
         self.vlv_alert_light_time = None
-        self.vlv_auto_force_ignore_valve_open_close_cmd = False
+        self.auto_force_close_valve = False
         self.vlv_manual_force_lock_valve_open_close_cmd = False
         self.vlv_add_alert_time_by_type = {}  #Key is Alert type, data is time()
+
+        self.valve_properties = None
+        valveconfigfilename = self.config_handler.getConfigParam("INTERNAL", "VALVE_CONFIG_DEFINITION_FILE")
+        self.loadValveConfig(valveconfigfilename)
 
         self.nbrfault=0
 
@@ -66,6 +70,34 @@ class Valve():
         #Force close on startup
         self.vlv_close_time = time.time()
         self.triggerValve("close")
+
+    def loadValveConfig(self,valveconfigfilename):
+        try:
+            valveconfigfilename = self.config_handler.getConfigParam("INTERNAL", "VALVE_CONFIG_DEFINITION_FILE")
+            valvesConfigJSON = {}
+            #loadValveConfig(self.valveconfigfilename)
+
+            f=open(valveconfigfilename)
+            valvesConfigJSON=json.load(f)
+            f.close()
+
+            key_list = valvesConfigJSON.keys()
+
+            for keysv in key_list: #Delete other keys, must be a better way !
+                if keysv != self.vlv_name:
+                    pass
+                else:
+                    self.valve_properties = valvesConfigJSON[keysv]
+                    print(self.valve_properties)
+            pass
+        except IOError:
+            log.error("Config file " + valveconfigfilename + " does not exist ! ")
+            log.error("Exiting...")
+            os._exit(-1)
+        except Exception:
+            traceback.print_exc()
+            log.error("Exiting...")
+            os._exit(-1)
 
     def isValveOpen(self,mything,myservice,myid):
         return self.vlv_status==G_OPEN
@@ -152,7 +184,7 @@ class Valve():
             status_text="OK"
             # self.tid,self.module,self.device,self.status,self.text)
         except Exception:
-            self.vlv_auto_force_ignore_valve_open_close_cmd = True
+            self.auto_force_close_valve = True
             sensor_status_text = self.addAlert("HW101", self.vlv_name )
             status_text = self.addAlert("VCD01", self.vlv_name)
 
@@ -296,7 +328,7 @@ class Valve():
         status_text = "Close"
 
         try:
-            if self.vlv_auto_force_ignore_valve_open_close_cmd == True:
+            if self.auto_force_close_valve == True:
                 status_text=self.vlv_name + " " +  self.alarm_mgr_handler.alertFileListJSON["Fr"]["GCD01"]["text"]+" "
                 # log.warning(status_text)
             else:
@@ -338,6 +370,11 @@ class Valve():
         logtxt=self.vlv_name+" "+cmd+" triggerValve "
         #ValveManager Check Policy will not call this because status os LOCKOPEN and OPEN in this mode !
 
+        valve_cmd = None
+        if self.valve_properties["TimeProperties"]["reverse_hi_low"] == "False":
+            valve_cmd = self.usbConnectHandler.LOW
+        else:
+            valve_cmd = self.usbConnectHandler.HIGH
 
         try:
             if (cmd == "open"):
@@ -345,18 +382,24 @@ class Valve():
                 if (self.vlv_manual_force_lock_valve_open_close_cmd):
                     logtxt = logtxt + "Trigger valve open refused because of Manual Override"
                 else:
-                    self.usbConnectHandler.digitalWrite(self.vlv_board_pin_relay, self.usbConnectHandler.HIGH)
+                    if self.valve_properties["TimeProperties"]["reverse_hi_low"] == "False":
+                        valve_cmd = self.usbConnectHandler.HIGH
+                    else:
+                        valve_cmd = self.usbConnectHandler.LOW
                     self.vlv_status=G_OPEN
             elif cmd == "close":
                 self.vlv_close_time = time.time()
-                self.usbConnectHandler.digitalWrite(self.vlv_board_pin_relay, self.usbConnectHandler.LOW)
+                if self.valve_properties["TimeProperties"]["reverse_hi_low"] == "False":
+                    valve_cmd = self.usbConnectHandler.LOW
+                else:
+                    valve_cmd = self.usbConnectHandler.HIGH
                 self.vlv_status = G_CLOSED
             else:
-                self.usbConnectHandler.digitalWrite(self.vlv_board_pin_relay, self.usbConnectHandler.LOW)
                 self.vlv_status = G_ERROR
                 logtxt = logtxt + "Error with triggerValve command"
                 status_text = self.addAlert("SW101", self.vlv_name)
 
+            self.usbConnectHandler.digitalWrite(self.vlv_board_pin_relay, valve_cmd)
             self.vlv_next_auto_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("VALVE_COMMON", "TimeBeforeAutoRetryClose"))
             self.vlv_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("VALVE_COMMON", "TimeBetweenButtonManualPressed"))
             self.vlv_last_cmd_sent_time=time.time()
