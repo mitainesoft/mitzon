@@ -38,8 +38,13 @@ class Valve():
         self.vlv_prevlightstatus = ""
 
         self.vlv_light_list = {}  #Dict of lights. key = color GREEN RED WHITE
+
+        self.vlv_start_time = time.time()
         self.vlv_update_time=time.time()
         self.vlv_open_time = None
+        self.vlv_manualopen_time = None
+        self.vlv_manual_mode = False
+
         self.vlv_error_time = None
         self.vlv_last_alert_time = None
         self.vlv_last_cmd_sent_time = None
@@ -51,7 +56,7 @@ class Valve():
         self.seconds_between_alerts=float(self.config_handler.getConfigParam("ALERT", "TimeBetweenAlerts"))
         self.vlv_alert_light_time = None
         self.auto_force_close_valve = False
-        self.vlv_manual_force_lock_valve_open_close_cmd = False
+        self.vlv_force_lock = False
         self.vlv_add_alert_time_by_type = {}  #Key is Alert type, data is time()
 
         self.valve_properties = None
@@ -186,7 +191,6 @@ class Valve():
         except Exception:
             self.auto_force_close_valve = True
             sensor_status_text = self.addAlert("HW101", self.vlv_name )
-            status_text = self.addAlert("VCD01", self.vlv_name)
 
         resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]",self.vlv_name ,self.vlv_status,status_text)
 
@@ -194,12 +198,12 @@ class Valve():
 
     def lock(self):
         tmptxt=""
-        if self.vlv_manual_force_lock_valve_open_close_cmd==False:
+        if self.vlv_force_lock==False:
             tmptxt="%s Valve Lock down requested" % (self.vlv_name)
-            self.vlv_manual_force_lock_valve_open_close_cmd = True
+            self.vlv_force_lock = True
             self.vlv_lock_time=time.time()
         else:
-            self.vlv_manual_force_lock_valve_open_close_cmd = False
+            self.vlv_force_lock = False
             tmptxt="%s Valve UnLock requested" % (self.vlv_name)
             # self.vlv_lock_time=None
         log.info(tmptxt)
@@ -288,11 +292,32 @@ class Valve():
         self.usbConnectHandler.pinMode(pin, self.usbConnectHandler.INPUT)
         self.s_update_time=time.time()
 
+    def manualopen(self):
+        try:
+            status_text = "ManualOpen"
+            self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+            self.vlv_manualopen_time=time.time()
+            self.vlv_open_time = time.time()
+            self.vlv_manual_mode = True
+            #self.triggerValve("open")
+            self.open()
+
+        except Exception:
+            traceback.print_exc()
+            logstr = "open() Valve %s Status = %s Fatal Exception" % (self.vlv_name, self.vlv_status)
+            log.error(logstr)
+            os._exit(-1)
+
+        # resp=CommmandQResponse(0, status_text)
+        #resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", status_text)
+        #log.debug(status_text)
+        #return resp
+
     def open(self):
         status_text="Open"
         self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
         try:
-            if self.vlv_manual_force_lock_valve_open_close_cmd == False:
+            if self.vlv_force_lock == False:
                 if (self.vlv_status  == G_CLOSED ):
                     if time.time() > self.vlv_next_manual_cmd_allowed_time:
                         # status_text+=" open. Trigger valve door !"
@@ -303,7 +328,9 @@ class Valve():
                         # self.startLightFlash('GREEN')
                     else:
                         # open denied. Too early to retry!
+                        self.vlv_manual_mode = False
                         status_text = self.addAlert("VTO02", self.vlv_name)
+
 
                 else:
                     # open denied. current status is " + self.vlv_status
@@ -325,30 +352,41 @@ class Valve():
         return resp
 
     def close(self):
+        logtxt = self.vlv_name +" "
         status_text = "Close"
 
         try:
-            if self.auto_force_close_valve == True:
-                status_text=self.vlv_name + " " +  self.alarm_mgr_handler.alertFileListJSON["Fr"]["GCD01"]["text"]+" "
-                # log.warning(status_text)
-            else:
-                if (self.vlv_status == G_OPEN and self.vlv_manual_force_lock_valve_open_close_cmd == False):
-                    if time.time() > self.vlv_next_manual_cmd_allowed_time:
-                        # close. Trigger valve door !
-                        self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
-                        status_text = self.addAlert("VTC01", self.vlv_name)
-                        self.triggerValve("close")
-                        self.vlv_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("VALVE_COMMON", "TimeBetweenButtonManualPressed"))
-                        # self.startLightFlash('RED')
-                    else:
-                        # status_text += "close denied. Too early to retry!"
-                        self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
-                        status_text = self.addAlert("VTC02", self.vlv_name)
+            self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name)
+            self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+
+            # if To avoid misleading logs. Valve will be closed regardless
+            if self.vlv_manual_mode == True and self.auto_force_close_valve == False:
+                logtxt = logtxt + "Close Manual "
+                log.info(logtxt)
+                if time.time() > self.vlv_next_manual_cmd_allowed_time:
+                    # close. valve normal path!
+                    status_text = self.addAlert("VTC01", self.vlv_name)
+                    self.vlv_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("VALVE_COMMON", "TimeBetweenButtonManualPressed"))
                 else:
-                    # Refused, already closed !
+                    # Closing to often. closing anyways. Could indicate a GUI bug !
+                    #if self.vlv_status != G_CLOSED and time.time() > (self.vlv_start_time+30):
                     self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+                    status_text = self.addAlert("VTC02", self.vlv_name, "Bug?")
+
+                if self.vlv_status != G_OPEN:
+                    #                         and time.time() > (self.vlv_start_time+30): #hard coded msg, dont wan to see on startup
+                    # already closed !
+                    # Avoid on startup
+                    #self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
                     status_text = self.addAlert("VTC03", self.vlv_name,self.vlv_status)
+            else:
+                logtxt = logtxt + "close() Auto "
+                log.debug(logtxt)
+
+            self.triggerValve("close")
             self.vlv_last_cmd_trigger_time=time.time()
+            self.vlv_manual_mode = False #reset manual mode to false
+
 
         except Exception:
             traceback.print_exc()
@@ -379,7 +417,7 @@ class Valve():
         try:
             if (cmd == "open"):
                 self.vlv_open_time = time.time()
-                if (self.vlv_manual_force_lock_valve_open_close_cmd):
+                if (self.vlv_force_lock):
                     logtxt = logtxt + "Trigger valve open refused because of Manual Override"
                 else:
                     if self.valve_properties["TimeProperties"]["reverse_hi_low"] == "False":
@@ -389,6 +427,7 @@ class Valve():
                     self.vlv_status=G_OPEN
             elif cmd == "close":
                 self.vlv_close_time = time.time()
+                self.vlv_manual_mode = False #Manual Mode disbaled by close
                 if self.valve_properties["TimeProperties"]["reverse_hi_low"] == "False":
                     valve_cmd = self.usbConnectHandler.LOW
                 else:
@@ -426,6 +465,10 @@ class Valve():
             printot = datetime.datetime.fromtimestamp(self.vlv_open_time).strftime("%Y%m%d-%H%M%S")
         else:
             printot = "None"
+        if self.vlv_manualopen_time != None:
+            printmot = datetime.datetime.fromtimestamp(self.vlv_manualopen_time).strftime("%Y%m%d-%H%M%S")
+        else:
+            printmot = "None"
         if self.vlv_close_time != None:
             printct = datetime.datetime.fromtimestamp(self.vlv_close_time).strftime("%Y%m%d-%H%M%S")
         else:
@@ -439,7 +482,7 @@ class Valve():
         else:
             printlast = "None"
         try:
-            logstr = logstr + "updte=" + printut + " opn=" + printot + " clse=" + printct + " err=" + printerrt + " Alert=" + printlast
+            logstr = logstr + "updte=" + printut + " opn=" + printot + " clse=" + printct + " mopn="+printmot+" err=" + printerrt + " Alert=" + printlast
             log.info(logstr)
         except Exception:
             log.error("Time Stamp print error ?!?  print to stdout ")

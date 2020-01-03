@@ -121,9 +121,16 @@
     },
     "VO002": {
       "deviceType": "Valve",
-      "severity": "1",
+      "severity": "2",
       "category": "VALVE_OPEN",
       "text": "Open Warning",
+      "workaround": "Close the valve!"
+    },
+    "VO003": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_OPEN",
+      "text": "Valve Manually Opened Warning",
       "workaround": "Close the valve!"
     },
     "VLO01": {
@@ -186,15 +193,15 @@
       "deviceType": "Valve",
       "severity": "2",
       "category": "VALVE_COMMAND",
-      "text": "close denied. Too early to retry!",
+      "text": "Too early to retry! Closing anyway.",
       "workaround": "Calm down! Wait before trying the valve again!"
     },
     "VTC03": {
       "deviceType": "Valve",
       "severity": "2",
       "category": "VALVE_COMMAND",
-      "text": "valve close denied.",
-      "workaround": "Calm down! Stop trying !"
+      "text": "valve already closed.",
+      "workaround": "Calm down! Stop trying closing !"
     },
     "HW101": {
       "deviceType": "Valve",
@@ -347,10 +354,17 @@
     },
     "VO002": {
       "deviceType": "Valve",
-      "severity": "1",
+      "severity": "2",
       "category": "VALVE_OPEN",
       "text": "Attention, robinet ouvert!",
       "workaround": "Fermez le robinet!"
+    },
+    "VO003": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_OPEN",
+      "text": "Valve Ouverte Manuellement",
+      "workaround": "Close the valve!"
     },
     "VLO01": {
       "deviceType": "Valve",
@@ -406,20 +420,20 @@
       "severity": "3",
       "category": "VALVE_COMMAND",
       "text": "Fermeture robinet demandée.",
-      "workaround": "Enlevez tout machin qui nuirait à la fermeture!"
+      "workaround": "-"
     },
     "VTC02": {
       "deviceType": "Valve",
       "severity": "3",
       "category": "VALVE_COMMAND",
-      "text": "Fermeture robinet refusée. Déclenchement trop récent!",
-      "workaround": "Attendre un peu avant de refermer!"
+      "text": "Fermeture robinet attive. Déclenchement trop récent! Je ferme quand même!",
+      "workaround": "Attendre un peu avant de fermer!"
     },
     "VTC03": {
       "deviceType": "Valve",
       "severity": "2",
       "category": "VALVE_COMMAND",
-      "text": "Fermeture robinet refusée.",
+      "text": "robinet déjà fermé !",
       "workaround": "Arrêtez d'essayer !"
     },
     "HW101": {
@@ -564,7 +578,7 @@
       "text": "Config Fault detected",
       "workaround": "Check mitzon.log !"
     },
-        "VO001": {
+      "VO001": {
       "deviceType": "Valve",
       "severity": "1",
       "category": "VALVE_OPEN",
@@ -573,10 +587,17 @@
     },
     "VO002": {
       "deviceType": "Valve",
-      "severity": "1",
+      "severity": "2",
       "category": "VALVE_OPEN",
       "text": "Attention, robinette ouverte mule!",
-      "workaround": "Grouille la robinette mule! l'enchanteur la fermera sous peu!"
+      "workaround": "Grouille de fermer la robinette mule! l'enchanteur la fermera sous peu!"
+    },
+    "VO003": {
+      "deviceType": "Valve",
+      "severity": "3",
+      "category": "VALVE_OPEN",
+      "text": "Mortecouille! la robinette a été ouverte manuelement par un vizigot",
+      "workaround": "ferme la robinette avec la boite a troubadourd"
     },
     "VLO01": {
       "deviceType": "Valve",
@@ -632,21 +653,21 @@
       "severity": "3",
       "category": "VALVE_COMMAND",
       "text": "Fermeture robinette demandée par une mule!",
-      "workaround": "Enlève ce qu'il y a dans le chemin de la robinette tête de veau"
+      "workaround": "Tu peux retouré dans le chemin de la robinette tête de veau"
     },
     "VTC02": {
       "deviceType": "Valve",
       "severity": "3",
       "category": "VALVE_COMMAND",
-      "text": "Fermeture robinette refusée mule. Déclenchement trop récent!",
-      "workaround": "Calme toi tête de veau! Attendre un peu avant de refermer!"
+      "text": "Fermeture robinette acceptée mule. Déclenchement trop récent! Ce n'est pas un jeu de veau !",
+      "workaround": "Calme toi tête de veau! Attendre un peu avant d'ouvrir et de refermer!"
     },
     "VTC03": {
       "deviceType": "Valve",
       "severity": "2",
       "category": "VALVE_COMMAND",
-      "text": "Fermeture robinette refusée.",
-      "workaround": "Calme toi tête de veau! Arrêtes d'essayer la robinette!"
+      "text": "robinette etait déjà fermé.",
+      "workaround": "Calme toi tête de veau! Arrêtes d'essayer de fermer la robinette!"
     },
     "HW101": {
       "deviceType": "Valve",

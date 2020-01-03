@@ -86,7 +86,6 @@ VALVE_DISPLAY_OPEN_STATUS_INTERVAL=300
 VALVE_DISPLAY_ALL_STATUS_INTERVAL=3600
 
 
-
 [VALVE_COMMON]
 #Nbr seconds to trigger an alarm when door is LOCK OPEN
 ValveLockOpenTriggerAlarmElapsedTime=7200
@@ -105,8 +104,13 @@ ValveOpenTriggerWarningElapsedTime=60
 # defaul=60002 (45min)   test=120
 ValveOpenTriggerCriticalElapsedTime=120
 
+#ValveOpenManualAllowedTime
+# default ValveOpenManualAllowedTime=7200
+ValveOpenManualAllowedTime = 60
+
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3
+
 
 
 #arduino mega 2560 sensor shield v2 digital OutBoardPin
@@ -175,7 +179,7 @@ TimeBetweenAlerts=120
 AlertDefaultClearInterval=15
 
 #These alarms will auto clear if True
-AlertAutoClearList=GLO01
+AlertAutoClearList=GLO01,VLO01,VTC01
 
 
 ########################
@@ -275,6 +279,10 @@ SERVER_SSL_PRIVATE_KEY=/opt/mitainesoft/security/mitainesoftsvr.key.pem
 CONFIG_FILE_REV=[MITAINESOFT_MITZON_REVISION]
 ALERT_DEFINITION_FILE=config/event_list.json
 VALVE_CONFIG_DEFINITION_FILE=config/valves_config.json
+
+LOG_SEVERITY1_REPEAT_INTERVAL=60
+LOG_SEVERITY2_REPEAT_INTERVAL=300
+LOG_SEVERITY3_REPEAT_INTERVAL=900
 
 
 [GARAGE_LOG_LEVEL]

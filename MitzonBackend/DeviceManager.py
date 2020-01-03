@@ -148,6 +148,8 @@ class DeviceManager(metaclass=SingletonMeta):
                 # resp = CommmandQResponse(0, ex_text)
                 return resp
             resp = thingToCall()
+            if (resp == None):
+                resp=resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "processDeviceCommand thingToCall is Null!" )
             log.debug("processDeviceCommand Class Resp String=%s" % resp.getRspPropsToString())
             pass
         else:

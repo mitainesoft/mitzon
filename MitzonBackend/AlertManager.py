@@ -161,7 +161,8 @@ class AlertManager(metaclass=SingletonMeta):
         log.warning("All Alerts cleared!")
 
     def clearAlertDevice(self,cat,dev):
-        log.debug("Clear alert request " + cat + " for " + dev)
+        rc="Clear alert request " + cat + " for " + dev
+        log.debug(rc)
 
         crazyloop=0;
         keyiter=iter(self.alertCurrentList)
@@ -185,12 +186,16 @@ class AlertManager(metaclass=SingletonMeta):
             if (crazyloop>=clmax):
                 os._exit(clmax)
         except StopIteration:
-            log.debug("Alarm List empty StopIteration!")
+            log.debug(rc+" End of List. StopIteration! (1)")
         except Exception:
             # traceback.print_exc()
             log.debug("Alarm List empty Exception!")
 
+        return rc
+
     def autoClearAlertByList(self):
+        rc = "Auto Clear Alert By List called for: " + self.config_handler.getConfigParam("ALERT", "AlertAutoClearList")
+        log.debug(rc)
         #Clears one at the time !
         crazyloop = 0;
         keyiter = iter(self.alertCurrentList)
@@ -214,20 +219,22 @@ class AlertManager(metaclass=SingletonMeta):
                         self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                         self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category, \
                         self.alertCurrentList[keyalert].text, altime)
-                    log.info("Auto Clear alert %s done!" % (txt))
+                    log.info("Auto Clear Alert %s done!" % (txt))
                     del self.alertCurrentList[keyalert]
                 keyalert = keyiter.__next__()
             if (crazyloop >= clmax):
                 os._exit(clmax)
         except StopIteration:
-            log.debug("Alarm List empty StopIteration!")
+            log.debug(rc + " End of List. StopIteration! (2)")
         except Exception:
             # traceback.print_exc()
             log.debug("Alarm List empty Exception!")
 
+        return rc
 
     def clearAlertID(self, id_to_clear,dev ):
-        log.debug("Clear alert ID request " + id_to_clear + " for " + dev)
+        rc = "Clear alert ID request " + id_to_clear + " for " + dev
+        log.debug(rc)
 
         crazyloop = 0;
         keyiter = iter(self.alertCurrentList)
@@ -251,13 +258,16 @@ class AlertManager(metaclass=SingletonMeta):
             if (crazyloop >= clmax):
                 os._exit(clmax)
         except StopIteration:
-            log.debug("Alarm List empty StopIteration!")
+            log.debug("End of List. StopIteration! (3)")
         except Exception:
             # traceback.print_exc()
             log.debug("Alarm List empty Exception!")
 
+        return rc
+
     def clearAlertNotifSent(self, dev):
-        log.debug("Clear alert Notif Sent for " + dev)
+        rc = "Clear alert Notif Sent for " + dev
+        log.debug(rc)
 
         crazyloop = 0;
         keyiter = iter(self.alertCurrentList)
@@ -284,10 +294,12 @@ class AlertManager(metaclass=SingletonMeta):
                 log.fatal("Too many alerts ! Die !")
                 os._exit(clmax)
         except StopIteration:
-            log.debug("Alarm List empty StopIteration!")
+            log.debug("End of List. StopIteration! (4)")
         except Exception:
             # traceback.print_exc()
             log.debug("Alarm List empty Exception!")
+
+        return rc
 
     def test(self):
         resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "test AlertManager")
