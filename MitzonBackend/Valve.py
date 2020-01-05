@@ -46,7 +46,8 @@ class Valve():
         self.vlv_manual_mode = False
 
         self.vlv_error_time = None
-        self.vlv_last_alert_time = None
+        self.vlv_last_alert_time = 0
+        self.vlv_last_sev1_alert_time = 0
         self.vlv_last_cmd_sent_time = None
         self.vlv_last_cmd_trigger_time = None
         self.vlv_next_auto_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_MANAGER_LOOP_TIMEOUT"))
@@ -163,18 +164,18 @@ class Valve():
             self.vlv_update_time = time.time()
             do_print_status = True
 
-            if (self.vlv_status == G_OPEN):
-                self.vlv_open_time = time.time()
-            elif (self.vlv_status == G_CLOSED):
-                self.vlv_close_time = time.time()
-            elif (self.vlv_status == G_LOCKOPEN):
-                self.vlv_lock_time = time.time()
-            elif (self.vlv_status == G_LOCKCLOSED):
-                self.vlv_lock_time = time.time()
-            elif (self.vlv_status == G_ERROR):
-                self.vlv_error_time = time.time()
-            elif (self.vlv_status == G_UNKNOWN):
-                self.vlv_update_time = time.time()
+            # if (self.vlv_status == G_OPEN):
+            #     self.vlv_open_time = time.time()
+            # elif (self.vlv_status == G_CLOSED):
+            #     self.vlv_close_time = time.time()
+            # elif (self.vlv_status == G_LOCKOPEN):
+            #     self.vlv_lock_time = time.time()
+            # elif (self.vlv_status == G_LOCKCLOSED):
+            #     self.vlv_lock_time = time.time()
+            # elif (self.vlv_status == G_ERROR):
+            #     self.vlv_error_time = time.time()
+            # elif (self.vlv_status == G_UNKNOWN):
+            #     self.vlv_update_time = time.time()
 
 
         self.vlv_prevstatus = self.vlv_status
@@ -355,11 +356,12 @@ class Valve():
     def close(self):
         logtxt = self.vlv_name +" "
         status_text = "Close"
-        self.vlv_close_time = time.time()
 
         try:
-            self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name)
-            self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+            # if time.time() >= (self.vlv_close_time+ 2*float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_MANAGER_LOOP_TIMEOUT"))): #Dont clear alarm right away. give time to notification manager
+            #     self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name)
+            #     self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+            #     self.vlv_last_sev1_alert_time = time.time()
 
             # if To avoid misleading logs. Valve will be closed regardless
             if self.vlv_manual_mode == True and self.auto_force_close_valve == False:
@@ -385,6 +387,7 @@ class Valve():
                 logtxt = logtxt + "close() Auto "
                 log.debug(logtxt)
 
+            self.vlv_close_time = time.time()
             self.triggerValve("close")
             self.vlv_last_cmd_trigger_time=time.time()
             self.vlv_manual_mode = False #reset manual mode to false
@@ -418,7 +421,7 @@ class Valve():
 
         try:
             if (cmd == "open"):
-                self.vlv_open_time = time.time()
+                #self.vlv_open_time = time.time()
                 if (self.vlv_force_lock):
                     logtxt = logtxt + "Trigger valve open refused because of Manual Override"
                 else:
@@ -428,7 +431,7 @@ class Valve():
                         valve_cmd = self.usbConnectHandler.LOW
                     self.vlv_status=G_OPEN
             elif cmd == "close":
-                self.vlv_close_time = time.time()
+                #self.vlv_close_time = time.time()
                 self.vlv_manual_mode = False #Manual Mode disbaled by close
                 if self.valve_properties["TimeProperties"]["reverse_hi_low"] == "False":
                     valve_cmd = self.usbConnectHandler.LOW

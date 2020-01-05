@@ -345,7 +345,7 @@
       "text": "Config Fault detected",
       "workaround": "Check mitzon.log !"
     },
-        "VO001": {
+      "VO001": {
       "deviceType": "Valve",
       "severity": "1",
       "category": "VALVE_OPEN",

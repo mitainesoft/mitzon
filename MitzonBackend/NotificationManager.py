@@ -134,7 +134,7 @@ class NotificationManager(metaclass=SingletonMeta):
 
             # mmmsg = MIMEMultipart()
             mmmsg = MIMEText(msg, 'plain')
-            mmmsg['Subject'] = "Alerte Garage %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
+            mmmsg['Subject'] = "Alerte Garage et Gazon %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
             mmmsg['From'] = ("%s <%s>" % (user_name, sender))
             mmmsg['To'] = COMMASPACE.join(mmrecipients)
 

@@ -263,7 +263,7 @@ if __name__ == '__main__':
         'disable_existing_loggers': False,
         'formatters': {
             'void': {
-                'format': ''
+                'format': 'void %(asctime)s %(name)s: %(message)s'
             },
             'standard': {
                 'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'

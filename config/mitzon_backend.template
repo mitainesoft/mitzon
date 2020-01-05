@@ -97,16 +97,12 @@ TimeBetweenButtonManualPressed=2
 TimeBeforeAutoRetryClose=10
 
 #ValveOpenTriggerWarningElapsedTime
-# defaul=45001 (45min)   test=60
-ValveOpenTriggerWarningElapsedTime=60
+# defaul=2700 (45min)   test=60
+ValveOpenTriggerWarningElapsedTime=
 
 #ValveOpenTriggerCriticalElapsedTime
-# defaul=60002 (45min)   test=120
+# defaul=3000 (48min)   test=120
 ValveOpenTriggerCriticalElapsedTime=120
-
-#ValveOpenManualAllowedTime
-# default ValveOpenManualAllowedTime=7200
-ValveOpenManualAllowedTime = 60
 
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3
@@ -280,6 +276,7 @@ CONFIG_FILE_REV=[MITAINESOFT_MITZON_REVISION]
 ALERT_DEFINITION_FILE=config/event_list.json
 VALVE_CONFIG_DEFINITION_FILE=config/valves_config.json
 
+#Change log severity intervals to 0 for more debug messages
 LOG_SEVERITY1_REPEAT_INTERVAL=60
 LOG_SEVERITY2_REPEAT_INTERVAL=300
 LOG_SEVERITY3_REPEAT_INTERVAL=900
