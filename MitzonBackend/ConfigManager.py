@@ -13,7 +13,7 @@ log = logging.getLogger('Garage.ConfigManager')
 class ConfigManager(metaclass=SingletonMeta):
 
     def __init__(self):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         log.debug("Started...")
         self.configfilename="config/mitzon_backend.config"
         self.config = configparser.ConfigParser()

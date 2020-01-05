@@ -20,7 +20,7 @@ log = logging.getLogger('Valve.Valve')
 class Valve():
 
     def __init__(self,valve_name,usbConnectHandler):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
 
@@ -154,7 +154,7 @@ class Valve():
         return status_text
 
     def determineValveOpenClosedStatus(self):
-        log.debug("Valve Determine Status called !")
+        #log.debug("Valve Determine Status called !")
         valve_status_text=self.vlv_name+":"+self.vlv_status
         logstr=""
         do_print_status=False
@@ -296,6 +296,7 @@ class Valve():
         try:
             status_text = "ManualOpen"
             self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+            self.addAlert("VO003", self.vlv_name, " Manually opened")
             self.vlv_manualopen_time=time.time()
             self.vlv_open_time = time.time()
             self.vlv_manual_mode = True
@@ -317,10 +318,10 @@ class Valve():
         status_text="Open"
         self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
         try:
+            self.vlv_open_time=time.time()
             if self.vlv_force_lock == False:
                 if (self.vlv_status  == G_CLOSED ):
                     if time.time() > self.vlv_next_manual_cmd_allowed_time:
-                        # status_text+=" open. Trigger valve door !"
                         self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name)
                         self.triggerValve("open")
                         status_text=self.addAlert("VTO01", self.vlv_name)
@@ -354,6 +355,7 @@ class Valve():
     def close(self):
         logtxt = self.vlv_name +" "
         status_text = "Close"
+        self.vlv_close_time = time.time()
 
         try:
             self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name)

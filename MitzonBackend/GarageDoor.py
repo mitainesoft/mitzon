@@ -21,7 +21,7 @@ log = logging.getLogger('Garage.GarageDoor')
 class GarageDoor():
 
     def __init__(self,garage_name,usbConnectHandler):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
 
@@ -269,9 +269,9 @@ class GarageDoor():
                 self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
                 status_text=self.addAlert("HW002", self.g_name)
                 self.g_update_time=time.time()
-            if (self.g_status == G_OPEN and self.g_open_time!=None and time.time() > (self.g_open_time+15)):
+            if self.g_status == G_OPEN and self.g_open_time!=None and time.time() > (self.g_open_time+15):
                 self.alarm_mgr_handler.clearAlertID("GTO01",self.g_name)
-            if (self.g_status.find(G_CLOSED)>=0 and self.g_close_time!=None and time.time() > (self.g_close_time+15)):
+            if self.g_status.find(G_CLOSED)>=0 and self.g_close_time!=None and time.time() > (self.g_close_time+15):
                 self.alarm_mgr_handler.clearAlertID("GTC01",self.g_name)
 
         #Trigger a print status on light changes

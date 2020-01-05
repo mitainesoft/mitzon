@@ -271,11 +271,11 @@ if __name__ == '__main__':
         },
          'handlers': {
              'Garage': { #{"log/mitzon.log", maxBytes=, backupCount=20, encoding=None,delay=0, logging.handlers.RotatingFileHandler
-                'level': 'INFO',
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.FileHandler"),
                 'class': 'logging.handlers.RotatingFileHandler',
                 'formatter': 'standard',
                 'filename': 'log/mitzon.log',
-                'maxBytes': 10485760,
+                'maxBytes': 104857600,
                 'backupCount': 20,
                 'encoding': 'utf8'
             },

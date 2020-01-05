@@ -293,6 +293,10 @@ LOG_SEVERITY3_REPEAT_INTERVAL=900
 #  INFO	        20
 #  DEBUG	    10
 #  NOTSET	    0
+
+#Level that will go to file. No a Mitzon class.
+Garage.FileHandler=DEBUG
+
 Garage.AlertManager=INFO
 Garage.ConfigManager=INFO
 Garage.DeviceManager=INFO

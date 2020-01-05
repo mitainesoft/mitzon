@@ -19,7 +19,7 @@ log = logging.getLogger('Garage.GarageManager')
 class GarageManager():
 
     def __init__(self):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         log.info("GarageManager Starting")
         self.garage_manager_start_time=time.time()
         self.config_handler = ConfigManager()

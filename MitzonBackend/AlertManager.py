@@ -20,7 +20,7 @@ log = logging.getLogger('Garage.AlertManager')
 
 class AlertManager(metaclass=SingletonMeta):
     def __init__(self):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         self.notif_handler = NotificationManager()
         self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")
@@ -186,10 +186,16 @@ class AlertManager(metaclass=SingletonMeta):
             if (crazyloop>=clmax):
                 os._exit(clmax)
         except StopIteration:
-            log.debug(rc+" End of List. StopIteration! (1)")
+            logtxt = "1-OK! StopIteration traceback:" + str(traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+        except RuntimeError:
+            logtxt = "1-OK! RuntimeError traceback:" + str(traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+            # expected dictionary changed size during iteration
         except Exception:
-            # traceback.print_exc()
-            log.debug("Alarm List empty Exception!")
+            #traceback.print_exc()
+            logtxt = "1-Exception traceback:" + str(traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.error(logtxt)
 
         return rc
 
@@ -225,10 +231,18 @@ class AlertManager(metaclass=SingletonMeta):
             if (crazyloop >= clmax):
                 os._exit(clmax)
         except StopIteration:
-            log.debug(rc + " End of List. StopIteration! (2)")
+            logtxt = "2-OK! StopIteration traceback:" + str(traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+        except RuntimeError:
+            logtxt = "2-OK! RuntimeError traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+            # expected dictionary changed size during iteration
         except Exception:
             # traceback.print_exc()
-            log.debug("Alarm List empty Exception!")
+            logtxt = "2-Exception traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.error(logtxt)
 
         return rc
 
@@ -257,11 +271,21 @@ class AlertManager(metaclass=SingletonMeta):
                 keyalert = keyiter.__next__()
             if (crazyloop >= clmax):
                 os._exit(clmax)
+
         except StopIteration:
-            log.debug("End of List. StopIteration! (3)")
+            logtxt = "3-OK! StopIteration traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+        except RuntimeError:
+            logtxt = "3-OK! RuntimeError traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+            # expected dictionary changed size during iteration
         except Exception:
             # traceback.print_exc()
-            log.debug("Alarm List empty Exception!")
+            logtxt = "3-Exception traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.error(logtxt)
 
         return rc
 
@@ -294,10 +318,19 @@ class AlertManager(metaclass=SingletonMeta):
                 log.fatal("Too many alerts ! Die !")
                 os._exit(clmax)
         except StopIteration:
-            log.debug("End of List. StopIteration! (4)")
+            logtxt = "4-OK! StopIteration traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+        except RuntimeError:
+            logtxt = "4-OK! RuntimeError traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+            # expected dictionary changed size during iteration
         except Exception:
             # traceback.print_exc()
-            log.debug("Alarm List empty Exception!")
+            logtxt = "4-Exception traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.error(logtxt)
 
         return rc
 
@@ -335,11 +368,20 @@ class AlertManager(metaclass=SingletonMeta):
                 alertlisttxt=alertlisttxt[:-1]
             else:
                 alertlisttxt = "Alertlist=None"
-            log.debug("processDeviceCommand Alarm List empty StopIteration!")
+            logtxt = "5-OK! StopIteration traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+        except RuntimeError:
+            logtxt = "5-OK! RuntimeError traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.debug(logtxt)
+            # expected dictionary changed size during iteration
         except Exception:
             # traceback.print_exc()
-            log.error("processDeviceCommand Alarm List empty Exception! Should not be here !")
-        #self.tid,self.module,self.device,self.status,self.text
+            logtxt = "5-Exception traceback:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.error(logtxt)
+
         resp = CommmandQResponse(time.time() * 1000000,"[AlertManager]","","",alertlisttxt )
         # resp = CommmandQResponse(time.time() * 1000000, "[DeviceManager] "+self.determineGarageDoorOpenClosedStatus().getRspPropsToString())
 

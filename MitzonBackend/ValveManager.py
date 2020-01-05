@@ -19,7 +19,7 @@ log = logging.getLogger('Valve.ValveManager')
 class ValveManager():
 
     def __init__(self):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         log.info("ValveManager Starting")
         self.valve_manager_start_time=time.time()
         self.config_handler = ConfigManager()
@@ -35,6 +35,8 @@ class ValveManager():
         self.vlv_add_alert_time_by_type = {}  #Key is Alert type, data is time()
         self.error_message_count = 0
         self.valve_last_info_log = {} #use as heart beat !
+        self.last_schedule_process_time = {} #Avoid closing the valve at every loop
+        self.last_alert_closed_sev3_checkvalvepolicy = {} #Avoid closing the valve at every loop
 
         self.default_language=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "DEFAULT_LANGUAGE")
 
@@ -50,6 +52,9 @@ class ValveManager():
             f.close()
             for keysv in self.valvesConfigJSON:
                 self.valve_last_info_log[keysv] = time.time() + float(self.config_handler.getConfigParam("VALVE_MANAGER","VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
+                self.last_schedule_process_time[keysv] = time.time() #Initial time for schedule
+                self.last_alert_closed_sev3_checkvalvepolicy[keysv] = time.time() - float(
+                    self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL")) #Initial time for schedule
         except IOError:
             log.error("Config file " + self.valveconfigfilename + " does not exist ! ")
             log.error("Exiting...")
@@ -73,7 +78,8 @@ class ValveManager():
 
             if time.time() > (self.valve_manager_start_time+60):
                 if cherrypy.engine.state == cherrypy.engine.states.STARTED:
-                    log.debug("Cherrypy Web Server Thread Running")
+                    if i%1000==0:
+                        log.debug("Cherrypy Web Server Thread Running")
                     self.cherryweb_server_last_run_time = time.time()
                 else:
                     log.error("Cherrypy Web Server Thread Dead")
@@ -87,7 +93,8 @@ class ValveManager():
                         status_text = self.addAlert("SW001", "RASPBERRY_PI")
                         log.error(status_text)
             else:
-                log.debug("Cherrypy Web server thread monitoring off for 1 min after ValveManager thread startup")
+                if i % 5 == 0:
+                    log.debug("Cherrypy Web server thread monitoring off for 1 min after ValveManager thread startup")
 
             for key in self.deviceList:
                 sensor_status_str = ""
@@ -97,7 +104,7 @@ class ValveManager():
                     obj.determineValveOpenClosedStatus()
                     self.ScheduleValve(obj)
                     self.checkValvePolicy(obj)
-                    if log.isEnabledFor(logging.DEBUG) or i % 100000 == 0:
+                    if log.isEnabledFor(logging.DEBUG) and i % 10000 == 0:
                         tmplog = "%s Device: %s" % (obj.get_vlv_name(), obj.get_serialdevicename())
                         log.info(tmplog)
                 # else:
@@ -107,7 +114,7 @@ class ValveManager():
 
             self.alarm_mgr_handler.processAlerts()
 
-            if log.isEnabledFor(logging.DEBUG) or i%10000==0 or time.time() > (lastlogprint+float(self.config_handler.getConfigParam("VALVE_MANAGER","VALVE_DISPLAY_ALL_STATUS_INTERVAL"))):
+            if i%10000==0 or time.time() > (lastlogprint+float(self.config_handler.getConfigParam("VALVE_MANAGER","VALVE_DISPLAY_ALL_STATUS_INTERVAL"))):
                 log.info("** valveManager heart beat %d **" % (i))
                 lastlogprint = time.time()
                 self.dev_manager_handler.listDevices()
@@ -140,55 +147,71 @@ class ValveManager():
     def ScheduleValve(self,vlv: Valve ):
         logtxt = "ScheduleValve: " + vlv.vlv_name +" "
         logtxt2 = logtxt
-        log.debug(logtxt)
+
         now = datetime.datetime.now()
         motime = "null"
 
-        #debug messages & events handling start
-        if vlv.vlv_manualopen_time != None:
-            motime=datetime.datetime.fromtimestamp(vlv.vlv_manualopen_time).strftime("%Y%m%d-%H%M%S")
-
-            if time.time() < (vlv.vlv_manualopen_time +60):
-                logtxt = logtxt + "Skip Scheduler. Manual mode too recent. "
-                log.debug(logtxt)
+        try:
+            if time.time() < (self.last_schedule_process_time[vlv.vlv_name] + 60):
+                # logtxt = logtxt +"Skip Schedule"
+                # log.debug(logtxt)
                 return logtxt
+            # else:
+            #     logtxt = logtxt + "Go Schedule!"
+            #     log.debug(logtxt)
 
-
-        logtxt2 = logtxt2 +  "%sManual Force Status:%s / Last Manual Open Time:%s" % (logtxt, vlv.auto_force_close_valve,motime )
-        log.debug(logtxt2)  # debug
-
-
-        if vlv.vlv_manual_mode == True and vlv.vlv_manualopen_time != None and time.time() < (vlv.vlv_manualopen_time+float(self.config_handler.getConfigParam("VALVE_COMMON", "ValveOpenManualAllowedTime"))):
-            logtxt2 = vlv.addAlert("VO003", vlv.vlv_name, " Manually opened")
-            log.debug(logtxt2)
-            return logtxt
-        else:
-            flag = vlv.vlv_manualopen_time != None and time.time() <  (vlv.vlv_manualopen_time + float(self.config_handler.getConfigParam("VALVE_COMMON", "ValveOpenManualAllowedTime")))
-            flagtxt = "manual was NOT Expired"
-
-            if (flag):
-                flagtxt = "manual was expired"
-
-            if ( vlv.vlv_manual_mode == True):
-                logtxt = logtxt +"Manual Open/Close Auto Disabled. (" + flag +") "
+            if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
+                    self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))):
                 log.debug(logtxt)
+            self.last_schedule_process_time[vlv.vlv_name] = time.time()
+
+            # debug messages & events handling start
+            if vlv.vlv_manualopen_time != None:
+                motime=datetime.datetime.fromtimestamp(vlv.vlv_manualopen_time).strftime("%Y%m%d-%H%M%S")
+
+                if time.time() < (vlv.vlv_manualopen_time +60):
+                    logtxt = logtxt + "Skip Scheduler. Manual mode too recent. "
+                    log.debug(logtxt)
+                    return logtxt
+
+
+            logtxt2 = logtxt2 +  "%sManual Force Status:%s / Last Manual Open Time:%s" % (logtxt, vlv.auto_force_close_valve,motime )
+            log.debug(logtxt2)  # debug
+
+
+            if vlv.vlv_manual_mode == True and vlv.vlv_manualopen_time != None and time.time() < (vlv.vlv_manualopen_time+float(self.config_handler.getConfigParam("VALVE_COMMON", "ValveOpenManualAllowedTime"))):
+                #logtxt2 = vlv.addAlert("VO003", vlv.vlv_name, " Manually opened")
+                logtxt2 = logtxt2 + "Manually opened"
+                log.debug(logtxt2)
                 return logtxt
+            else:
+                flag = vlv.vlv_manualopen_time != None and time.time() <  (vlv.vlv_manualopen_time + float(self.config_handler.getConfigParam("VALVE_COMMON", "ValveOpenManualAllowedTime")))
+                flagtxt = "manual was NOT Expired"
 
-            #vlv.vlv_manual_mode = False
-        #debug messages & events handling end
+                if (flag):
+                    flagtxt = "manual was expired"
+
+                if ( vlv.vlv_manual_mode == True):
+                    logtxt = logtxt +"Manual Open/Close Auto Disabled. (" + flagtxt +") "
+                    log.debug(logtxt)
+                    return logtxt
+
+                #vlv.vlv_manual_mode = False
+            #debug messages & events handling end
 
 
-        tmpstartdatetime = now.strftime("%Y%m%d") +"-"
-        if vlv.auto_force_close_valve == True:
-            #Skip scheduling
-            try:
+            tmpstartdatetime = now.strftime("%Y%m%d") +"-"
+            if vlv.auto_force_close_valve == True:
+                #Skip scheduling
                 logtxt = logtxt + " auto_force_close_valve enabled. Skip Scheduling."
+                log.debug(logtxt)
                 vlv.vlv_manual_mode = False
                 vlv.triggerValve("close")
                 vlv.close()
                 return logtxt
-            except Exception:
-                vlv.addAlert("SW002", vlv.vlv_name," Error force closing")
+        except Exception:
+            vlv.addAlert("SW002", vlv.vlv_name," Error force closing")
+            raise Exception("Bloc Messages & events or Auto Force Close")
             return
 
         try:
@@ -225,20 +248,27 @@ class ValveManager():
                         logtxt2 = logtxt2 + " Turn VALVE_OFF"
                         valve_enable = valve_enable | False
 
-
-                    logtxt2 = logtxt2 + " [s="+start_datetime_str2 + ", e="+end_datetime_str2+"] "
-                    log.debug(logtxt2)
+                    if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
+                            self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))):
+                        logtxt2 = logtxt2 + " [s="+start_datetime_str2 + ", e="+end_datetime_str2+"] "
+                        log.debug(logtxt2)
 
                 if (valve_enable):
-                    #vlv.triggerValve("open")
-                    vlv.open()
-                    logtxt = logtxt +"Open "+ logtxtvalvetimetrigger
+                    if vlv.vlv_status != G_OPEN:
+                        vlv.open()
+                        logtxt = logtxt +"Open "+ logtxtvalvetimetrigger
+                    else:
+                        logtxt = logtxt + "Already Open " + logtxtvalvetimetrigger
                 else:
-                    #vlv.triggerValve("close")
-                    vlv.close()
-                    logtxt = logtxt + "Closed"
+                    if vlv.vlv_status != G_CLOSED:
+                        vlv.close()
+                        logtxt = logtxt + "Closed"
+                    else:
+                        logtxt = logtxt + "Already Closed"
 
-                log.debug(logtxt)
+                if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
+                        self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))):
+                    log.debug(logtxt)
 
             else:
                 logtxt=logtxt+" not defined in " + self.valveconfigfilename
@@ -247,23 +277,29 @@ class ValveManager():
         except Exception:
             traceback.print_exc()
             vlv.auto_force_close_valve = True
+            vlv.vlv_manual_mode = False
             self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
             self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
             status_text = vlv.addAlert("SW002", vlv.vlv_name, logtxt)
             vlv.vlv_last_alert_time = time.time()
             log.error(status_text)
 
-        #Display Status at fixed interval
+            #Do all to close!
+            vlv.triggerValve("close")
+            vlv.close()
+
+        # Display Status at fixed interval
         if vlv.vlv_status != G_CLOSED and time.time() > self.valve_last_info_log[vlv.vlv_name]:
-            #limit number of logs !
+            # limit number of logs !
             log.info(logtxt)
-            self.valve_last_info_log[vlv.vlv_name] = time.time() + float(self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
+            self.valve_last_info_log[vlv.vlv_name] = time.time() + float(
+                self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
 
 
 
 #Valve policy should take precedence over schedule in case something goes wrong
     def checkValvePolicy(self,vlv: Valve ):
-        logtxt = " check Valve Policy: " + vlv.vlv_name
+        logtxt = " check Valve Policy: " + vlv.vlv_name +" "
 
         try:
 
@@ -275,6 +311,7 @@ class ValveManager():
             opentimehw = refopentime + float(self.ValveHardwareResponseTime)
             opentimecritical = refopentime + float(self.ValveOpenTriggerCriticalElapsedTime)
             opentimewarning = refopentime  + float(self.ValveOpenTriggerWarningElapsedTime)
+            
             event_active_time = refopentime  + float(30) #Alarm hardocoded 30 sec
 
 
@@ -317,7 +354,7 @@ class ValveManager():
                         #self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
                         #self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
                         if (time.time() > vlv.vlv_last_alert_time \
-                            +  float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY2_REPEAT_INTERVAL"))):  # 2 min hardcoded
+                            +  float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY2_REPEAT_INTERVAL"))):
                             log.warning(logtxt)
                         status_text = vlv.addAlert("VO002", vlv.vlv_name)
                         vlv.vlv_last_alert_time = time.time()
@@ -331,12 +368,13 @@ class ValveManager():
                         logtxt = logtxt + " " + tmpstr
                 log.debug(logtxt)
             if vlv.vlv_status == G_CLOSED:
-                if time.time() < event_active_time: #reduce load, dont clear forever
+                self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
+                self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
+                if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name]+float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))): #reduce load, dont clear forever
                     logtxt = logtxt + "G_CLOSED clearAlertDevice VALVE_COMMAND VALVE_OPEN"
                     log.debug(logtxt)
-                    self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
-                    self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
                     vlv.vlv_last_alert_time = time.time()
+                    self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] = time.time()
         except Exception:
             traceback.print_exc()
             vlv.auto_force_close_valve=True
