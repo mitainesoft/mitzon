@@ -127,26 +127,6 @@ class ValveManager():
             i=i+1
         pass
 
-    #Warpper for add alert
-    def addAlertWrap(self, id, device,extratxt=""):
-        self.vlv_last_alert_time = time.time()
-        status_text="Wrapper request for Alert %s %s %s" %(id, device,extratxt)
-
-
-        if (id in self.gm_add_alert_time_by_type):
-            lastalerttime = self.vlv_add_alert_time_by_type[id]
-            if ( time.time() >(lastalerttime+self.seconds_between_alerts)):
-                self.gm_add_alert_time_by_type.remove(id)
-                log.info("%s can now be sent again for %s!" %(id,device))
-            else:
-                log.debug("Skip %s" % status_text)
-        else:
-            self.gm_add_alert_time_by_type[id]=time.time()
-            status_text = self.alarm_mgr_handler.addAlert(id, device, extratxt)
-            log.warning(status_text)
-
-        return status_text
-
     #Schedule valvle method
     def ScheduleValve(self,vlv: Valve ):
         logtxt = "ScheduleValve: " + vlv.vlv_name +" " + vlv.vlv_status +" "
@@ -429,30 +409,3 @@ class ValveManager():
 
         return status_text
 
-    def addAlertDeprecated(self, id, device,extratxt=""):
-        self.vlv_last_alert_time = time.time()
-        status_text="request for Alert %s %s %s" %(id, device,extratxt)
-
-        try:
-            if (id in self.vlv_add_alert_time_by_type):
-                lastalerttime = self.vlv_add_alert_time_by_type[id]
-                if ( time.time() >(lastalerttime+self.seconds_between_alerts)):
-                    try:
-                        del self.vlv_add_alert_time_by_type[id]
-                    except KeyError:
-                        pass
-
-                    log.info("%s can now be sent again for %s!" %(id,device))
-                else:
-                    log.debug("Skip %s" % status_text)
-            else:
-                self.vlv_add_alert_time_by_type[id]=time.time()
-                status_text = self.alarm_mgr_handler.addAlert(id, device, extratxt)
-                log.warning(status_text)
-        except Exception:
-            traceback.print_exc()
-            logtxt = "ValveManager AddAlert Exception:" + str(
-                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
-            log.error(logtxt)
-
-        return status_text

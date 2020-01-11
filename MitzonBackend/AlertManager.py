@@ -136,7 +136,13 @@ class AlertManager(metaclass=SingletonMeta):
         try:
             alert_text = device + " " + self.alertFileListJSON[self.default_language][id]["text"]+" "+extratxt
             keyalert=id+"_"+device
-            self.alertCurrentList[keyalert] = self.Alert(id,device,self.alertFileListJSON[self.default_language][id]["severity"],
+
+            if keyalert in self.alertCurrentList:
+                logtxt="addAlert Duplicate "+id+" " + device + " (" + extratxt+")"
+                log.error(logtxt)
+            else:
+                log.debug("Add Alert Queue: " + id + ">" + alert_text)
+                self.alertCurrentList[keyalert] = self.Alert(id,device,self.alertFileListJSON[self.default_language][id]["severity"],
                                                          self.alertFileListJSON[self.default_language][id]["category"],
                                                          self.alertFileListJSON[self.default_language][id]["text"],
                                                          self.alertFileListJSON[self.default_language][id]["workaround"],
@@ -146,7 +152,6 @@ class AlertManager(metaclass=SingletonMeta):
             log.error(alert_text)
             os._exit(-1)
 
-        log.debug("Add Alert Queue: " + id+">"+alert_text)
         return alert_text
 
     def clear(self):
