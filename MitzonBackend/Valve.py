@@ -164,20 +164,6 @@ class Valve():
             self.vlv_update_time = time.time()
             do_print_status = True
 
-            # if (self.vlv_status == G_OPEN):
-            #     self.vlv_open_time = time.time()
-            # elif (self.vlv_status == G_CLOSED):
-            #     self.vlv_close_time = time.time()
-            # elif (self.vlv_status == G_LOCKOPEN):
-            #     self.vlv_lock_time = time.time()
-            # elif (self.vlv_status == G_LOCKCLOSED):
-            #     self.vlv_lock_time = time.time()
-            # elif (self.vlv_status == G_ERROR):
-            #     self.vlv_error_time = time.time()
-            # elif (self.vlv_status == G_UNKNOWN):
-            #     self.vlv_update_time = time.time()
-
-
         self.vlv_prevstatus = self.vlv_status
         if (do_print_status == True):
             self.printStatus()
@@ -296,7 +282,7 @@ class Valve():
     def manualopen(self):
         try:
             status_text = "ManualOpen"
-            self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+            self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name,"called from manualopen()")
             self.addAlert("VO003", self.vlv_name, " Manually opened")
             self.vlv_manualopen_time=time.time()
             self.vlv_open_time = time.time()
@@ -316,14 +302,15 @@ class Valve():
         #return resp
 
     def open(self):
+
         status_text="Open"
-        self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+        self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name, "from open()")
         try:
             self.vlv_open_time=time.time()
             if self.vlv_force_lock == False:
                 if (self.vlv_status  == G_CLOSED ):
                     if time.time() > self.vlv_next_manual_cmd_allowed_time:
-                        self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name)
+                        self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", self.vlv_name,"from open() / "+self.printStatus(True))
                         self.triggerValve("open")
                         status_text=self.addAlert("VTO01", self.vlv_name)
                         self.vlv_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("VALVE_COMMON", "TimeBetweenButtonManualPressed"))
@@ -374,7 +361,7 @@ class Valve():
                 else:
                     # Closing to often. closing anyways. Could indicate a GUI bug !
                     #if self.vlv_status != G_CLOSED and time.time() > (self.vlv_start_time+30):
-                    self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name)
+                    self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name,"from close()")
                     status_text = self.addAlert("VTC02", self.vlv_name, "Bug?")
 
                 if self.vlv_status != G_OPEN:
@@ -458,7 +445,7 @@ class Valve():
 
 
 
-    def printStatus(self):
+    def printStatus(self, silent=False):
         logstr = "%s:%s " % (self.vlv_name, self.vlv_status)
 
 
@@ -488,10 +475,13 @@ class Valve():
             printlast = "None"
         try:
             logstr = logstr + "updte=" + printut + " opn=" + printot + " clse=" + printct + " mopn="+printmot+" err=" + printerrt + " Alert=" + printlast
-            log.info(logstr)
+            if silent == False:
+                log.info(logstr)
         except Exception:
             log.error("Time Stamp print error ?!?  print to stdout ")
             print(logstr)
+
+        return logstr
 
     def getAllLightStatus(self):
         all_light_status = ""

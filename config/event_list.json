@@ -121,7 +121,7 @@
     },
     "VO002": {
       "deviceType": "Valve",
-      "severity": "2",
+      "severity": "1",
       "category": "VALVE_OPEN",
       "text": "Open Warning",
       "workaround": "Close the valve!"
@@ -354,7 +354,7 @@
     },
     "VO002": {
       "deviceType": "Valve",
-      "severity": "2",
+      "severity": "1",
       "category": "VALVE_OPEN",
       "text": "Attention, robinet ouvert!",
       "workaround": "Fermez le robinet!"
@@ -587,7 +587,7 @@
     },
     "VO002": {
       "deviceType": "Valve",
-      "severity": "2",
+      "severity": "1",
       "category": "VALVE_OPEN",
       "text": "Attention, robinette ouverte mule!",
       "workaround": "Grouille de fermer la robinette mule! l'enchanteur la fermera sous peu!"

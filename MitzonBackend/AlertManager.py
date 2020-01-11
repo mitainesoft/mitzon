@@ -160,7 +160,7 @@ class AlertManager(metaclass=SingletonMeta):
         self.alertCurrentList.clear()
         log.warning("All Alerts cleared!")
 
-    def clearAlertDevice(self,cat,dev):
+    def clearAlertDevice(self,cat,dev,extratxt=""):
         rc="Clear alert request " + cat + " for " + dev
         log.debug(rc)
 
@@ -170,7 +170,7 @@ class AlertManager(metaclass=SingletonMeta):
         try:
             keyalert = keyiter.__next__()
             while keyalert != None and crazyloop<clmax:
-                tmptxt="%d>Alert Key=%s %d" %(crazyloop,keyalert,keyiter.__sizeof__())
+                tmptxt="%d>Alert Key=%s %d (%s)" %(crazyloop,keyalert,keyiter.__sizeof__(),extratxt)
                 log.debug(tmptxt)
                 crazyloop += 1
                 if dev == self.alertCurrentList[keyalert].device and cat==self.alertCurrentList[keyalert].category:
@@ -180,7 +180,7 @@ class AlertManager(metaclass=SingletonMeta):
                     self.alertCurrentList[keyalert].id, self.alertCurrentList[keyalert].device, \
                     self.alertCurrentList[keyalert].severity, self.alertCurrentList[keyalert].category,
                     self.alertCurrentList[keyalert].text, altime)
-                    log.debug("Clear alert " + cat + " for " + dev + "-->" + txt)
+                    log.debug("Clear alert " + cat + " for " + dev + "-->" + txt + " "+ extratxt)
                     del self.alertCurrentList[keyalert]
                 keyalert = keyiter.__next__()
             if (crazyloop>=clmax):

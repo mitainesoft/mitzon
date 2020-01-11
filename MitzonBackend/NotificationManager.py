@@ -9,6 +9,7 @@ from MitzonBackend.Constants import *
 from MitzonBackend.ConfigManager import ConfigManager
 from MitzonBackend.CommandQResponse import *
 from MitzonBackend.ConfigManager import ConfigManager
+from GarageUtil import *
 import time
 import datetime
 from time import sleep
@@ -83,14 +84,16 @@ class NotificationManager(metaclass=SingletonMeta):
         pass
 
     def isAlertSentTooRecently(self, alertid, device, language=""):
-        self.g_last_alert_time = time.time()
+        #self.g_last_alert_time = time.time()
         alert_sent_too_rencently=False
         key_email_recent=alertid+"_"+device+"_"+language
-        status_text = "check if email for %s %s %s (%s)" % (alertid, device, language,key_email_recent)
+        status_text = "check if email sent too recently for %s %s %s (%s)" % (alertid, device, language,key_email_recent)
         log.debug(status_text)
+        add_alert_time_by_typeTxt=""
 
         if (key_email_recent in self.g_add_alert_time_by_type):
             lastalerttime = self.g_add_alert_time_by_type[key_email_recent]
+            add_alert_time_by_typeTxt = GarageUtil.getDateTimeFormated(self,lastalerttime) +"(exists)"
             if time.time() > (lastalerttime + self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL):
                 try:
                     #del self.g_add_alert_time_by_type[key_email_recent]
@@ -107,8 +110,13 @@ class NotificationManager(metaclass=SingletonMeta):
             #Email not duplicate
             alert_sent_too_rencently = False
             self.g_add_alert_time_by_type[key_email_recent] = time.time()
+            add_alert_time_by_typeTxt = GarageUtil.getDateTimeFormated(self,self.g_add_alert_time_by_type[key_email_recent])
             log.debug("email related to %s %s NOT a duplicate (time between=%ds)" % (alertid, device,self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL))
+        logtxt = "isAlertSentTooRecently "+GarageUtil.getTrueFalseStr(self,alert_sent_too_rencently)+" "+key_email_recent \
+                                  + " alert_time_by_type=" + add_alert_time_by_typeTxt +"("+alertid+")"
 
+
+        log.debug(logtxt)
         return alert_sent_too_rencently
 
     def send_email(self, sender, recipients, msg):
@@ -203,9 +211,9 @@ class NotificationManager(metaclass=SingletonMeta):
 
                     if alsev in self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "NOTIFICATION_ALERT_SEVERITY_FILTER"):
                         alertfiltertrigger = True
-                        log.debug("Accept notif by filter %s" % (id))
+                        log.debug("Accept notif by filter %s %s %s" % (id, device, alsev))
                     else:
-                        log.debug("Skip notif low severity %s" % (id))
+                        log.debug("Skip notif low severity %s %s %s" % (id,device, alsev))
                         keyalert = keyiter.__next__()
 
                     nbrnotif_recipient += 1
@@ -235,12 +243,12 @@ class NotificationManager(metaclass=SingletonMeta):
                 traceback.print_exc()
                 os._exit(-1)
 
-            if (alertfiltertrigger):
+            if (alertfiltertrigger == True):
                 #notif_text = "Msg from: " + sender + "\n\n" + alertlisttxt
                 notif_text = "Attention!\n\n" + alertlisttxt
                 self.notifQueue.put(self.Notif(sender, recipients, notif_text, time.time()))
                 log.debug("Notif added to queue for " + recipients + " <<<" + notif_text + ">>>")
             else:
                 log.debug("Skip notif message, no high sev !")
-        log.debug("Send %d email notifications..." % nbrnotif)
+        log.debug("addNotif Send %d email notifications... (alertfiltertrigger:%s)" % (nbrnotif,GarageUtil.getTrueFalseStr(self,alertfiltertrigger)))
         return

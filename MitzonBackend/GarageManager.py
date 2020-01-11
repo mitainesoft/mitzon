@@ -140,8 +140,8 @@ class GarageManager():
                     if time.time() > opentimefinal:
                         # " GARAGE OPEN TIME EXPIRED ALERT"
                         #status_text = gd.g_name + " " + self.alarm_magr_handler.alertTable["G0001"]["text"]
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name," from checkGaragePolicy() G_OPEN opentimefinal")
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name, " from checkGaragePolicy() G_OPEN opentimefinal")
                         status_text = gd.addAlert("GO001", gd.g_name)
                         gd.g_last_alert_time = time.time()
                         log.debug(status_text)
@@ -170,8 +170,8 @@ class GarageManager():
                     elif time.time() > opentimewarning:
                         # status_text = gd.g_name + " GARAGE OPEN TIME WARNING ALERT"
                         # self.alarm_magr_handler.addAlert(CommmandQResponse(0, status_text))
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name," from checkGaragePolicy() G_OPEN opentimewarning")
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name, " from checkGaragePolicy() G_OPEN opentimewarning")
                         status_text = gd.addAlert("GO002", gd.g_name)
                         gd.g_last_alert_time = time.time()
                         log.debug(status_text)
@@ -186,8 +186,8 @@ class GarageManager():
             if (gd.g_status == G_LOCKOPEN):
                 #Alert in this case every GarageLockOpenTriggerAlarmElapsedTime
                 if (gd.g_lock_time!=None and time.time() > (gd.g_lock_time + float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageLockOpenTriggerAlarmElapsedTime")))):
-                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name)
-                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name)
+                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", gd.g_name, "from checkGaragePolicy() G_LOCKOPEN")
+                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", gd.g_name," from checkGaragePolicy() G_LOCKLOPEN")
                     status_text = gd.addAlert("GLO01", gd.g_name)
                     gd.startLightFlash('WHITE')
                     gd.startLightFlash('RED')

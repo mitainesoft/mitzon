@@ -161,7 +161,7 @@ class GarageDoor():
                         # self.stopLightFlash('GREEN')
                         for sensorkey in self.g_sensor_props:
                             sensordevname = self.g_name + "_" + sensorkey
-                            self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname)
+                            self.alarm_mgr_handler.clearAlertDevice("SENSOR", sensordevname,"from determineGarageDoorOpenClosedStatus")
                         self.nbrfault=0
                         self.g_sensor_error_time=None
                 else:
@@ -226,7 +226,7 @@ class GarageDoor():
                 # self.g_auto_force_ignore_garage_open_close_cmd = False
                 self.g_close_time = time.time()
                 # Clear all alarms when all sensors are OK since garage is closed.
-                self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name,"from determineGarageDoorOpenClosedStatus()")
                 self.alarm_mgr_handler.clearAlertID("GLO01", self.g_name)
                 self.alarm_mgr_handler.clearAlertID("HW002", self.g_name)
                 for sensorkey in self.g_sensor_props:
@@ -266,7 +266,7 @@ class GarageDoor():
                 and self.g_manual_force_lock_garage_open_close_cmd == False \
                 and time.time() > (self.g_last_cmd_sent_time + float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange")))\
                 and self.g_last_cmd_trigger_time > (self.g_update_time+float(self.config_handler.getConfigParam("GARAGE_COMMON", "GarageElapsedTimeForStatusChange"))):
-                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name,"determineGarageDoorOpenClosedStatus() before HW002")
                 status_text=self.addAlert("HW002", self.g_name)
                 self.g_update_time=time.time()
             if self.g_status == G_OPEN and self.g_open_time!=None and time.time() > (self.g_open_time+15):
@@ -390,13 +390,13 @@ class GarageDoor():
 
     def open(self):
         status_text="Open"
-        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name,"from open() 1")
         try:
             if self.g_manual_force_lock_garage_open_close_cmd == False:
                 if (self.g_status  == G_CLOSED ):
                     if time.time() > self.g_next_manual_cmd_allowed_time:
                         # status_text+=" open. Trigger garage door !"
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name)
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_OPEN", self.g_name,"from open() 2")
                         self.triggerGarageDoor()
                         status_text=self.addAlert("GTO01", self.g_name)
                         self.g_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBetweenButtonManualPressed"))
@@ -435,18 +435,18 @@ class GarageDoor():
                 if (self.g_status == G_OPEN and self.g_manual_force_lock_garage_open_close_cmd == False):
                     if time.time() > self.g_next_manual_cmd_allowed_time:
                         # close. Trigger garage door !
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name,"from close() 1")
                         status_text = self.addAlert("GTC01", self.g_name)
                         self.triggerGarageDoor()
                         self.g_next_manual_cmd_allowed_time = time.time() + float(self.config_handler.getConfigParam("GARAGE_COMMON", "TimeBetweenButtonManualPressed"))
                         # self.startLightFlash('RED')
                     else:
                         # status_text += "close denied. Too early to retry!"
-                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                        self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name,"from close() 2")
                         status_text = self.addAlert("GTC02", self.g_name)
                 else:
                     # status_text += "close denied. current status is " + self.g_status
-                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name)
+                    self.alarm_mgr_handler.clearAlertDevice("GARAGE_COMMAND", self.g_name, "from close() 3")
                     status_text = self.addAlert("GTC03", self.g_name,self.g_status)
             self.g_last_cmd_trigger_time=time.time()
 

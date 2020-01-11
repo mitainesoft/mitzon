@@ -309,7 +309,7 @@ class ValveManager():
 
 #Valve policy should take precedence over schedule in case something goes wrong
     def checkValvePolicy(self,vlv: Valve ):
-        logtxt = " check Valve Policy: " + vlv.vlv_name +" "
+        logtxt = " checkValvePolicy: " + vlv.vlv_name +" "
         tmpstr =""
 
         try:
@@ -343,7 +343,7 @@ class ValveManager():
 
                 if (vlv.vlv_open_time != None): #Is there an open time stamp ?
                     if time.time() > opentimecritical:
-                        logtxt = logtxt + " Open Time Critical Exceeded "
+                        logtxt = logtxt + " Open Time Exceeded "
                         log.debug(logtxt)
                         # self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
                         # self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
@@ -365,7 +365,7 @@ class ValveManager():
                         self.last_schedule_process_time[vlv.vlv_name] = time.time() + 90
                         vlv.close()
                     elif time.time() > opentimewarning:
-                        logtxt = logtxt + " Open Time Warning Exceeded!"
+                        logtxt = logtxt + " Open Time Warning!"
                         log.debug(logtxt)
                         #self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
                         #self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
@@ -393,8 +393,8 @@ class ValveManager():
                 if time.time() >= (vlv.vlv_close_time + 2 * float(
                         self.config_handler.getConfigParam("NOTIFICATION_MANAGER",
                                                            "NOTIFICATION_MANAGER_LOOP_TIMEOUT"))):  # Dont clear alarm right away. give time to notification manager
-                    self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name)
-                    self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name)
+                    self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name, logtxt+" G_CLOSED")
+                    self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name, logtxt+" G_CLOSED")
                     logtxt = logtxt + " G_CLOSED clearAlertDevice VALVE_COMMAND VALVE_OPEN events"
 
                     if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name]+float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))): #reduce load, dont clear forever
@@ -414,6 +414,22 @@ class ValveManager():
             os._exit(-1)
 
     def addAlert(self, id, device,extratxt=""):
+        self.vlv_last_alert_time = time.time()
+        status_text="request for Alert %s %s %s" %(id, device,extratxt)
+
+        try:
+            self.vlv_add_alert_time_by_type[id]=time.time()
+            status_text = self.alarm_mgr_handler.addAlert(id, device, extratxt)
+            log.warning(status_text)
+        except Exception:
+            traceback.print_exc()
+            logtxt = "ValveManager AddAlert Exception:" + str(
+                traceback.format_list(traceback.extract_stack())) + "    sys.excInfo:" + str(sys.exc_info())
+            log.error(logtxt)
+
+        return status_text
+
+    def addAlertDeprecated(self, id, device,extratxt=""):
         self.vlv_last_alert_time = time.time()
         status_text="request for Alert %s %s %s" %(id, device,extratxt)
 
