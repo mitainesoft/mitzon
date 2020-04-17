@@ -362,7 +362,7 @@ class Valve():
                     # Closing to often. closing anyways. Could indicate a GUI bug !
                     #if self.vlv_status != G_CLOSED and time.time() > (self.vlv_start_time+30):
                     self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", self.vlv_name,"from close()")
-                    status_text = self.addAlert("VTC02", self.vlv_name, "Bug?")
+                    status_text = self.addAlert("VTC02", self.vlv_name, "from close()")
 
                 if self.vlv_status != G_OPEN:
                     #                         and time.time() > (self.vlv_start_time+30): #hard coded msg, dont wan to see on startup
