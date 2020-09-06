@@ -236,43 +236,43 @@
 Outputs in main mitzon Backend console
 
 
- curl --cacert /opt/mitainesoft/security/mitainesoftsvr.pem  -X POST -d '' https://192.168.1.83:8050/mitzonDoor/status/0
+ curl --cacert /opt/mitainesoft/security/mitainesoftsvr.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
 
 
 
     a) Test Status
-    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/status/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
 
     b) Test Open Close
-    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/open/0
-    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/close/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
 
     c) Test lock/Unlock
-    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/lock/0
-    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/close/0
-    curl -X POST -d '' https://192.168.1.83:8050/mitzonDoor/open/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/lock/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
 
 
 
     f) Test Status
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/status/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
 
     g) Test Open Close
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/open/0
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
 
     h) Test lock/Unlock
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/lock/0
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/close/0
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
 
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/lock/0
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/close/0
-    curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/open/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
 
 
  d)Test Relay
-curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
+curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 
 
@@ -931,7 +931,7 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
 
 ** test **
     #/root/ca/ is root only
-    sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/mitzonDoor/status/0
+    sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
 
 
     *** Test for Verify return code: 0 (ok) ***
@@ -1184,10 +1184,8 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
 
 
 6.2 Make build
-    #open Linux terminal on mitzon raspberry pi 
-    su - root
-    iptables --list
-    iptables --flush
+'''
+
     #Merge code from development PC!
     su - [git user]
     cd /git/mitzon
@@ -1197,14 +1195,6 @@ curl -X POST -d '' http://192.168.1.83:8050/mitzonDoor/testRelay/2
     python3 setup.py sdist
     #Package is under dist
 
-    #restore iptables
-    su - root
-    iptables-restore  </etc/iptables-mitzon.rule
-    #Check iptables rules list
-    iptables --list
-
-
-7. HW
 
 a) Raspberry Temperature Overheat !
 

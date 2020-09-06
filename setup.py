@@ -159,7 +159,7 @@ setuptools.setup(
     python_requires='~=3.3',
     author='mitainesoft',
     author_email='mitainesoft@gmail.com',
-    description='Monitor and Control Sprinklers & Garage Door',
+    description='Monitor and Control Sprinkler Valves & Garage Door',
     long_description='Supervise mitzon door opening. Generate Alarms if required.  Allow remote open. Security via certificates and other fireall options. SCRUM board: https://github.com/mitainesoft/mitzon/projects',
     platforms='Raspberry PI armv7l GNU/Linux 4.9.28-v7+',
 )

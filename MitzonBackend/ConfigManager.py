@@ -13,15 +13,15 @@ log = logging.getLogger('Garage.ConfigManager')
 class ConfigManager(metaclass=SingletonMeta):
 
     def __init__(self):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         log.debug("Started...")
         self.configfilename="config/mitzon_backend.config"
         self.config = configparser.ConfigParser()
         self.configSections = []
         self.NBR_GARAGE=0 #Calculated value
         self.GARAGE_NAME = [] # ["GARAGE_0", "GARAGE_1", "GARAGE_2", "GARAGE_3"]
-        self.NBR_SPRINKLER=0 #Calculated value
-        self.SPRINKLER_NAME = [] # ["SPRINKLER_0", "SPRINKLER_1", "SPRINKLER_2", "SPRINKLER_3"]
+        self.NBR_VALVE=0 #Calculated value
+        self.VALVE_NAME = [] # ["VALVE_0", "VALVE_1", "VALVE_2", "VALVE_3"]
 
 
     def setConfigFileName(self,filename):
@@ -41,7 +41,7 @@ class ConfigManager(metaclass=SingletonMeta):
             self.configSections=self.config.sections()
             for keySections in self.configSections:
                 if ("GARAGE_" in keySections):
-                    matchObj=re.match("GARAGE_\d",keySections,2)
+                    matchObj=re.match("GARAGE_\d+",keySections,2)
                     if matchObj:
                         if (self.getConfigParam(keySections, "SuperviseThisDevice").upper() == "TRUE"):
                             self.GARAGE_NAME.append(keySections)
@@ -52,17 +52,17 @@ class ConfigManager(metaclass=SingletonMeta):
                     else:
                         log.debug("config file, not garage: " + keySections + "...Skipping" )
 
-                if ("SPRINKLER_" in keySections):
-                    matchObj = re.match("SPRINKLER_\d", keySections, 2)
+                if ("VALVE_" in keySections):
+                    matchObj = re.match("VALVE_\d+", keySections, 2)
                     if matchObj:
                         if (self.getConfigParam(keySections, "SuperviseThisDevice").upper() == "TRUE"):
-                            self.SPRINKLER_NAME.append(keySections)
-                            self.NBR_SPRINKLER += 1
-                            log.info("Found Sprinkler in config:" + keySections + " (" + self.NBR_SPRINKLER.__str__() + ")")
+                            self.VALVE_NAME.append(keySections)
+                            self.NBR_VALVE += 1
+                            log.info("Found Valve in config:" + keySections + " (" + self.NBR_VALVE.__str__() + ")")
                         else:
-                            log.info("Skip Sprinkler in config:" + keySections + ". Should not supervise!")
+                            log.info("Skip Valve in config:" + keySections + ". Should not supervise!")
                     else:
-                        log.debug("config file, not Sprinkler: " + keySections + "...Skipping")
+                        log.debug("config file, not Valve: " + keySections + "...Skipping")
 
                 for key in self.config[keySections]:
                     log.info(keySections + "/" + key + " = " + self.config[keySections][key])
@@ -150,8 +150,10 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_LOG_LEVEL', 'Garage.mitzonURLCmdProcessor'],
             ['GARAGE_LOG_LEVEL', 'nanpy'],
             ['GARAGE_LOG_LEVEL', 'nanpy.serialmanager'],
+            ['GARAGE_LOG_LEVEL', 'Valve.Valve'],
+            ['GARAGE_LOG_LEVEL', 'Valve.ValveManager'],
             ['DEVICES', 'GARAGE_SERIAL_MANAGER_DEVICE'],
-            ['DEVICES', 'VALVES_SERIAL_MANAGER_DEVICE'],
+           #['DEVICES', 'VALVE_SERIAL_MANAGER_DEVICE'],
             ['SECURITY','SERVER_SOCKET_HOST'],
             ['SECURITY', 'SERVER_SOCKET_PORT'],
             ['SECURITY', 'SERVER_SSL_MODULE'],
