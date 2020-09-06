@@ -9,7 +9,7 @@ from MitzonBackend.Constants import *
 from MitzonBackend.ConfigManager import ConfigManager
 from MitzonBackend.CommandQResponse import *
 from MitzonBackend.ConfigManager import ConfigManager
-from GarageUtil import *
+from MitzonBackend.GarageUtil import *
 import time
 import datetime
 from time import sleep
