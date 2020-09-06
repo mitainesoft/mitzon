@@ -209,6 +209,7 @@ DEFAULT_LANGUAGE=Fr
 SMTP_SERVER=smtp.Xmail.com
 USER=myEmail@gmail.com
 EMAIL_SENDER_NAME=myEmailName
+#Generate app Password for PASSWORD
 PASSWORD=myPassword
 
 

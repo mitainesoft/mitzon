@@ -156,7 +156,6 @@ class NotificationManager(metaclass=SingletonMeta):
             traceback.print_exc()
             log.error("Unable to send email notification ! open ports for DNS and emails on firewall ? Check README.rst  ")
             self.email_server.close()
-            os._exit(10)
 
     def addNotif(self, alert_current_list):
         nbrnotif = 0;
@@ -241,7 +240,7 @@ class NotificationManager(metaclass=SingletonMeta):
             except Exception:
                 log.error("Exception during email processing")
                 traceback.print_exc()
-                os._exit(-1)
+                #os._exit(-1)
 
             if (alertfiltertrigger == True):
                 #notif_text = "Msg from: " + sender + "\n\n" + alertlisttxt
