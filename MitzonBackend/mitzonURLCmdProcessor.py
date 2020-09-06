@@ -16,6 +16,7 @@ from MitzonBackend.GarageDoor import GarageDoor
 from MitzonBackend.AlertManager import AlertManager
 from MitzonBackend.DeviceManager import DeviceManager
 from MitzonBackend.GarageManager import GarageManager
+from MitzonBackend.ValveManager import ValveManager
 from MitzonBackend.NotificationManager import NotificationManager
 from queue import *
 from threading import Thread
@@ -29,6 +30,8 @@ import json
 log = logging.getLogger('Garage.mitzonURLCmdProcessor')
 
 garage_manager_handler = None #GarageManager()
+valve_manager_handler = None #ValveManager()
+
 notification_manager_handler = None
 
 @cherrypy.expose
@@ -260,7 +263,7 @@ if __name__ == '__main__':
         'disable_existing_loggers': False,
         'formatters': {
             'void': {
-                'format': ''
+                'format': 'void %(asctime)s %(name)s: %(message)s'
             },
             'standard': {
                 'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
@@ -268,11 +271,11 @@ if __name__ == '__main__':
         },
          'handlers': {
              'Garage': { #{"log/mitzon.log", maxBytes=, backupCount=20, encoding=None,delay=0, logging.handlers.RotatingFileHandler
-                'level': 'INFO',
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.FileHandler"),
                 'class': 'logging.handlers.RotatingFileHandler',
                 'formatter': 'standard',
                 'filename': 'log/mitzon.log',
-                'maxBytes': 10485760,
+                'maxBytes': 104857600,
                 'backupCount': 20,
                 'encoding': 'utf8'
             },
@@ -327,6 +330,17 @@ if __name__ == '__main__':
                 'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.GarageManager"),
                 'propagate': True
             },
+            'Valve.Valve': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Valve.Valve"),
+                'propagate': True
+            },
+            'Valve.ValveManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Valve.ValveManager"),
+                'propagate': True
+            },
+
             'Garage.Light': {
                 'handlers': ['Garage'],
                 'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.Light"),
@@ -408,6 +422,12 @@ if __name__ == '__main__':
                                        args=(garage_manager_handler,), name='garage_manager',
                                        daemon=True)
 
+
+        mitzon_valve_handler = ValveManager()
+        thread_valve_manager = Thread(target=ValveManager.monitor,
+                                       args=(mitzon_valve_handler,), name='valve_manager',
+                                       daemon=True)
+        
         notification_manager_handler = NotificationManager()
         thread_notification_manager = Thread(target=NotificationManager.processnotif,
                                        args=(notification_manager_handler,), name='notification_manager',
@@ -416,6 +436,7 @@ if __name__ == '__main__':
         thread_command_queue.start()
         thread_dispatcher.start()
         thread_garage_manager.start()
+        thread_valve_manager.start()
         thread_notification_manager.start()
 
         cherrypy.quickstart(garageHandler, '/',garage_backend_conf)

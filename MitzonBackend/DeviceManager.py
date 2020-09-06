@@ -1,6 +1,6 @@
 import logging
 from MitzonBackend.GarageDoor import GarageDoor
-from MitzonBackend.SprinklerControl import SprinklerControl
+from MitzonBackend.Valve import Valve
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.Sensor import Sensor
 from MitzonBackend.Light import Light
@@ -17,24 +17,24 @@ log = logging.getLogger('Garage.DeviceManager')
 
 class DeviceManager(metaclass=SingletonMeta):
     def __init__(self):
-        log.setLevel(logging.INFO)
+        #log.setLevel(logging.INFO)
         self.config_handler = ConfigManager()
         # self.deviceList=deviceList = {}
         self.deviceList = {}
         self.defaultgarage = self.config_handler.getConfigParam("GARAGE_MANAGER", "GARAGE_NAME_FOR_TEST")
-        self.defaultsprinkler = self.config_handler.getConfigParam("SPRINKLER_MANAGER", "SPRINKLER_NAME_FOR_TEST")
+        self.defaultValve = self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_NAME_FOR_TEST")
         self.mypin = int(self.config_handler.getConfigParam(self.defaultgarage, "GarageBoardPin"))
         self.usbConnectHandler = None
         self.serialdevicename="Any";
         self.connectUSB()
 
         self.createGarageObj()
-        self.createSprinklerObj()
+        self.createValveObj()
 
     def createGarageObj(self):
         # replace by config
         for garageNameKey in self.config_handler.GARAGE_NAME:
-            matchObj = re.findall(r'\d', garageNameKey, 1)
+            matchObj = re.findall(r'\d+', garageNameKey)
             garage_id = int(matchObj[0])
             logging.info(
                 'Initialize board garage_id %s ** Control Board Pin %s' % (
@@ -75,22 +75,19 @@ class DeviceManager(metaclass=SingletonMeta):
             self.deviceList[obj_key] = obj
             garage_id = garage_id + 1
 
-    def createSprinklerObj(self):
+    def createValveObj(self):
         # replace by config
-        for sprinklerNameKey in self.config_handler.SPRINKLER_NAME:
-            matchObj = re.findall(r'\d', sprinklerNameKey, 1)
-            sprinkler_id = int(matchObj[0])
+        for ValveNameKey in self.config_handler.VALVE_NAME:
+            matchObj = re.findall(r'\d+', ValveNameKey)
+            Valve_id = int(matchObj[0])
             logging.info(
-                'Initialize board sprinkler_id %s ** Control Board Pin %s' % (
-                    sprinklerNameKey, self.config_handler.getConfigParam(self.defaultsprinkler, "BoardPin")))
-            obj = SprinklerControl(sprinklerNameKey, self.usbConnectHandler)
+                'Initialize board Valve_id %s ** Control Board Pin %s' % (
+                    ValveNameKey, self.config_handler.getConfigParam(self.defaultValve, "OutBoardPin")))
+            obj = Valve(ValveNameKey, self.usbConnectHandler)
 
-            obj.turnOffLight('WHITE')
-            obj.turnOffLight('GREEN')
-            obj.turnOffLight('RED')
-            obj_key = "SprinklerControl_%d" % sprinkler_id
+            obj_key = "Valve_%d" % Valve_id
             self.deviceList[obj_key] = obj
-            sprinkler_id = sprinkler_id + 1
+            Valve_id = Valve_id + 1
 
     def connectUSB(self):
         log.info("Rapberry Arduino connection Started...")
@@ -151,6 +148,8 @@ class DeviceManager(metaclass=SingletonMeta):
                 # resp = CommmandQResponse(0, ex_text)
                 return resp
             resp = thingToCall()
+            if (resp == None):
+                resp=resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", "processDeviceCommand thingToCall is Null!" )
             log.debug("processDeviceCommand Class Resp String=%s" % resp.getRspPropsToString())
             pass
         else:
@@ -164,11 +163,12 @@ class DeviceManager(metaclass=SingletonMeta):
 
     def listDevices(self):
         devlistidx = 0
-        for key in self.deviceList:
+        for key in sorted(self.deviceList, key=lambda str: int((re.findall("\d+", str))[0])):
+        #for key in sorted(self.deviceList):
             obj = self.deviceList[key]
             sensor_status_str = ""
 
-            if isinstance(obj, GarageDoor):
+            if isinstance(obj, GarageDoor) or isinstance(obj, Valve):
                 obj.printStatus()
             else:
                 log.error("typedef %s not found!" % (obj.__class__.__name__))

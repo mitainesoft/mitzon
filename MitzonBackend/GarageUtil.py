@@ -43,4 +43,16 @@ class GarageUtil():
         return tmpbuf
 
 
+    def getDateTimeFormated(self,intime):
+        if intime != None:
+            return datetime.datetime.fromtimestamp(intime).strftime("%Y%m%d-%H%M%S")
+        else:
+            return "-"
+
+    def getTrueFalseStr(self,cond):
+        if cond == True:
+            return "True"
+        else:
+            return "False"
+
 

@@ -26,6 +26,12 @@ class CommmandQResponse():
 
     def getRspPropsToString(self):
         #Format according to module type i.e. DeviceManager or AlertManage to keep backward compatibility
+
+        if self.module == None or  self.tid == None:
+            status_text = self.addAlert("SW001", "CommmandQResponse")
+            log.error(status_text)
+            return status_text
+
         if (self.module=="[DeviceManager]"):
             retstr = "tid:%020d %s %s:%s" % (self.tid, self.module, self.device, self.status)
             pass
