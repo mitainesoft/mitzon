@@ -289,7 +289,9 @@ class Valve():
             self.vlv_manual_mode = True
             #self.triggerValve("open")
             self.open()
-
+            resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", status_text)
+            log.debug(status_text)
+            return resp
         except Exception:
             traceback.print_exc()
             logstr = "open() Valve %s Status = %s Fatal Exception" % (self.vlv_name, self.vlv_status)

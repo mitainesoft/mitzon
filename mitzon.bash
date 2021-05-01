@@ -18,7 +18,7 @@ mkdir -p /opt/mitainesoft/mitzon/log
 touch /opt/mitainesoft/mitzon/log/mitzon.log
 cd $MITAINEMITZONHOME 
 export PYTHONUNBUFFERED=1 
-export PYTHONPATH=/opt/mitainesoft/mitzon/MitzonBackend:/opt/mitainesoft/mitzon:/opt/mitainesoft/mitzon/MitzonFrontend
+export PYTHONPATH=/opt/mitainesoft/mitzon/MitzonBackend:/opt/mitainesoft/mitzon:/opt/mitainesoft/mitzon/MitzonFrontend:/usr/local/lib/python3.7/dist-packages
 export PYTHONIOENCODING=UTF-8
 
 nohup /usr/bin/python3 -u $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py&

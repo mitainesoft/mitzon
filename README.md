@@ -92,6 +92,13 @@
         sudo apt-get install git-core
 
 
+   ** Install apache2 2021 rasp pi 3 **
+   # https://www.raspberrypi.org/documentation/remote-access/web-server/apache.md
+   su -
+   apt install apache2 -y
+   
+   
+
     ** Create mitainesoft user **
         sudo adduser mitainesoft
         #Answers to questions and passwd not important

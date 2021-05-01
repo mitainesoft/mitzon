@@ -424,6 +424,13 @@ class GarageDoor():
         log.warning(status_text)
         return resp
 
+    def manualopen(self):
+        self.open()
+        status_text="manualopen"
+        resp = CommmandQResponse(time.time() * 1000000, "[MESSAGE]", "", "", status_text)
+        log.debug(status_text)
+        return resp
+
     def close(self):
         status_text = "Close"
 

@@ -245,8 +245,118 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "10",
-      "start_time": "09:01,09:12,09:23,09:34,09:45,09:56",
-      "duration": "05,05,05,05,05,05",
+      "start_time": "23:00",
+      "duration": "01",
+      "calendar": "even",
+      "maxopentime": 30,
+      "description": "Valve 10",
+      "zone": "1",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False",
+      "normally_off": "True",
+      "reverse_hi_low" : "True"
+    },
+    "WebProperties": {
+      "Color": "0x330033",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  },
+  "VALVE_11": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "id": "11",
+      "start_time": "23:01",
+      "duration": "01",
+      "calendar": "even",
+      "maxopentime": 30,
+      "description": "Valve 11",
+      "zone": "1",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False",
+      "normally_off": "True",
+      "reverse_hi_low" : "True"
+    },
+    "WebProperties": {
+      "Color": "0x330033",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  },
+  "VALVE_12": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "id": "12",
+      "start_time": "23:02",
+      "duration": "01",
+      "calendar": "even",
+      "maxopentime": 30,
+      "description": "Valve 12",
+      "zone": "1",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False",
+      "normally_off": "True",
+      "reverse_hi_low" : "True"
+    },
+    "WebProperties": {
+      "Color": "0x330033",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  },
+  "VALVE_13": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "id": "13",
+      "start_time": "23:03",
+      "duration": "01",
+      "calendar": "even",
+      "maxopentime": 30,
+      "description": "Valve 13",
+      "zone": "1",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False",
+      "normally_off": "True",
+      "reverse_hi_low" : "True"
+    },
+    "WebProperties": {
+      "Color": "0x330033",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  },
+  "VALVE_14": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "id": "14",
+      "start_time": "09:04",
+      "duration": "01",
+      "calendar": "even",
+      "maxopentime": 30,
+      "description": "Valve 14",
+      "zone": "1",
+      "rain_detector_ignore": "True",
+      "current_weather_ignore": "True",
+      "lock": "False",
+      "normally_off": "True",
+      "reverse_hi_low" : "True"
+    },
+    "WebProperties": {
+      "Color": "0x330033",
+      "ScaleMax": "60",
+      "ScaleMin": "0"
+    }
+  },
+  "VALVE_15": {
+    "TimeProperties": {
+      "deviceType": "Valve",
+      "id": "15",
+      "start_time": "09:05",
+      "duration": "01",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 10",
