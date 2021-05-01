@@ -375,7 +375,7 @@ class ValveManager():
                                                            "NOTIFICATION_MANAGER_LOOP_TIMEOUT"))):  # Dont clear alarm right away. give time to notification manager
                     self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name, logtxt+" G_CLOSED")
                     self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name, logtxt+" G_CLOSED")
-                    logtxt = logtxt + " G_CLOSED clearAlertDevice VALVE_COMMAND VALVE_OPEN events"
+                    logtxt = logtxt + " G_CLOSED. clearAlertDevice/VALVE_COMMAND/VALVE_OPEN"
 
                     if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name]+float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))): #reduce load, dont clear forever
                         log.debug(logtxt)

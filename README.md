@@ -281,7 +281,7 @@ Outputs in main mitzon Backend console
  d)Test Relay
 curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
-
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 
 4.  Enable Security on Raspberry PI Raspbian
 
