@@ -98,7 +98,7 @@ TimeBeforeAutoRetryClose=10
 
 #ValveOpenTriggerWarningElapsedTime
 # defaul=2700 (45min)   test=60
-ValveOpenTriggerWarningElapsedTime=
+ValveOpenTriggerWarningElapsedTime=60
 
 #ValveOpenTriggerCriticalElapsedTime
 # defaul=3000 (48min)   test=120
@@ -210,7 +210,7 @@ SMTP_SERVER=smtp.Xmail.com
 USER=myEmail@gmail.com
 EMAIL_SENDER_NAME=myEmailName
 #Generate app Password for PASSWORD
-PASSWORD=myPassword
+PASSWORD=myGenerateAppPasswordinGmail
 
 
 #Separate myReceivers with ,

@@ -1,5 +1,5 @@
 ###################################################################################
-# Mitainesoft mitzon (c) 2019                                                     #
+# Mitainesoft mitzon (c) 2021                                                     #
 # HW: mitzon raspberry-pi arduino                                                 #
 # Version: [MITAINESOFT_MITZON_REVISION]                                    #
 # Code: Python3 with cherrypy, nanpi                                              #
@@ -1231,16 +1231,25 @@ a) Raspberry Temperature Overheat !
 
 9. DESIGN ENV SETUP
 
+   # Use github ssh not https !!!
+   
     ** ssh key **
         1. on linux where git will installed.
         2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
         3. Enter your SSH key in https://github.com/mitainesoft in settings.
         4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
 
+      Raspberry
+      
+      # https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+      ssh-keygen -t ed25519 -C "mitainesoft@gmail.com"
+      cd /git/mitzon 
+      ssh -T git@github.com
+
 
     ** git config **
-        git config --global user.name "<your_signum>" (e.g. lmcpare, exxxxxx)
-        git config --global user.email "<your_email_address>" (as it appears in Outlook, e.g. firstname.lastname@ericsson.com)
+        git config --global user.name "mitainesoft" 
+        git config --global user.email "mitainesoft@gmail.com" 
 
 
         *** OPTIONAL? ***
@@ -1268,8 +1277,18 @@ a) Raspberry Temperature Overheat !
             git config --global core.editor "C:\Program Files (x86)\Notepad++\notepad++.exe"
 
 
+         ** prevent build_info.txt from merging **
+         cd /git/mitzon/
 
+         vi build_info.txt
+         git status
+         
+         vi .gitattributes
+            build_info.txt merge=do_not_merge
+         
+         git config --global merge.do_not_merge.driver true
 
+ 
 
 
     ** debian package **

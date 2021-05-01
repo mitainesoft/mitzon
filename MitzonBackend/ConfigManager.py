@@ -7,6 +7,8 @@ import traceback
 import sys
 import os
 import re
+from time import sleep
+
 
 log = logging.getLogger('Garage.ConfigManager')
 
