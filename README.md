@@ -1288,9 +1288,7 @@ a) Raspberry Temperature Overheat !
          
          git config --global merge.do_not_merge.driver true
 
-   
-
-
+ 
 
 
     ** debian package **
