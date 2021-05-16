@@ -1235,23 +1235,42 @@ a) Raspberry Temperature Overheat !
 
 
 
-9. DESIGN ENV SETUP
+9. DESIGN ENV SETUP GIT CONFIG SSH KEY
 
    # Use github ssh not https !!!
    
+   # ssh raspberry as pi
+   
+   
     ** ssh key **
-        1. on linux where git will installed.
-        2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
-        3. Enter your SSH key in https://github.com/mitainesoft in settings.
-        4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
+     1. on linux where git will installed.
 
-      Raspberry
-      
-      # https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-      ssh-keygen -t ed25519 -C "mitainesoft@gmail.com"
+     2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
+           
+         # https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+         ssh-keygen -t ed25519 -C "mitainesoft@gmail.com"
+         cd ~/.ssh
+         cat id_ed25519.pub
+         
+         
+     3. Enter your SSH key in https://github.com/mitainesoft in settings.
+         Select "SSH and GPG key"
+         Click New SSH Key
+         # Add key from Step 2 `cat id_ed25519.pub`
+     
+     3. Clone 
+        sudo mkdir /git
+        sudo chown pi:pi /git
+        cd /git
+        git clone git@github.com:mitainesoft/mitzon.git
+
+     
+     4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
+
+     5. Test Key 
       cd /git/mitzon 
       ssh -T git@github.com
-
+      # Hi mitainesoft! You've successfully authenticated, but GitHub does not provide shell access.
 
     ** git config **
         git config --global user.name "mitainesoft" 
