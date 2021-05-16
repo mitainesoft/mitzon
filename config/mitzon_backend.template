@@ -107,27 +107,34 @@ ValveOpenTriggerCriticalElapsedTime=120
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3
 
+# SCHEDULE_CHECK_INTERVAL_MIN = 60
+# Default every 60s
+SCHEDULE_CHECK_INTERVAL_MIN=5
 
 
 #arduino mega 2560 sensor shield v2 digital OutBoardPin
 [VALVE_0]
 SuperviseThisDevice = True
 OutBoardPin = 14
+# Uno OutBoardPin = 4
 SensorBoardPin = -1
 
 [VALVE_1]
 SuperviseThisDevice = True
 OutBoardPin = 15
+# Uno OutBoardPin = 5
 SensorBoardPin = -1
 
 [VALVE_2]
 SuperviseThisDevice = True
 OutBoardPin = 16
+# Uno OutBoardPin = 6
 SensorBoardPin = -1
 
 [VALVE_3]
 SuperviseThisDevice = True
 OutBoardPin = 17
+# Uno OutBoardPin = 7
 SensorBoardPin = -1
 
 [VALVE_4]
