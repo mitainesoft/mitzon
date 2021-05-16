@@ -157,7 +157,8 @@ class ValveManager():
     # Is this a day to run
     #################################################
     def isDayRun(self,vname,cal,idx):
-        caldx=0 #Take calendar 0 i.e. 1st element of array as default.  calendar: OFF,EVEN,WEEKDAYS,MON,EVERYDAY
+        caldx=0 #Take calendar 0 i.e. 1st element of array as default.
+        # calendar: OFF,EVEN,MONDAY,EVERYDAY
         calname="OFF"
         isdayrun=False
         dt = datetime.datetime.today()
