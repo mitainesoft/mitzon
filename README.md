@@ -25,6 +25,7 @@
 
     https://github.com/nanpy/nanpy
 
+        #In Windows
         git clone https://github.com/nanpy/nanpy-firmware.git
         cd nanpy-firmware
         ./configure.sh
@@ -89,7 +90,7 @@
         sudo apt-get update
         Install Git with apt-get in one command:
 
-        sudo apt-get install git-core
+        apt-get install git-core
 
 
    ** Install apache2 2021 rasp pi 3 **
@@ -100,13 +101,13 @@
    
 
     ** Create mitainesoft user **
-        sudo adduser mitainesoft
+         adduser mitainesoft
         #Answers to questions and passwd not important
         # Keep in mind that this user will have access to the USB port!
         # You can change later with  'sudo passwd mitainesoft'
 
     ** Add mitainesoft to dialout group
-        sudo vi /etc/group
+         vi /etc/group
 
             dialout:x:20:pi,mitainesoft
 
@@ -118,7 +119,7 @@
 
 
     ** remove pi from sudoers
-
+    visudo
         #Change line
                 pi ALL=(ALL) NOPASSWD: ALL
                 to
@@ -131,6 +132,7 @@
     mkdir -p /opt/mitainesoft/security
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
     cd /opt/mitainesoft/
+    #Add 3 pem files. see how to generate
     
 2.  Install or Upgrade mitzon packages
 
@@ -175,8 +177,10 @@
         ls -l
         #IF not done already !
         cd /var/www
-        rm html
+        mv html html.orig
         ln -s /opt/mitainesoft/mitzon/MitzonFrontend html
+        # or for dev env 
+        # ln -s  /home/pi/mitzon/MitzonFrontend/ html
 
 
     ** Fix garage start boot script
@@ -278,8 +282,15 @@ Outputs in main mitzon Backend console
     curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
 
 
- d)Test Relay
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+    d)Test Relay
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+
+   e) Valve test 2021
+      curl -k -d ''  https://192.168.1.92:8050/Valve/open/0
+      curl -k -d ''  https://192.168.1.92:8050/Valve/close/0
+      curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/0
+
+      kill -9 `pgrep -f mitzonURLCmdProcessor`
 
 curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 
@@ -1072,19 +1083,7 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 
 ** Install certificates in cherrypy web server **
 
-    Review section !
-    pyOpenSSL not working
-
-    #Install cython, takes 20mins without any indication that it is running. `ls -ltr /tmp` to monitor...
-    pip3 install cython
-
-    # already installed my pi
-    pip3 install pyOpenSSL
-
-    http://www.fcollyer.com/posts/cherrypy-only-http-and-https-app-serving/
-
-    http://docs.cherrypy.org/en/latest/deploy.html?highlight=certificate
-
+   # This is hardcoded in mitzon 
     Add the following lines in your CherryPy config to point to your certificate files:
 
         'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/mitainesoftsvr.cert.pem",
@@ -1360,6 +1359,7 @@ a) Raspberry Temperature Overheat !
     alias log='cd /opt/mitainesoft/mitzon/log'
     alias cfg='cd  /opt/mitainesoft/mitzon/config'
     alias mit='cd  /opt/mitainesoft/mitzon/'
+    alias h='history'
 
 
 Installing Node.js

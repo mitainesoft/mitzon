@@ -394,7 +394,7 @@ if __name__ == '__main__':
     logging.config.dictConfig(LOG_CONF)
 
     # Say starting and force a log rotation
-    log=logging.getLogger('Garage.mitzonURLCmdProcessor')
+    log=logging.getLogger('Mitzon.mitzonURLCmdProcessor')
     logh=logging._handlers.get('Garage')
     logh.doRollover()
     log.info("Starting Mitzon...")
