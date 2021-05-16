@@ -25,6 +25,7 @@
 
     https://github.com/nanpy/nanpy
 
+        #In Windows
         git clone https://github.com/nanpy/nanpy-firmware.git
         cd nanpy-firmware
         ./configure.sh
@@ -89,17 +90,24 @@
         sudo apt-get update
         Install Git with apt-get in one command:
 
-        sudo apt-get install git-core
+        apt-get install git-core
 
+
+   ** Install apache2 2021 rasp pi 3 **
+   # https://www.raspberrypi.org/documentation/remote-access/web-server/apache.md
+   su -
+   apt install apache2 -y
+   
+   
 
     ** Create mitainesoft user **
-        sudo adduser mitainesoft
+         adduser mitainesoft
         #Answers to questions and passwd not important
         # Keep in mind that this user will have access to the USB port!
         # You can change later with  'sudo passwd mitainesoft'
 
     ** Add mitainesoft to dialout group
-        sudo vi /etc/group
+         vi /etc/group
 
             dialout:x:20:pi,mitainesoft
 
@@ -111,7 +119,7 @@
 
 
     ** remove pi from sudoers
-
+    visudo
         #Change line
                 pi ALL=(ALL) NOPASSWD: ALL
                 to
@@ -124,6 +132,7 @@
     mkdir -p /opt/mitainesoft/security
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
     cd /opt/mitainesoft/
+    #Add 3 pem files. see how to generate
     
 2.  Install or Upgrade mitzon packages
 
@@ -168,8 +177,10 @@
         ls -l
         #IF not done already !
         cd /var/www
-        rm html
+        mv html html.orig
         ln -s /opt/mitainesoft/mitzon/MitzonFrontend html
+        # or for dev env 
+        # ln -s  /home/pi/mitzon/MitzonFrontend/ html
 
 
     ** Fix garage start boot script
@@ -271,10 +282,17 @@ Outputs in main mitzon Backend console
     curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
 
 
- d)Test Relay
-curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+    d)Test Relay
+    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
+   e) Valve test 2021
+      curl -k -d ''  https://192.168.1.92:8050/Valve/open/0
+      curl -k -d ''  https://192.168.1.92:8050/Valve/close/0
+      curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/0
 
+      kill -9 `pgrep -f mitzonURLCmdProcessor`
+
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 
 4.  Enable Security on Raspberry PI Raspbian
 
@@ -1065,19 +1083,7 @@ curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
 
 ** Install certificates in cherrypy web server **
 
-    Review section !
-    pyOpenSSL not working
-
-    #Install cython, takes 20mins without any indication that it is running. `ls -ltr /tmp` to monitor...
-    pip3 install cython
-
-    # already installed my pi
-    pip3 install pyOpenSSL
-
-    http://www.fcollyer.com/posts/cherrypy-only-http-and-https-app-serving/
-
-    http://docs.cherrypy.org/en/latest/deploy.html?highlight=certificate
-
+   # This is hardcoded in mitzon 
     Add the following lines in your CherryPy config to point to your certificate files:
 
         'cherrypy.server.ssl_certificate': "/opt/mitainesoft/security/mitainesoftsvr.cert.pem",
@@ -1229,23 +1235,42 @@ a) Raspberry Temperature Overheat !
 
 
 
-9. DESIGN ENV SETUP
+9. DESIGN ENV SETUP GIT CONFIG SSH KEY
 
    # Use github ssh not https !!!
    
+   # ssh raspberry as pi
+   
+   
     ** ssh key **
-        1. on linux where git will installed.
-        2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
-        3. Enter your SSH key in https://github.com/mitainesoft in settings.
-        4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
+     1. on linux where git will installed.
 
-      Raspberry
-      
-      # https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-      ssh-keygen -t ed25519 -C "mitainesoft@gmail.com"
+     2. Execute ssh-keygen -t rsa and accept all the default (press enter). The SSH public key will be generated in .ssh/ directory under your home directory, typically C:\Users\<username>\.ssh\id_rsa.pub on Windows.
+           
+         # https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+         ssh-keygen -t ed25519 -C "mitainesoft@gmail.com"
+         cd ~/.ssh
+         cat id_ed25519.pub
+         
+         
+     3. Enter your SSH key in https://github.com/mitainesoft in settings.
+         Select "SSH and GPG key"
+         Click New SSH Key
+         # Add key from Step 2 `cat id_ed25519.pub`
+     
+     3. Clone 
+        sudo mkdir /git
+        sudo chown pi:pi /git
+        cd /git
+        git clone git@github.com:mitainesoft/mitzon.git
+
+     
+     4. If using Git on Unix, copy keys from Windows to Unix ~/.ssh. Keys are C:\Users\<username>\.ssh\id_rsa.pub and C:\Users\<username>\.ssh\id_rsa.
+
+     5. Test Key 
       cd /git/mitzon 
       ssh -T git@github.com
-
+      # Hi mitainesoft! You've successfully authenticated, but GitHub does not provide shell access.
 
     ** git config **
         git config --global user.name "mitainesoft" 
@@ -1353,6 +1378,7 @@ a) Raspberry Temperature Overheat !
     alias log='cd /opt/mitainesoft/mitzon/log'
     alias cfg='cd  /opt/mitainesoft/mitzon/config'
     alias mit='cd  /opt/mitainesoft/mitzon/'
+    alias h='history'
 
 
 Installing Node.js

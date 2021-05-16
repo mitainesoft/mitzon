@@ -36,6 +36,9 @@ class ValveManager():
         self.error_message_count = 0
         self.valve_last_info_log = {} #use as heart beat !
         self.last_schedule_process_time = {} #Avoid closing the valve at every loop
+        self.endtime_null="19990101-00:00:00"
+        self.weekdays_name = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+        self.valve_run_end_time_dict = {} #Track end time for valve
         self.last_alert_closed_sev3_checkvalvepolicy = {} #Avoid closing the valve at every loop
         self.last_alert_open_sev3_checkvalvepolicy = {} #Avoid closing the valve at every loop
 
@@ -50,15 +53,9 @@ class ValveManager():
         try:
             f=open(self.valveconfigfilename)
             self.valvesConfigJSON=json.load(f)
+            #self.valvesConfigJSON=json.dumps(tmpcfg, indent=2, sort_keys=True)
             f.close()
-            for keysv in self.valvesConfigJSON:
-                self.valve_last_info_log[keysv] = time.time() + float(self.config_handler.getConfigParam("VALVE_MANAGER","VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
-                self.last_schedule_process_time[keysv] = time.time() #Initial time for schedule
-                self.last_alert_closed_sev3_checkvalvepolicy[keysv] = time.time() - float(
-                    self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL")) #Initial time for schedule
-                self.last_alert_open_sev3_checkvalvepolicy[keysv] = time.time() - float(
-                    self.config_handler.getConfigParam("INTERNAL",
-                                                       "LOG_SEVERITY3_REPEAT_INTERVAL"))  # Initial time for schedule
+            self.processValveConfig()
         except IOError:
             log.error("Config file " + self.valveconfigfilename + " does not exist ! ")
             log.error("Exiting...")
@@ -68,9 +65,33 @@ class ValveManager():
             log.error("Exiting...")
             os._exit(-1)
 
+    def processValveConfig(self):
+        try:
+            for keysv in sorted(self.valvesConfigJSON, key=lambda k: ["id"]):
+            #for keysv in self.valvesConfigJSON:
+                cfg_start_time = self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
+                if cfg_start_time == "PREVIOUS":
+                    self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]="00:00"
+                    cfg_start_time=self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
+                cfg_duration = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
 
 
+                log.debug("processValveConfig "+keysv +" st="+cfg_start_time+" dur="+cfg_duration)
 
+
+                self.valve_last_info_log[keysv] = time.time() + float(
+                    self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
+                self.last_schedule_process_time[keysv] = time.time()  # Initial time for schedule
+                self.last_alert_closed_sev3_checkvalvepolicy[keysv] = time.time() - float(
+                    self.config_handler.getConfigParam("INTERNAL",
+                                                       "LOG_SEVERITY3_REPEAT_INTERVAL"))  # Initial time for schedule
+                self.last_alert_open_sev3_checkvalvepolicy[keysv] = time.time() - float(
+                    self.config_handler.getConfigParam("INTERNAL","LOG_SEVERITY3_REPEAT_INTERVAL"))  # Initial time for schedule
+            #os._exit(-1)
+        except Exception:
+            traceback.print_exc()
+            log.error("Exiting...")
+            os._exit(-1)
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
         self.deviceList=self.dev_manager_handler.deviceList
@@ -127,7 +148,60 @@ class ValveManager():
             i=i+1
         pass
 
-    #Schedule valvle method
+
+    def getWeekdays(self,day):
+        i = self.weekdays_name.index(day)  # get the index of the selected day
+        return i
+
+    #################################################
+    # Is this a day to run
+    #################################################
+    def isDayRun(self,vname,cal,idx):
+        caldx=0 #Take calendar 0 i.e. 1st element of array as default.
+        # calendar: OFF,EVEN,MONDAY,EVERYDAY
+        calname="OFF"
+        isdayrun=False
+        dt = datetime.datetime.today()
+        wd = datetime.datetime.today().weekday()
+
+        cal_array = cal.split(',')
+        nbrcal =len(cal_array)
+
+        if (idx <= (nbrcal-1)):
+            calname=cal_array[idx].upper()
+        else:
+            calname=cal_array[0].upper()
+
+        if calname==None or calname == "OFF":
+            log.info(vname+" OFF")
+            isdayrun = False
+        elif calname == "EVERYDAY":
+            isdayrun = True
+        elif calname == "EVEN":
+            if dt.day % 2 == 0:
+                isdayrun = True
+        elif calname == "ODD":
+            if dt.day % 2 == 1:
+                isdayrun = True
+        elif calname in self.weekdays_name:
+            day=self.getWeekdays(calname)
+            if (day == wd):
+                isdayrun = True
+            tmplog = vname + " #" + str(idx) + " Weekday check "+calname+" day=" + str(day) + " wd=" + str(wd) + " " + str(isdayrun)
+            log.debug(tmplog)
+
+        else:
+            log.error("Unsupported Calendar Name:'" + calname+"' for "+vname)
+            isdayrun = False
+
+        tmplog = vname + " #"+str(idx)+ " isdayrun="+str(isdayrun) +" cal=" + cal + " nbr calendars="+str(nbrcal)
+        log.debug(tmplog)
+        return isdayrun
+
+
+    #################################################
+    # Schedule valvle method
+    #################################################
     def ScheduleValve(self,vlv: Valve ):
         logtxt = "ScheduleValve: " + vlv.vlv_name +" " + vlv.vlv_status +" "
         logtxt2 = logtxt
@@ -136,13 +210,9 @@ class ValveManager():
         motime = "None"
 
         try:
-            if time.time() < (self.last_schedule_process_time[vlv.vlv_name] + 60):
-                # logtxt = logtxt +"Skip Schedule"
-                # log.debug(logtxt)
-                return logtxt
-            # else:
-            #     logtxt = logtxt + "Go Schedule!"
-            #     log.debug(logtxt)
+            if time.time() < (self.last_schedule_process_time[vlv.vlv_name] + float(
+                    self.config_handler.getConfigParam("VALVE_COMMON", "SCHEDULE_CHECK_INTERVAL_MIN"))):
+                 return logtxt
 
             #last_alert_closed_sev3_checkvalvepolicy updated in check policy
             if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
@@ -155,7 +225,6 @@ class ValveManager():
             if vlv.vlv_manual_mode == True:
                 if vlv.vlv_manualopen_time != None:
                     motime=datetime.datetime.fromtimestamp(vlv.vlv_manualopen_time).strftime("%Y%m%d-%H%M%S")
-                #if time.time() < (vlv.vlv_manualopen_time + 60):
                 logtxt = logtxt + "Skip Scheduler. Manual Mode enabled "
                 log.debug(logtxt)
                 return logtxt
@@ -165,28 +234,6 @@ class ValveManager():
             if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
                     self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))):
                 log.debug(logtxt2)  # debug
-
-
-            # if vlv.vlv_manual_mode == True and vlv.vlv_manualopen_time != None and time.time() < (vlv.vlv_manualopen_time+float(self.config_handler.getConfigParam("VALVE_COMMON", "ValveOpenManualAllowedTime"))):
-            #     #logtxt2 = vlv.addAlert("VO003", vlv.vlv_name, " Manually opened")
-            #     logtxt2 = logtxt2 + "Manually opened"
-            #     log.debug(logtxt2)
-            #     return logtxt
-            # else:
-            #     flag = vlv.vlv_manualopen_time != None and time.time() <  (vlv.vlv_manualopen_time + float(self.config_handler.getConfigParam("VALVE_COMMON", "ValveOpenManualAllowedTime")))
-            #     flagtxt = "manual was NOT Expired"
-            #
-            #     if (flag):
-            #         flagtxt = "manual was expired"
-            #
-            #     if ( vlv.vlv_manual_mode == True):
-            #         logtxt = logtxt +"Manual Open/Close Auto Disabled. (" + flagtxt +") "
-            #         log.debug(logtxt)
-            #         return logtxt
-
-                #vlv.vlv_manual_mode = False
-            #debug messages & events handling end
-
 
             tmpstartdatetime = now.strftime("%Y%m%d") +"-"
             if vlv.auto_force_close_valve == True:
@@ -204,9 +251,13 @@ class ValveManager():
             return
 
         try:
+
             if vlv.vlv_name in self.valvesConfigJSON:
                 cfg_start_time = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["start_time"]
                 cfg_duration = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["duration"]
+                cfg_calendar = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["calendar"]
+
+
 
                 valve_enable=False
 
@@ -220,27 +271,36 @@ class ValveManager():
 
                 logtxtvalvetimetrigger = ""
                 for idx in range(cfg_start_time_array_len):
+
+                    isdayrun=self.isDayRun(vlv.vlv_name,cfg_calendar,idx)
+
                     logtxt2 = vlv.vlv_name + " #" +str(idx) +">" + "start_time:"+ cfg_start_time_array[idx] +" dur:" + cfg_duration_array[idx]
+                    # if (re.match(r"PREVIOUS", cfg_start_time_array[idx])):
+                    #     start_datetime_str=self.getRunEndTime(vlv.vlv_name, idx, vlv.vlv_status)
+                    # else:
                     start_datetime_str = tmpstartdatetime +  cfg_start_time_array[idx]+ ":00"   #0s to remove ambiguity
                     # logtxt = logtxt + " start_datetime #"+str(idx)+"=" + start_datetime_str
                     start_datetime =  datetime.datetime.strptime(start_datetime_str,"%Y%m%d-%H:%M:%S")
                     end_datetime = start_datetime  + datetime.timedelta(minutes=int(cfg_duration_array[idx]))
+                    start_datetime_str2=start_datetime.strftime("%Y%m%d-%H:%M:%S")
+                    end_datetime_str2 = end_datetime.strftime("%Y%m%d-%H:%M:%S")
 
-                    start_datetime_str2=start_datetime.strftime("%Y%m%d-%Hh%Mm%Ss")
-                    end_datetime_str2 = end_datetime.strftime("%Y%m%d-%Hh%Mm%Ss")
-
-                    if (now >= start_datetime and now <= end_datetime):
+                    if (isdayrun == True and now >= start_datetime and now <= end_datetime):
                         logtxt2 = logtxt2 +" Turn VALVE_ON"
                         valve_enable = valve_enable | True
                         logtxtvalvetimetrigger = logtxtvalvetimetrigger + start_datetime.strftime("%d-%Hh%Mm") + " to " + end_datetime.strftime("%d-%Hh%Mm")
                     else:
                         logtxt2 = logtxt2 + " Turn VALVE_OFF"
                         valve_enable = valve_enable | False
+                        # if vlv.vlv_status == G_OPEN: #This will be set prior to Close
+                        #     self.logRunEndTime(vlv.vlv_name, idx, end_datetime_str2,vlv.vlv_status)
 
                     if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
                             self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))):
                         logtxt2 = logtxt2 + " [s="+start_datetime_str2 + ", e="+end_datetime_str2+"] "
                         log.debug(logtxt2)
+
+                    #end for idx
 
                 if (valve_enable):
                     if vlv.vlv_status != G_OPEN:
@@ -285,9 +345,50 @@ class ValveManager():
             self.valve_last_info_log[vlv.vlv_name] = time.time() + float(
                 self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
 
+    def logRunEndTime(self,valve_name,idx,end_time,vlv_status):
+        key = valve_name + "_" + str(idx)
+        log.debug("logRunEndTime In "+ key + " end_time=" + end_time)
+        if end_time != self.endtime_null:
+            self.valve_run_end_time_dict[key]=end_time
+            log.debug("logRunEndTime:" +key +" et=" + self.valve_run_end_time_dict[key] )
+        else:
+            log.debug(key + " logRunEndTime Skip logging ")
+
+    def getRunEndTime(self, valve_name, idx, vlv_status):
+
+        found_et=False
+        end_time=self.endtime_null
+
+        ###
+        valve_name_array = valve_name.split('_')  #relies on the valve name. Could rely on id !
+        vlv_idx=str(valve_name_array[1])
+        vlv_name = valve_name_array[1]
+        i=int(vlv_idx) - 1
+        log.debug("getRunEndTime Previous VALVE_" + str(i))
+        prevlvkey="VALVE_"+str(i)+"_"+str(idx)
+        prevvlvname="VALVE_"+str(i)
+        while (i>=0):
+            prevlvkey="VALVE_"+str(i)+"_"+str(idx)
+            if prevlvkey in self.valve_run_end_time_dict:
+                #if vlv_status == G_OPEN:
+                end_time = self.valve_run_end_time_dict[prevlvkey]
+                found_et=True
+                log.debug("getRunEndTime found key="+prevlvkey+"  et="+end_time)
+            i = i -1
+
+        # logtxt = "getRunEndTime no previous run for " + key
+        # # SW102
+        # # status_text = self.addAlert("SW102", valve_name, logtxt)
+        # end_time = self.endtime_null  # Set past time to avoid run
+        # log.error(logtxt)
+        foundstr = 'Found ' if found_et else ' Not Found (yet!)'
+        log.debug("getRunEndTime: Previous Valve for " + prevlvkey + foundstr)
+        return end_time
 
 
-#Valve policy should take precedence over schedule in case something goes wrong
+
+
+    #Valve policy should take precedence over schedule in case something goes wrong
     def checkValvePolicy(self,vlv: Valve ):
         logtxt = " checkValvePolicy: " + vlv.vlv_name +" "
         tmpstr =""
@@ -375,7 +476,7 @@ class ValveManager():
                                                            "NOTIFICATION_MANAGER_LOOP_TIMEOUT"))):  # Dont clear alarm right away. give time to notification manager
                     self.alarm_mgr_handler.clearAlertDevice("VALVE_OPEN", vlv.vlv_name, logtxt+" G_CLOSED")
                     self.alarm_mgr_handler.clearAlertDevice("VALVE_COMMAND", vlv.vlv_name, logtxt+" G_CLOSED")
-                    logtxt = logtxt + " G_CLOSED clearAlertDevice VALVE_COMMAND VALVE_OPEN events"
+                    logtxt = logtxt + " G_CLOSED. clearAlertDevice/VALVE_COMMAND/VALVE_OPEN Alert."
 
                     if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name]+float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))): #reduce load, dont clear forever
                         log.debug(logtxt)
