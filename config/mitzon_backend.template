@@ -173,6 +173,14 @@ OutBoardPin = 24
 SensorBoardPin = -1
 
 
+[WEATHER_MANAGER]
+#WEATHER_MANAGER_LOOP_TIMEOUT=3600
+WEATHER_MANAGER_LOOP_TIMEOUT=3600
+
+# WEATHER_URL
+# Current weather is unreliable with 0
+#   http://wttr.in/Nominingue?0ATF
+WEATHER_URL=http://wttr.in/Nominingue?1ATF
 
 [ALERT]
 #TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
@@ -315,3 +323,4 @@ nanpy=CRITICAL
 nanpy.serialmanager=CRITICAL
 Valve.Valve=INFO
 Valve.ValveManager=INFO
+Weather.WeatherManager=INFO
