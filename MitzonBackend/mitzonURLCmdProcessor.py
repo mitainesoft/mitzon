@@ -17,6 +17,7 @@ from MitzonBackend.AlertManager import AlertManager
 from MitzonBackend.DeviceManager import DeviceManager
 from MitzonBackend.GarageManager import GarageManager
 from MitzonBackend.ValveManager import ValveManager
+from MitzonBackend.WeatherManager import WeatherManager
 from MitzonBackend.NotificationManager import NotificationManager
 from queue import *
 from threading import Thread
@@ -31,6 +32,7 @@ log = logging.getLogger('Garage.mitzonURLCmdProcessor')
 
 garage_manager_handler = None #GarageManager()
 valve_manager_handler = None #ValveManager()
+weather_manager_handler = None #WeatherManager()
 
 notification_manager_handler = None
 
@@ -361,6 +363,11 @@ if __name__ == '__main__':
                 'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Garage.mitzonURLCmdProcessor"),
                 'propagate': True
             },
+            'Weather.WeatherManager': {
+                'handlers': ['Garage'],
+                'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "Weather.WeatherManager"),
+                'propagate': True
+            },
             'nanpy': {
                 'handlers': ['Garage'],
                 'level': garageHandler.config_handler.getConfigParam("GARAGE_LOG_LEVEL", "nanpy"),
@@ -427,7 +434,13 @@ if __name__ == '__main__':
         thread_valve_manager = Thread(target=ValveManager.monitor,
                                        args=(mitzon_valve_handler,), name='valve_manager',
                                        daemon=True)
-        
+
+        mitzon_weather_handler = WeatherManager()
+        thread_weather_manager = Thread(target=WeatherManager.monitor,
+                                       args=(mitzon_weather_handler,), name='weather_manager',
+                                       daemon=True)
+
+
         notification_manager_handler = NotificationManager()
         thread_notification_manager = Thread(target=NotificationManager.processnotif,
                                        args=(notification_manager_handler,), name='notification_manager',
@@ -437,6 +450,7 @@ if __name__ == '__main__':
         thread_dispatcher.start()
         thread_garage_manager.start()
         thread_valve_manager.start()
+        thread_weather_manager.start()
         thread_notification_manager.start()
 
         cherrypy.quickstart(garageHandler, '/',garage_backend_conf)

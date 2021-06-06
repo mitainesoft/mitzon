@@ -8,6 +8,7 @@ from MitzonBackend.DeviceManager import DeviceManager
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.CommandQResponse import *
 from MitzonBackend.AlertManager import AlertManager
+from MitzonBackend.WeatherManager import *
 from time import sleep
 import time
 import datetime
@@ -24,6 +25,10 @@ class ValveManager():
         self.valve_manager_start_time=time.time()
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
+        self.weather_mgr_handler = WeatherManager()
+
+        self.isRainForecast = False
+        self.isRainForecastPrev = False
 
         self.ValveOpenTriggerCriticalElapsedTime = float(self.config_handler.getConfigParam("VALVE_COMMON","ValveOpenTriggerCriticalElapsedTime"))
         self.ValveOpenTriggerWarningElapsedTime = float(self.config_handler.getConfigParam("VALVE_COMMON","ValveOpenTriggerWarningElapsedTime"))
@@ -100,6 +105,9 @@ class ValveManager():
         lastlogprint = time.time()
 
         while (True):
+            self.isRainForecast=self.weather_mgr_handler.isRainForecasted()
+            logstr = "is Rain Forecasted Direct: " + str(self.isRainForecast)
+            log.debug(logstr)
 
             if time.time() > (self.valve_manager_start_time+60):
                 if cherrypy.engine.state == cherrypy.engine.states.STARTED:
@@ -139,13 +147,24 @@ class ValveManager():
 
             self.alarm_mgr_handler.processAlerts()
 
+
+
             if i%10000==0 or time.time() > (lastlogprint+float(self.config_handler.getConfigParam("VALVE_MANAGER","VALVE_DISPLAY_ALL_STATUS_INTERVAL"))):
                 log.info("** valveManager heart beat %d **" % (i))
                 lastlogprint = time.time()
                 self.dev_manager_handler.listDevices()
                 self.alarm_mgr_handler.status()
+
+            if self.isRainForecastPrev != self.isRainForecast:
+                #For a print on rain forecast change
+                logstr = "is Rain Forecasted: " + str(self.isRainForecast)
+                self.isRainForecastPrev = self.isRainForecast
+                log.info(logstr)
+
+
             sleep(float(self.config_handler.getConfigParam("VALVE_MANAGER","VALVE_MANAGER_LOOP_TIMEOUT")))
             i=i+1
+
         pass
 
 
@@ -256,11 +275,7 @@ class ValveManager():
                 cfg_start_time = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["start_time"]
                 cfg_duration = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["duration"]
                 cfg_calendar = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["calendar"]
-
-
-
                 valve_enable=False
-
                 cfg_start_time_array = cfg_start_time.split(',')
                 cfg_start_time_array_len=len(cfg_start_time_array)
                 cfg_duration_array = cfg_duration.split(',')
@@ -285,7 +300,7 @@ class ValveManager():
                     start_datetime_str2=start_datetime.strftime("%Y%m%d-%H:%M:%S")
                     end_datetime_str2 = end_datetime.strftime("%Y%m%d-%H:%M:%S")
 
-                    if (isdayrun == True and now >= start_datetime and now <= end_datetime):
+                    if (self.isRainForecast == False and isdayrun == True and now >= start_datetime and now <= end_datetime):
                         logtxt2 = logtxt2 +" Turn VALVE_ON"
                         valve_enable = valve_enable | True
                         logtxtvalvetimetrigger = logtxtvalvetimetrigger + start_datetime.strftime("%d-%Hh%Mm") + " to " + end_datetime.strftime("%d-%Hh%Mm")

@@ -160,7 +160,13 @@ class ConfigManager(metaclass=SingletonMeta):
             ['SECURITY', 'SERVER_SOCKET_PORT'],
             ['SECURITY', 'SERVER_SSL_MODULE'],
             ['SECURITY', 'SERVER_SSL_CERTIFICATE'],
-            ['SECURITY', 'SERVER_SSL_PRIVATE_KEY']
+            ['SECURITY', 'SERVER_SSL_PRIVATE_KEY'],
+            # WEATHER_MANAGER
+            ['WEATHER_MANAGER', 'WEATHER_MANAGER_LOOP_TIMEOUT'],
+            ['WEATHER_MANAGER', 'WEATHER_URL'],
+            ['WEATHER_MANAGER', 'WEATHER_URL_JSON'],
+            ['WEATHER_MANAGER','WEATHER_CHECK_ENABLE']
+
         ]
 
         try:

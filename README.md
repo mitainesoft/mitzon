@@ -82,6 +82,9 @@
         # https://pypi.python.org/pypi/nanpy
         pip3 install nanpy
 
+   ** Install aiohttp ** 
+        pip3 install aiohttp
+
 
     ** install git **
         Step 1 � Installing Git with APT

@@ -173,6 +173,21 @@ OutBoardPin = 24
 SensorBoardPin = -1
 
 
+[WEATHER_MANAGER]
+# Disable WEATHER_CHECK_ENABLE for garage !
+WEATHER_CHECK_ENABLE=True
+
+#WEATHER_MANAGER_LOOP_TIMEOUT=3600
+WEATHER_MANAGER_LOOP_TIMEOUT=3600
+
+# WEATHER_URL
+# Current weather is unreliable with 0
+#   http://wttr.in/yul?0ATF
+WEATHER_URL=http://wttr.in/yul?1ATF
+
+# WEATHER_URL_JSON
+#wttr.in/Nominingue?format=j1
+WEATHER_URL_JSON=http://wttr.in/yul?format=j1
 
 [ALERT]
 #TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI
@@ -315,3 +330,4 @@ nanpy=CRITICAL
 nanpy.serialmanager=CRITICAL
 Valve.Valve=INFO
 Valve.ValveManager=INFO
+Weather.WeatherManager=INFO
