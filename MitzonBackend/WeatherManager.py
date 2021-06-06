@@ -28,10 +28,11 @@ class WeatherManager(metaclass=SingletonMeta):
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
         self.cherryweb_server_last_run_time = time.time()
-        # Current weather is unreliable with 0
-        #   http://wttr.in/Nominingue?0ATF
-        self.meteo_url="http://wttr.in/Nominingue?1ATF"
+
         self.meteo_url=self.config_handler.getConfigParam("WEATHER_MANAGER", "WEATHER_URL")
+        self.meteo_url_json=self.config_handler.getConfigParam("WEATHER_MANAGER", "WEATHER_URL_JSON")
+        self.use_json_resp=True
+
         self.isRainForecast=False
 
 
@@ -65,7 +66,10 @@ class WeatherManager(metaclass=SingletonMeta):
                     log.debug("Cherrypy Web server thread monitoring off for 1 min after ValveManager thread startup")
 
             try:
-                asyncio.run(self.getWeatherFromWTTR())
+                if self.use_json_resp==True:
+                    asyncio.run(self.getJSONWeatherFromWTTR())
+                else:
+                    asyncio.run(self.getWeatherFromWTTR())
             except Exception:
                 #self.addAlert("SW002", self.__class__.__name__ , "getWeatherFromWTTR Exeption")
                 log.error("Get Weather Error!")
@@ -75,6 +79,29 @@ class WeatherManager(metaclass=SingletonMeta):
             i=i+1
         pass
 
+    async def getJSONWeatherFromWTTR(self):
+        found_rain = False
+        async with aiohttp.ClientSession() as session:
+            meteo_url = self.meteo_url_json
+            async with session.get(meteo_url) as resp:
+                meteo_json = await resp.json()
+                logstr1 = "Status:" + str(resp.status) + " Content-type:", resp.headers['content-type']
+                log.debug(logstr1)
+                logstr2=json.dumps(meteo_json)
+                log.debug(logstr2)
+                current_condition=meteo_json["current_condition"][0]["weatherDesc"][0]['value'].upper()
+                localObsDateTime =meteo_json["current_condition"][0]["localObsDateTime"]
+                if "RAIN" in current_condition:
+                    found_rain = True
+                logstr3= current_condition+ " on " + localObsDateTime
+                log.info(logstr3)
+
+        if found_rain == True:
+            self.isRainForecast = True
+        else:
+            self.isRainForecast = False
+        logstr = "is Rain Forecasted? " + str(self.isRainForecast)
+        log.info(logstr)
 
     async def getWeatherFromWTTR(self):
         found_rain=False

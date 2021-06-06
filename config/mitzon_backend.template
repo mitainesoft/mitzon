@@ -179,8 +179,12 @@ WEATHER_MANAGER_LOOP_TIMEOUT=3600
 
 # WEATHER_URL
 # Current weather is unreliable with 0
-#   http://wttr.in/Nominingue?0ATF
-WEATHER_URL=http://wttr.in/Nominingue?1ATF
+#   http://wttr.in/yul?0ATF
+WEATHER_URL=http://wttr.in/yul?1ATF
+
+# WEATHER_URL_JSON
+#wttr.in/Nominingue?format=j1
+WEATHER_URL_JSON=http://wttr.in/yul?format=j1
 
 [ALERT]
 #TimeBetweenAlerts will trigger a notif every "TimeBetweenAlerts". This affects the UI

@@ -163,7 +163,8 @@ class ConfigManager(metaclass=SingletonMeta):
             ['SECURITY', 'SERVER_SSL_PRIVATE_KEY'],
             # WEATHER_MANAGER
             ['WEATHER_MANAGER', 'WEATHER_MANAGER_LOOP_TIMEOUT'],
-            ['WEATHER_MANAGER', 'WEATHER_URL']
+            ['WEATHER_MANAGER', 'WEATHER_URL'],
+            ['WEATHER_MANAGER', 'WEATHER_URL_JSON']
 
         ]
 
