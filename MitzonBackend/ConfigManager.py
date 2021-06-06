@@ -164,7 +164,8 @@ class ConfigManager(metaclass=SingletonMeta):
             # WEATHER_MANAGER
             ['WEATHER_MANAGER', 'WEATHER_MANAGER_LOOP_TIMEOUT'],
             ['WEATHER_MANAGER', 'WEATHER_URL'],
-            ['WEATHER_MANAGER', 'WEATHER_URL_JSON']
+            ['WEATHER_MANAGER', 'WEATHER_URL_JSON'],
+            ['WEATHER_MANAGER','WEATHER_CHECK_ENABLE']
 
         ]
 
