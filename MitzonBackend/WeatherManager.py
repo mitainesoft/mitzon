@@ -104,7 +104,7 @@ class WeatherManager(metaclass=SingletonMeta):
                         log.debug(logstr2)
                         current_condition=meteo_json["current_condition"][0]["weatherDesc"][0]['value'].upper()
                         localObsDateTime =meteo_json["current_condition"][0]["localObsDateTime"]
-                        if "RAIN" in current_condition: #MIST also possible !
+                        if "RAIN" in current_condition and "POSSIBLE" not in current_condition: #MIST also possible !
                             found_rain = True
                         logstr3= current_condition+ " on " + localObsDateTime
                         log.info(logstr3)
