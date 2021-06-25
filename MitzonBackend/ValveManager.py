@@ -51,6 +51,7 @@ class ValveManager():
 
         self.valveconfigfilename=self.config_handler.getConfigParam("INTERNAL", "VALVE_CONFIG_DEFINITION_FILE")
         self.valvesConfigJSON = {}
+        self.valves_by_id = {}
         self.loadValveConfig(self.valveconfigfilename)
 
 
@@ -72,16 +73,117 @@ class ValveManager():
 
     def processValveConfig(self):
         try:
-            for keysv in sorted(self.valvesConfigJSON, key=lambda k: ["id"]):
-            #for keysv in self.valvesConfigJSON:
-                cfg_start_time = self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
-                if cfg_start_time == "PREVIOUS":
-                    self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]="00:00"
-                    cfg_start_time=self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
-                cfg_duration = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
+            valve_ordered_array=[]
+            for keysv in self.valvesConfigJSON:
+                id=self.valvesConfigJSON[keysv]["TimeProperties"]["id"]
+                self.valves_by_id[id]=keysv #hash to sort valve by id. No lamda working!
 
 
-                log.debug("processValveConfig "+keysv +" st="+cfg_start_time+" dur="+cfg_duration)
+            for id in sorted(self.valves_by_id, key=int):
+                keysv=self.valves_by_id[id]
+                valve_ordered_array.append(keysv)
+            valve_ordered_array_length=len(valve_ordered_array)
+
+            for vlvidx in range(valve_ordered_array_length):
+                keysv=valve_ordered_array[vlvidx]
+                keysvprevious = None
+                logtxt=keysv + " "
+                cfg_start_time_field = self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
+                cfg_duration_field = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
+                cfg_calendar_field  = self.valvesConfigJSON[keysv]["TimeProperties"]["calendar"]
+                previous_cfg_start_time_field = None
+                previous_cfg_duration_field = None
+                previous_cfg_calendar_field = None
+                previous_cfg_duration_field_array = None
+                previous_cfg_duration_field_array_len = 0
+                previous_cfg_calendar_field_array = None
+                previous_cfg_calendar_field_array_len = 0
+                previous_flag = False
+
+
+                if cfg_start_time_field == "PREVIOUS":
+                    previous_flag = True
+                    logtxt = " PREVIOUS keyword found."
+                    log.info(logtxt)
+
+                    if vlvidx == 0:
+                        log.error(keysv + " Cannot be set to previous with id")
+                        log.error(keysv + "Config error for cfg_start_time in " + self.valveconfigfilename)
+                        os._exit(-1)
+
+                    keysvprevious = valve_ordered_array[vlvidx - 1]
+                    previous_cfg_start_time_field = self.valvesConfigJSON[keysvprevious]["TimeProperties"]["start_time"]
+                    previous_cfg_duration_field = self.valvesConfigJSON[keysvprevious]["TimeProperties"]["duration"]
+                    previous_cfg_calendar_field = self.valvesConfigJSON[keysvprevious]["TimeProperties"]["calendar"]
+                    previous_cfg_duration_field_array = previous_cfg_duration_field.split(',')
+                    previous_cfg_duration_field_array_len = len(previous_cfg_duration_field_array)
+                    previous_cfg_calendar_field_array = previous_cfg_calendar_field.split(',')
+                    previous_cfg_calendar_field_array_len = len(previous_cfg_calendar_field_array)
+                    logtxt = str(vlvidx) + ") PREVIOUS value for " + keysvprevious + " from " + keysv + " st=" + previous_cfg_start_time_field
+                    log.debug(logtxt)
+
+                if previous_flag == True:
+                    cfg_start_time_field_array = previous_cfg_start_time_field.split(',')
+                else:
+                    cfg_start_time_field_array = cfg_start_time_field .split(',')
+                cfg_start_time_field_array_len=len(cfg_start_time_field_array)
+                cfg_duration_field_array = cfg_duration_field.split(',')
+                cfg_duration_field_array_len = len(cfg_duration_field_array)
+                cfg_calendar_field_array = cfg_calendar_field.split(',')
+                cfg_calendar_field_array_len = len(cfg_calendar_field_array)
+                if (cfg_start_time_field_array_len != cfg_duration_field_array_len or cfg_start_time_field_array_len != cfg_calendar_field_array_len):
+                    # Different valve configs, only use 1st entry by default.
+                    logtxt = logtxt + " - Different valve configs, only use 1st entry by default.. start_time, calendar or duration array len unequal (" + str(cfg_start_time_field_array_len) \
+                             + "/"+str(cfg_duration_field_array_len) + "/"+str(cfg_calendar_field_array_len) +") "
+                    log.warning(logtxt)
+
+                if (cfg_start_time_field_array_len<=0 or cfg_duration_field_array_len<=0):
+                    logtxt = logtxt + "start_time & duration array len unequal (" + str(cfg_start_time_field_array_len) + "/"+str(cfg_duration_field_array_len) \
+                             + "/"+str(cfg_calendar_field_array_len) +") "
+                    raise Exception(logtxt)
+
+                logtxt2 = keysv + " " +" previous_flag:" + str(previous_flag)
+                logtxt2 =  " cfg_start_time_field:" + cfg_start_time_field + " cfg_duration_field:"+str(cfg_duration_field) + " cfg_calendar_field:" +cfg_calendar_field
+                for idx in range(cfg_start_time_field_array_len): #Look in json field separated by commas
+                    cfg_start_time = cfg_start_time_field_array[idx]
+                    if idx > 0:
+                        if (cfg_duration_field_array_len-1)<idx:
+                            cfg_duration = 0
+                            cfg_duration_field = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
+                            cfg_duration_field = cfg_duration_field + ",0"
+                            cfg_duration_field_array = cfg_duration_field.split(',')
+                            cfg_duration_field_array_len = len(cfg_duration_field_array)
+                            self.valvesConfigJSON[keysv]["TimeProperties"]["duration"] = cfg_duration_field
+                        else:
+                            cfg_duration = cfg_duration_field_array[idx]
+
+                        if (cfg_calendar_field_array_len-1)<idx:
+                            cfg_calendar = "OFF"
+                    else:
+                        cfg_duration = cfg_duration_field_array[idx]
+                    if previous_flag == True:
+                        # If previous start time is previous + duration
+                        if previous_cfg_duration_field_array_len == cfg_start_time_field_array_len:
+                            previous_cfg_duration = previous_cfg_duration_field_array[idx]
+                        else:
+                            previous_cfg_duration = 0
+                            log.error("previous_flag=True with previous_cfg_duration_array len > idx")
+                        now = datetime.datetime.now()
+                        tmpstartdatetime = now.strftime("%Y%m%d") + "-"
+                        start_datetime_str = tmpstartdatetime + cfg_start_time + ":00"  # 0s to remove ambiguity
+                        logtxt = logtxt + " start_datetime #"+str(idx)+"=" + start_datetime_str
+                        log.debug(logtxt)
+                        start_datetime_init = datetime.datetime.strptime(start_datetime_str, "%Y%m%d-%H:%M:%S")
+                        start_datetime = start_datetime_init + datetime.timedelta(minutes=int(previous_cfg_duration))
+                        start_datetime_str = start_datetime.strftime("%H:%M")
+                        if idx > 0:
+                            start_datetime_str = self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"] + ","+start_datetime_str
+
+                        self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]=start_datetime_str
+
+                    cfg_start_time_field=self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
+                    cfg_duration_field = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
+                    log.debug(str(idx)+">processValveConfig "+keysv +" st="+cfg_start_time_field+" dur="+cfg_duration_field+" id="+id)
 
 
                 self.valve_last_info_log[keysv] = time.time() + float(
@@ -97,6 +199,18 @@ class ValveManager():
             traceback.print_exc()
             log.error("Exiting...")
             os._exit(-1)
+
+        log.info("*** Valve config summary ***")
+        for vlvidx in range(valve_ordered_array_length):
+            #Print summary
+            keysv=valve_ordered_array[vlvidx]
+            cfg_start_time_field = self.valvesConfigJSON[keysv]["TimeProperties"]["start_time"]
+            cfg_duration_field = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
+            cfg_calendar_field  = self.valvesConfigJSON[keysv]["TimeProperties"]["calendar"]
+            logtxt = keysv + " start_time:" + cfg_start_time_field + "  duration:" + str(cfg_duration_field) + " calendar:" + cfg_calendar_field
+            log.info(logtxt)
+        os._exit(-1)
+
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
         self.deviceList=self.dev_manager_handler.deviceList
