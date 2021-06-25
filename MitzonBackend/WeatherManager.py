@@ -33,7 +33,7 @@ class WeatherManager(metaclass=SingletonMeta):
         self.meteo_check=self.config_handler.getConfigParam("WEATHER_MANAGER", "WEATHER_CHECK_ENABLE")
         self.meteo_url=self.config_handler.getConfigParam("WEATHER_MANAGER", "WEATHER_URL")
         self.meteo_url_json=self.config_handler.getConfigParam("WEATHER_MANAGER", "WEATHER_URL_JSON")
-        self.use_json_resp=True
+        self.use_json_resp=False
 
         self.isRainForecast=False
 

@@ -222,7 +222,7 @@ class ValveManager():
             logtxt = keysv + " start_time:" + cfg_start_time_field + "  duration:" + str(cfg_duration_field) + " calendar:" + cfg_calendar_field
             log.info(logtxt)
             emailstr = emailstr + logtxt +"\n"
-
+        #os._exit(-1)
         try:
             self.notif_mgr_handler.send_email(self.email_sender, self.email_recipient,emailstr,emailsub)
         except Exception:
@@ -406,6 +406,7 @@ class ValveManager():
                 cfg_start_time = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["start_time"]
                 cfg_duration = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["duration"]
                 cfg_calendar = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["calendar"]
+                cfg_current_weather_ignore = self.valvesConfigJSON[vlv.vlv_name]["TimeProperties"]["current_weather_ignore"]
                 valve_enable=False
                 cfg_start_time_array = cfg_start_time.split(',')
                 cfg_start_time_array_len=len(cfg_start_time_array)
@@ -426,7 +427,12 @@ class ValveManager():
                     start_datetime_str2=start_datetime.strftime("%Y%m%d-%H:%M:%S")
                     end_datetime_str2 = end_datetime.strftime("%Y%m%d-%H:%M:%S")
 
-                    if (self.isRainForecast == False and isdayrun == True and now >= start_datetime and now <= end_datetime):
+                    isRainForecastOverride = self.isRainForecast
+                    if self.isRainForecast==True and cfg_current_weather_ignore == "True":
+                        isRainForecastOverride=False
+                        logtxt2 = logtxt2 + " Override Rain forcast! "
+
+                    if (isRainForecastOverride == False and isdayrun == True and now >= start_datetime and now <= end_datetime):
                         logtxt2 = logtxt2 +" Turn VALVE_ON"
                         valve_enable = valve_enable | True
                         logtxtvalvetimetrigger = logtxtvalvetimetrigger + start_datetime.strftime("%d-%Hh%Mm") + " to " + end_datetime.strftime("%d-%Hh%Mm")
@@ -444,6 +450,9 @@ class ValveManager():
 
                 if (valve_enable):
                     if vlv.vlv_status != G_OPEN:
+                        if self.isRainForecast == True and cfg_current_weather_ignore == "True":
+                            logtxtOver = vlv.vlv_name +  " Override Rain forcast, " + G_OPEN +"!"
+                            log.info(logtxtOver)
                         vlv.open()
                         logtxt = logtxt +"Open "+ logtxtvalvetimetrigger
                     else:
@@ -490,9 +499,7 @@ class ValveManager():
     def checkValvePolicy(self,vlv: Valve ):
         logtxt = " checkValvePolicy: " + vlv.vlv_name +" "
         tmpstr =""
-
         try:
-
             # This is how the open time threasholds are defined.  refopentime is there to ensure opentime non null value.
             # ------- <opentimewarning>----<opentimeredcritical>--<opentimefinal>----<opentimelightingstop>
             refopentime = time.time()
@@ -506,20 +513,6 @@ class ValveManager():
 
 
             if vlv.vlv_status == G_OPEN:  #Locked Status is LOCKOPEN ! Don't allow auto close on lock open.
-
-                # remain_time_before_next_command_allowed = vlv.vlv_next_auto_cmd_allowed_time - time.time()
-
-
-                #Unused
-                # if remain_time_before_next_command_allowed > 0:
-                #     tmpstr="checkValvePolicy %s open=%s Allowed Next_Manual_Cmd=%s Next_Auto_Cmd=%s --> Remain=%d sec"  % (vlv.vlv_name, \
-                #                                                                                     datetime.datetime.fromtimestamp(vlv.vlv_open_time).strftime("%Y%m%d-%H%M%S"), \
-                #                                                                                     datetime.datetime.fromtimestamp(vlv.vlv_next_manual_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
-                #                                                                                     datetime.datetime.fromtimestamp(vlv.vlv_next_auto_cmd_allowed_time).strftime("%Y%m%d-%H%M%S"), \
-                #                                                                                     remain_time_before_next_command_allowed)
-                #     if (int(time.time())%10==0  ):
-                #             log.debug(tmpstr )
-
                 if (vlv.vlv_open_time != None): #Is there an open time stamp ?
                     if time.time() > opentimecritical:
                         logtxt = logtxt + " Open Time Exceeded "
