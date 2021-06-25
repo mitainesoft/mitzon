@@ -119,7 +119,7 @@ class NotificationManager(metaclass=SingletonMeta):
         log.debug(logtxt)
         return alert_sent_too_rencently
 
-    def send_email(self, sender, recipients, msg):
+    def send_email(self, sender, recipients, msg, subject = None):
         try:
             COMMASPACE = ', '
             mmrecipients = recipients.split(',')
@@ -142,7 +142,10 @@ class NotificationManager(metaclass=SingletonMeta):
 
             # mmmsg = MIMEMultipart()
             mmmsg = MIMEText(msg, 'plain')
-            mmmsg['Subject'] = "Alerte Garage et Gazon %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
+            if subject == None:
+                mmmsg['Subject'] = "Alerte Garage et Gazon %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
+            else:
+                mmmsg['Subject'] = "Alerte Garage et Gazon %s " % (subject)
             mmmsg['From'] = ("%s <%s>" % (user_name, sender))
             mmmsg['To'] = COMMASPACE.join(mmrecipients)
 

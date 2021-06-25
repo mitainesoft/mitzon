@@ -8,6 +8,7 @@ from MitzonBackend.DeviceManager import DeviceManager
 from MitzonBackend.ConfigManager import *
 from MitzonBackend.CommandQResponse import *
 from MitzonBackend.AlertManager import AlertManager
+from MitzonBackend.NotificationManager import NotificationManager
 from MitzonBackend.WeatherManager import *
 from time import sleep
 import time
@@ -25,6 +26,10 @@ class ValveManager():
         self.valve_manager_start_time=time.time()
         self.config_handler = ConfigManager()
         self.alarm_mgr_handler = AlertManager()
+        self.notif_mgr_handler = NotificationManager()
+        self.email_sender = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER")
+        self.email_recipient = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION","RECIPIENTLISTINFO")
+
         self.weather_mgr_handler = WeatherManager()
 
         self.isRainForecast = False
@@ -104,7 +109,7 @@ class ValveManager():
                 if cfg_start_time_field == "PREVIOUS":
                     previous_flag = True
                     logtxt = " PREVIOUS keyword found."
-                    log.info(logtxt)
+                    log.debug(logtxt)
 
                     if vlvidx == 0:
                         log.error(keysv + " Cannot be set to previous with id")
@@ -133,9 +138,9 @@ class ValveManager():
                 cfg_calendar_field_array_len = len(cfg_calendar_field_array)
                 if (cfg_start_time_field_array_len != cfg_duration_field_array_len or cfg_start_time_field_array_len != cfg_calendar_field_array_len):
                     # Different valve configs, only use 1st entry by default.
-                    logtxt = logtxt + " - Different valve configs, only use 1st entry by default.. start_time, calendar or duration array len unequal (" + str(cfg_start_time_field_array_len) \
+                    logtxt = logtxt + " - Different valve configs, start_time, calendar or duration array len unequal (" + str(cfg_start_time_field_array_len) \
                              + "/"+str(cfg_duration_field_array_len) + "/"+str(cfg_calendar_field_array_len) +") "
-                    log.warning(logtxt)
+                    log.debug(logtxt)
 
                 if (cfg_start_time_field_array_len<=0 or cfg_duration_field_array_len<=0):
                     logtxt = logtxt + "start_time & duration array len unequal (" + str(cfg_start_time_field_array_len) + "/"+str(cfg_duration_field_array_len) \
@@ -148,19 +153,24 @@ class ValveManager():
                     cfg_start_time = cfg_start_time_field_array[idx]
                     if idx > 0:
                         if (cfg_duration_field_array_len-1)<idx:
-                            cfg_duration = 0
+                            # cfg_duration = 0
                             cfg_duration_field = self.valvesConfigJSON[keysv]["TimeProperties"]["duration"]
                             cfg_duration_field = cfg_duration_field + ",0"
                             cfg_duration_field_array = cfg_duration_field.split(',')
                             cfg_duration_field_array_len = len(cfg_duration_field_array)
                             self.valvesConfigJSON[keysv]["TimeProperties"]["duration"] = cfg_duration_field
-                        else:
-                            cfg_duration = cfg_duration_field_array[idx]
+                        # else:
+                        #     cfg_duration = cfg_duration_field_array[idx]
+                        if (cfg_calendar_field_array_len - 1) < idx:
+                            # cfg_calendar = 0
+                            cfg_calendar_field = self.valvesConfigJSON[keysv]["TimeProperties"]["calendar"]
+                            cfg_calendar_field = cfg_calendar_field + ",OFF"
+                            cfg_calendar_field_array = cfg_calendar_field.split(',')
+                            cfg_calendar_field_array_len = len(cfg_calendar_field_array)
+                            self.valvesConfigJSON[keysv]["TimeProperties"]["calendar"] = cfg_calendar_field
 
-                        if (cfg_calendar_field_array_len-1)<idx:
-                            cfg_calendar = "OFF"
-                    else:
-                        cfg_duration = cfg_duration_field_array[idx]
+                    # else:
+                    #     cfg_duration = cfg_duration_field_array[idx]
                     if previous_flag == True:
                         # If previous start time is previous + duration
                         if previous_cfg_duration_field_array_len == cfg_start_time_field_array_len:
@@ -200,7 +210,9 @@ class ValveManager():
             log.error("Exiting...")
             os._exit(-1)
 
-        log.info("*** Valve config summary ***")
+        emailsub = "Valve Config Summary"
+        emailstr="*** " + emailsub + " ***\n"
+        log.info(emailstr)
         for vlvidx in range(valve_ordered_array_length):
             #Print summary
             keysv=valve_ordered_array[vlvidx]
@@ -209,7 +221,16 @@ class ValveManager():
             cfg_calendar_field  = self.valvesConfigJSON[keysv]["TimeProperties"]["calendar"]
             logtxt = keysv + " start_time:" + cfg_start_time_field + "  duration:" + str(cfg_duration_field) + " calendar:" + cfg_calendar_field
             log.info(logtxt)
-        os._exit(-1)
+            emailstr = emailstr + logtxt +"\n"
+
+        try:
+            self.notif_mgr_handler.send_email(self.email_sender, self.email_recipient,emailstr,emailsub)
+        except Exception:
+            traceback.print_exc()
+            errtxt = self.email_sender + " " + self.email_recipient + " " +emailstr + " " + emailsub
+            log.error(errtxt)
+
+        #os._exit(-1)
 
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
@@ -254,10 +275,6 @@ class ValveManager():
                     if log.isEnabledFor(logging.DEBUG) and i % 10000 == 0:
                         tmplog = "%s Device: %s" % (obj.get_vlv_name(), obj.get_serialdevicename())
                         log.info(tmplog)
-                # else:
-                #     if self.error_message_count % 1000 == 0:
-                #         log.info("No Valve configured!")
-                #     self.error_message_count = self.error_message_count + 1
 
             self.alarm_mgr_handler.processAlerts()
 
@@ -306,7 +323,7 @@ class ValveManager():
             calname=cal_array[0].upper()
 
         if calname==None or calname == "OFF":
-            log.info(vname+" OFF")
+            log.debug(vname+" OFF")
             isdayrun = False
         elif calname == "EVERYDAY":
             isdayrun = True
@@ -400,13 +417,8 @@ class ValveManager():
 
                 logtxtvalvetimetrigger = ""
                 for idx in range(cfg_start_time_array_len):
-
                     isdayrun=self.isDayRun(vlv.vlv_name,cfg_calendar,idx)
-
                     logtxt2 = vlv.vlv_name + " #" +str(idx) +">" + "start_time:"+ cfg_start_time_array[idx] +" dur:" + cfg_duration_array[idx]
-                    # if (re.match(r"PREVIOUS", cfg_start_time_array[idx])):
-                    #     start_datetime_str=self.getRunEndTime(vlv.vlv_name, idx, vlv.vlv_status)
-                    # else:
                     start_datetime_str = tmpstartdatetime +  cfg_start_time_array[idx]+ ":00"   #0s to remove ambiguity
                     # logtxt = logtxt + " start_datetime #"+str(idx)+"=" + start_datetime_str
                     start_datetime =  datetime.datetime.strptime(start_datetime_str,"%Y%m%d-%H:%M:%S")
@@ -421,8 +433,7 @@ class ValveManager():
                     else:
                         logtxt2 = logtxt2 + " Turn VALVE_OFF"
                         valve_enable = valve_enable | False
-                        # if vlv.vlv_status == G_OPEN: #This will be set prior to Close
-                        #     self.logRunEndTime(vlv.vlv_name, idx, end_datetime_str2,vlv.vlv_status)
+
 
                     if time.time() > (self.last_alert_closed_sev3_checkvalvepolicy[vlv.vlv_name] + float(
                             self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY3_REPEAT_INTERVAL"))):
@@ -473,48 +484,6 @@ class ValveManager():
             log.info(logtxt)
             self.valve_last_info_log[vlv.vlv_name] = time.time() + float(
                 self.config_handler.getConfigParam("VALVE_MANAGER", "VALVE_DISPLAY_OPEN_STATUS_INTERVAL"))
-
-    def logRunEndTime(self,valve_name,idx,end_time,vlv_status):
-        key = valve_name + "_" + str(idx)
-        log.debug("logRunEndTime In "+ key + " end_time=" + end_time)
-        if end_time != self.endtime_null:
-            self.valve_run_end_time_dict[key]=end_time
-            log.debug("logRunEndTime:" +key +" et=" + self.valve_run_end_time_dict[key] )
-        else:
-            log.debug(key + " logRunEndTime Skip logging ")
-
-    def getRunEndTime(self, valve_name, idx, vlv_status):
-
-        found_et=False
-        end_time=self.endtime_null
-
-        ###
-        valve_name_array = valve_name.split('_')  #relies on the valve name. Could rely on id !
-        vlv_idx=str(valve_name_array[1])
-        vlv_name = valve_name_array[1]
-        i=int(vlv_idx) - 1
-        log.debug("getRunEndTime Previous VALVE_" + str(i))
-        prevlvkey="VALVE_"+str(i)+"_"+str(idx)
-        prevvlvname="VALVE_"+str(i)
-        while (i>=0):
-            prevlvkey="VALVE_"+str(i)+"_"+str(idx)
-            if prevlvkey in self.valve_run_end_time_dict:
-                #if vlv_status == G_OPEN:
-                end_time = self.valve_run_end_time_dict[prevlvkey]
-                found_et=True
-                log.debug("getRunEndTime found key="+prevlvkey+"  et="+end_time)
-            i = i -1
-
-        # logtxt = "getRunEndTime no previous run for " + key
-        # # SW102
-        # # status_text = self.addAlert("SW102", valve_name, logtxt)
-        # end_time = self.endtime_null  # Set past time to avoid run
-        # log.error(logtxt)
-        foundstr = 'Found ' if found_et else ' Not Found (yet!)'
-        log.debug("getRunEndTime: Previous Valve for " + prevlvkey + foundstr)
-        return end_time
-
-
 
 
     #Valve policy should take precedence over schedule in case something goes wrong
