@@ -134,6 +134,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['EMAIL_ACCOUNT_INFORMATION', 'email_sender_name'],
             ['EMAIL_ACCOUNT_INFORMATION', 'password'],
             ['EMAIL_ACCOUNT_INFORMATION', 'recipientlist'],
+            ['EMAIL_ACCOUNT_INFORMATION', 'recipientlistinfo'],
             ['NOTIFICATION_MANAGER', 'notification_manager_loop_timeout'],
             ['NOTIFICATION_MANAGER', 'notification_alert_severity_filter'],
             ['NOTIFICATION_MANAGER','TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL'],

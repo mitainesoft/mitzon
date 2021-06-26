@@ -1,40 +1,17 @@
 {
-  "VALVE_DEFAULT": {
-    "TimeProperties": {
-      "deviceType": "Valve",
-      "id": "999",
-      "start_time": "04:00",
-      "duration": "03",
-      "calendar": "even",
-      "maxopentime": 60,
-      "description": "default for non configured valve ",
-      "zone": "null",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
-      "lock": "False",
-      "normally_off": "True",
-      "reverse_hi_low" : "False"
-    },
-    "WebProperties": {
-      "Color": "0x000000",
-      "ScaleMax": "60",
-      "ScaleMin": "0"
-    }
-  },
   "VALVE_0": {
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "0",
-      "start_time": "01:00",
-      "duration": "8",
+      "start_time": "03:00",
+      "duration": "20",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 0",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -47,16 +24,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "1",
-      "start_time": "01:25",
-      "duration": "5",
+      "start_time": "03:25",
+      "duration": "20",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 1",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -69,16 +45,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "2",
-      "start_time": "01:50",
-      "duration": "7",
+      "start_time": "03:50",
+      "duration": "20",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 2",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -91,16 +66,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "3",
-      "start_time": "02:20",
-      "duration": "2",
+      "start_time": "04:20",
+      "duration": "8",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 3",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -113,16 +87,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "4",
-      "start_time": "02:35",
-      "duration": "1",
+      "start_time": "04:35",
+      "duration": "5",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 4",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -135,16 +108,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "5",
-      "start_time": "03:00",
-      "duration": "7",
+      "start_time": "05:00",
+      "duration": "20",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 5",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -157,16 +129,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "6",
-      "start_time": "03:15",
-      "duration": "12",
+      "start_time": "05:25",
+      "duration": "40",
       "calendar": "even",
       "maxopentime": 30,
       "description": "Valve 6",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -179,16 +150,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "7",
-      "start_time": "04:00",
+      "start_time": "06:20",
       "duration": "03",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 7",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -203,14 +173,13 @@
       "id": "8",
       "start_time": "23:00",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 8",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -223,16 +192,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "9",
-      "start_time": "05:00",
+      "start_time": "10:00",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 9",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -245,16 +213,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "10",
-      "start_time": "23:00",
+      "start_time": "11:00",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 10",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -267,16 +234,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "11",
-      "start_time": "23:01",
+      "start_time": "12:01",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 11",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -289,16 +255,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "12",
-      "start_time": "23:02",
+      "start_time": "13:02",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 12",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -311,16 +276,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "13",
-      "start_time": "23:03",
+      "start_time": "14:03",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 13",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -333,16 +297,15 @@
     "TimeProperties": {
       "deviceType": "Valve",
       "id": "14",
-      "start_time": "23:04",
+      "start_time": "15:04",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 14",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
@@ -357,14 +320,13 @@
       "id": "15",
       "start_time": "23:05",
       "duration": "01",
-      "calendar": "even",
+      "calendar": "OFF",
       "maxopentime": 30,
       "description": "Valve 10",
       "zone": "1",
-      "rain_detector_ignore": "True",
-      "current_weather_ignore": "True",
+      "rain_detector_ignore": "False",
+      "current_weather_ignore": "False",
       "lock": "False",
-      "normally_off": "True",
       "reverse_hi_low" : "True"
     },
     "WebProperties": {
