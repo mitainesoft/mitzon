@@ -243,6 +243,12 @@ PASSWORD=myGenerateAppPasswordinGmail
 #  allo@hotmail.com,myhello@yahoo.ca+En,hello@xmail.ca+FrMule;
 RECIPIENTLIST=myReceivers
 
+
+
+# Email info Valve Config JSON file
+RECIPIENTLISTINFO=mitainesoft@gmail.com
+
+
 [NOTIFICATION_MANAGER]
 NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15
 
