@@ -164,7 +164,7 @@ class AlertManager(metaclass=SingletonMeta):
 
             if keyalert in self.alertCurrentList:
                 logtxt="addAlert Duplicate "+id+" " + device + " (" + extratxt+")"
-                log.error(logtxt)
+                log.debug(logtxt)
             else:
                 log.debug("Add Alert Queue: " + id + ">" + alert_text)
                 self.alertCurrentList[keyalert] = self.Alert(id,device,self.alertFileListJSON[self.default_language][id]["severity"],

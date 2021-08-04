@@ -87,22 +87,16 @@ VALVE_DISPLAY_ALL_STATUS_INTERVAL=3600
 
 
 [VALVE_COMMON]
-#Nbr seconds to trigger an alarm when door is LOCK OPEN
-ValveLockOpenTriggerAlarmElapsedTime=7200
-
-#Time Between Button Manual Pressed
-TimeBetweenButtonManualPressed=2
-
 #TimeBeforeAutoRetryClose
 TimeBeforeAutoRetryClose=10
 
 #ValveOpenTriggerWarningElapsedTime
 # defaul=2700 (45min)   test=60
-ValveOpenTriggerWarningElapsedTime=60
+ValveOpenTriggerWarningElapsedTime=2700
 
 #ValveOpenTriggerCriticalElapsedTime
 # defaul=3000 (48min)   test=120
-ValveOpenTriggerCriticalElapsedTime=120
+ValveOpenTriggerCriticalElapsedTime=3000
 
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3

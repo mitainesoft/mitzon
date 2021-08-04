@@ -527,7 +527,7 @@ class ValveManager():
                         self.alarm_mgr_handler.clearAlertID("VO002",vlv.vlv_name)
                         self.alarm_mgr_handler.clearAlertID("VO003", vlv.vlv_name)
                         status_text = self.addAlert("VO001", vlv.vlv_name, logtxt)
-                        log.warning(status_text)
+                        log.debug(status_text)
                         vlv.vlv_last_alert_time = time.time()
 
                         self.vlv_manual_mode = False
@@ -547,7 +547,7 @@ class ValveManager():
                             self.last_alert_open_sev3_checkvalvepolicy[vlv.vlv_name] = time.time()
                         status_text = self.addAlert("VO002", vlv.vlv_name)
                         vlv.vlv_last_alert_time = time.time()
-                        log.critical(status_text)
+                        log.debug(status_text)
                         #self.vlv_manual_mode = False
                     elif time.time() > opentimehw:
                         if time.time() > (self.last_alert_open_sev3_checkvalvepolicy[vlv.vlv_name] + float(
