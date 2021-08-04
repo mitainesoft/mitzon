@@ -127,6 +127,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['ALERT', 'timebetweenalerts'],
             ['ALERT', 'AlertDefaultClearInterval'],
             ['ALERT', 'AlertAutoClearList'],
+            ['ALERT', 'AlertTimeToLiveMax'],
             ['NOTIFICATION_COMMON', 'notificationenabled'],
             ['NOTIFICATION_COMMON', 'default_language'],
             ['EMAIL_ACCOUNT_INFORMATION', 'smtp_server'],

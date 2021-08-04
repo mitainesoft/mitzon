@@ -199,6 +199,10 @@ AlertDefaultClearInterval=15
 #These alarms will auto clear if True
 AlertAutoClearList=GLO01,VLO01,VTC01
 
+# Alert Time To Live Max
+#   In case of alert clear error. Clear after 2h.
+AlertTimeToLiveMax=7200
+
 
 ########################
 ## Notification ########

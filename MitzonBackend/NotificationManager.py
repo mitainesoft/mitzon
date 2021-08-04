@@ -67,9 +67,15 @@ class NotificationManager(metaclass=SingletonMeta):
                     msg = notif_obj[2]
                     sender = notif_obj[0]
                     recipients = notif_obj[1]
+                    notiftime = notif_obj[3]
+                    notiftimestr = ""
+
+                    if notiftime != None:
+                        notiftimestr=notiftime.strftime("%Y%m%d-%H:%M:%S")
+                        pass
 
                     if (self.notif_enabled.upper() == "TRUE"):
-                        logtxt = " Notif from %s to %s msg:<<<%s>>>" % (sender, recipients, msg)
+                        logtxt = " Notif from %s to %s msg:<<<%s>>> @ [%s]" % (sender, recipients, msg, notiftimestr)
                         log.debug(logtxt)
                         self.send_email(sender, recipients, msg)
                     else:
@@ -248,7 +254,7 @@ class NotificationManager(metaclass=SingletonMeta):
             if (alertfiltertrigger == True):
                 #notif_text = "Msg from: " + sender + "\n\n" + alertlisttxt
                 notif_text = "Attention!\n\n" + alertlisttxt
-                self.notifQueue.put(self.Notif(sender, recipients, notif_text, time.time()))
+                self.notifQueue.put(self.Notif(sender, recipients, notif_text, datetime.datetime.now()))
                 log.debug("Notif added to queue for " + recipients + " <<<" + notif_text + ">>>")
             else:
                 log.debug("Skip notif message, no high sev !")

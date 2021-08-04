@@ -236,7 +236,6 @@ class ValveManager():
         self.dev_manager_handler = DeviceManager()
         self.deviceList=self.dev_manager_handler.deviceList
         i=0
-
         lastlogprint = time.time()
 
         while (True):
@@ -258,7 +257,7 @@ class ValveManager():
                         # 15sec to allow for cherry pi web server to start
                         log.error("Cherrypy Web server thread not running, sending alert SW001 !")
                         # status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
-                        status_text = self.addAlert("SW001", "RASPBERRY_PI")
+                        status_text = self.addAlert("SW001", "RASPBERRY_PI","Cherrypy Web server thread not running")
                         log.error(status_text)
             else:
                 if i % 5 == 0:
@@ -524,6 +523,7 @@ class ValveManager():
                             +  float(self.config_handler.getConfigParam("INTERNAL", "LOG_SEVERITY1_REPEAT_INTERVAL"))):
                             log.critical(logtxt)
 
+                        self.alarm_mgr_handler.clearAlertID("VO001",vlv.vlv_name)
                         self.alarm_mgr_handler.clearAlertID("VO002",vlv.vlv_name)
                         self.alarm_mgr_handler.clearAlertID("VO003", vlv.vlv_name)
                         status_text = self.addAlert("VO001", vlv.vlv_name, logtxt)

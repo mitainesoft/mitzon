@@ -149,7 +149,7 @@
   "VALVE_7": {
     "TimeProperties": {
       "deviceType": "Valve",
-      "id": "7",
+      "id": "8",
       "start_time": "PREVIOUS",
       "duration": "03",
       "calendar": "OFF",
@@ -170,10 +170,10 @@
   "VALVE_8": {
     "TimeProperties": {
       "deviceType": "Valve",
-      "id": "8",
-      "start_time": "23:00",
-      "duration": "01",
-      "calendar": "OFF",
+      "id": "7",
+      "start_time": "PREVIOUS",
+      "duration": "5,5",
+      "calendar": "ODD,EVEN",
       "maxopentime": 30,
       "description": "Valve 8",
       "zone": "1",

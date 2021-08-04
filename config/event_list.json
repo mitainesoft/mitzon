@@ -137,7 +137,7 @@
       "deviceType": "Valve",
       "severity": "1",
       "category": "VALVE_LOCK",
-      "text": "Door Open with Manual Lock expired !",
+      "text": "Valve Open with Manual Lock expired !",
       "workaround": "Remove Lock and close the valve!"
     },
     "VCD01": {
@@ -392,7 +392,7 @@
       "severity": "3",
       "category": "VALVE_COMMAND",
       "text": "Ouverture du robinet !",
-      "workaround": "Eloignez vous de le robinets!"
+      "workaround": "Eloignez vous du robinet!"
     },
     "VTO02": {
       "deviceType": "Valve",
