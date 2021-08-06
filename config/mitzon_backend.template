@@ -98,6 +98,9 @@ ValveOpenTriggerWarningElapsedTime=2700
 # defaul=3000 (48min)   test=120
 ValveOpenTriggerCriticalElapsedTime=3000
 
+#Time Between Button Manual Pressed
+TimeBetweenButtonManualPressed=2
+
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3
 
