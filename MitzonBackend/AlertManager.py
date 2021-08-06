@@ -26,6 +26,7 @@ class AlertManager(metaclass=SingletonMeta):
         self.alertfilename=self.config_handler.getConfigParam("INTERNAL", "ALERT_DEFINITION_FILE")
         log.info("AlertManager started...")
         self.default_language=self.config_handler.getConfigParam("NOTIFICATION_COMMON", "DEFAULT_LANGUAGE")
+        self.AlertTimeToLiveMax = float(self.config_handler.getConfigParam("ALERT", "AlertTimeToLiveMax"))
 
         self.alertFileListJSON = {}
         self.alertCurrentList = {}
@@ -54,10 +55,34 @@ class AlertManager(metaclass=SingletonMeta):
     def processAlerts(self):
         alert_triggered=False
         keyiter = iter(self.alertCurrentList)
+        crazyloop = 0
+        runaway_alert = False
         try:
             keyalert = keyiter.__next__()
             if keyalert != None:
                 alert_triggered=True
+
+            while runaway_alert == False and keyalert != None and crazyloop < 100:
+                id = self.alertCurrentList[keyalert].id
+                altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
+                    "%Y%m%d-%H%M%S")
+                crazyloop += 1
+                altimeobj = datetime.datetime.strptime(altime, "%Y%m%d-%H%M%S")
+                alerttimesec = time.mktime(altimeobj.timetuple())
+                now = time.time()
+                #Check for alarm not cleared due to sw fault!
+                if now > (alerttimesec+self.AlertTimeToLiveMax):
+                    #'id', 'device', 'severity', 'category', 'text', 'workaround', 'time','notif_sent'
+                    device =  self.alertCurrentList[keyalert].device
+                    text = self.alertCurrentList[keyalert].text
+                    rc=self.clearAlertID(id,device)
+                    logtxt = device + " (" + id + ")" + " now:" + str(now) + " alertTime:" + altime + " text='" + text + "' rc='"+rc+"'"
+                    log.debug(logtxt)
+                    logerrtxt="SW Fault Clearing expired alert "+id+" "+device+" "+altime+" "+text
+                    log.error(logerrtxt)
+                    # Ensure to exist this loop as keyiter changes size after clearAlertID
+                    runaway_alert=True
+                    alert_triggered = False
         except StopIteration:
             log.debug("processAlerts Alarm List empty StopIteration!")
         except Exception:
@@ -100,7 +125,7 @@ class AlertManager(metaclass=SingletonMeta):
                 tmpmsg = tmpmsg + (" (Time between alerts:%dsec)" % self.seconds_between_alerts )
                 log.debug("Alert %s Send denied! %s" %(tmp_alert_id_txt,tmpmsg))
         except StopIteration:
-            log.info("No alert left due to racing condition. Alert send denied! " +tmpmsg )
+            log.info("No alert left due to race condition. Alert send denied! " +tmpmsg )
         except Exception:
             log.error("Alert!  Unexpected code condition! Die! " + tmpmsg)
             traceback.print_exc()
@@ -139,7 +164,7 @@ class AlertManager(metaclass=SingletonMeta):
 
             if keyalert in self.alertCurrentList:
                 logtxt="addAlert Duplicate "+id+" " + device + " (" + extratxt+")"
-                log.error(logtxt)
+                log.debug(logtxt)
             else:
                 log.debug("Add Alert Queue: " + id + ">" + alert_text)
                 self.alertCurrentList[keyalert] = self.Alert(id,device,self.alertFileListJSON[self.default_language][id]["severity"],
@@ -218,7 +243,6 @@ class AlertManager(metaclass=SingletonMeta):
                 altime = "%s" % datetime.datetime.fromtimestamp(int(self.alertCurrentList[keyalert].time)).strftime(
                     "%Y%m%d-%H%M%S")
                 crazyloop += 1
-
 
                 if (id in self.config_handler.getConfigParam("ALERT", "AlertAutoClearList")):
                     log.debug("auto Clear Alert By List %s %s %d triggered!" %(id,altime,float(self.alertCurrentList[keyalert].time)))

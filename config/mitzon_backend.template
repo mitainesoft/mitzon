@@ -87,22 +87,16 @@ VALVE_DISPLAY_ALL_STATUS_INTERVAL=3600
 
 
 [VALVE_COMMON]
-#Nbr seconds to trigger an alarm when door is LOCK OPEN
-ValveLockOpenTriggerAlarmElapsedTime=7200
-
-#Time Between Button Manual Pressed
-TimeBetweenButtonManualPressed=2
-
 #TimeBeforeAutoRetryClose
 TimeBeforeAutoRetryClose=10
 
 #ValveOpenTriggerWarningElapsedTime
 # defaul=2700 (45min)   test=60
-ValveOpenTriggerWarningElapsedTime=60
+ValveOpenTriggerWarningElapsedTime=2700
 
 #ValveOpenTriggerCriticalElapsedTime
 # defaul=3000 (48min)   test=120
-ValveOpenTriggerCriticalElapsedTime=120
+ValveOpenTriggerCriticalElapsedTime=3000
 
 #ValveHardwareResponseTime
 ValveHardwareResponseTime=3
@@ -199,6 +193,10 @@ AlertDefaultClearInterval=15
 #These alarms will auto clear if True
 AlertAutoClearList=GLO01,VLO01,VTC01
 
+# Alert Time To Live Max
+#   In case of alert clear error. Clear after 2h.
+AlertTimeToLiveMax=7200
+
 
 ########################
 ## Notification ########
@@ -242,6 +240,12 @@ PASSWORD=myGenerateAppPasswordinGmail
 # Example2:
 #  allo@hotmail.com,myhello@yahoo.ca+En,hello@xmail.ca+FrMule;
 RECIPIENTLIST=myReceivers
+
+
+
+# Email info Valve Config JSON file
+RECIPIENTLISTINFO=mitainesoft@gmail.com
+
 
 [NOTIFICATION_MANAGER]
 NOTIFICATION_MANAGER_LOOP_TIMEOUT = 15

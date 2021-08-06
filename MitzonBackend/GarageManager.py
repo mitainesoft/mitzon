@@ -56,7 +56,7 @@ class GarageManager():
                         # 15sec to allow for cherry pi web server to start
                         log.error("Cherrypy Web server thread not running, sending alert SW001 !")
                         # status_text = self.alarm_mgr_handler.addAlert("SW001", "RASPBERRY_PI")
-                        status_text = self.addAlert("SW001", "RASPBERRY_PI")
+                        status_text = self.addAlert("SW001", "RASPBERRY_PI","Cherrypy Web server thread not running")
                         log.error(status_text)
             else:
                 log.debug("Cherrypy Web server thread monitoring off for 1 min after GarageManager thread startup")
