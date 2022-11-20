@@ -151,6 +151,9 @@ class GarageDoor():
             if i==0:
                 #keep track of 1st sensor, not necessarely in order to see all are the same
                 sensorkey0=sensor
+                if (self.g_sensor_props.__len__() == 1):
+                    self.g_status =  self.g_sensor_props[sensorkey0].status
+                    log.debug(self.g_name + " Only one sensor")
             else:
                 if (self.g_sensor_props[sensor].status == self.g_sensor_props[sensorkey0].status):
                     self.g_status=self.g_sensor_props[sensor].status
