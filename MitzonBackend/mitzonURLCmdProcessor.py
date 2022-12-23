@@ -446,6 +446,8 @@ if __name__ == '__main__':
                                        args=(notification_manager_handler,), name='notification_manager',
                                        daemon=True)
 
+        notification_manager_handler.emailConfig()
+
         thread_command_queue.start()
         thread_dispatcher.start()
         thread_garage_manager.start()

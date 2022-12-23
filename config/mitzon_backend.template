@@ -85,6 +85,10 @@ VALVE_DISPLAY_OPEN_STATUS_INTERVAL=300
 #VALVE DISPLAY ALL STATUS INTERVAL. A Status change will always be displayed
 VALVE_DISPLAY_ALL_STATUS_INTERVAL=3600
 
+# Email Valve Config
+# Send an email on startup for Valve config
+EMAIL_VALVE_CONFIG=False
+
 
 [VALVE_COMMON]
 #TimeBeforeAutoRetryClose
@@ -209,6 +213,10 @@ AlertTimeToLiveMax=7200
 #Set to True to enable notif to email configured below
 NotificationEnabled = False
 
+#Send Config by email on start
+# EMAIL_CONFIG_ON_RESTART
+EMAIL_CONFIG_ON_RESTART=True
+
 ########################
 # DEFAULT_LANGUAGE=
 #   Fr = Francais
@@ -245,9 +253,13 @@ PASSWORD=myGenerateAppPasswordinGmail
 RECIPIENTLIST=myReceivers
 
 
-
 # Email info Valve Config JSON file
 RECIPIENTLISTINFO=mitainesoft@gmail.com
+
+
+# Admin email receiving configuration info
+ADMIN_EMAIL=mitainesoft@gmail.com
+
 
 
 [NOTIFICATION_MANAGER]

@@ -29,6 +29,7 @@ class ValveManager():
         self.notif_mgr_handler = NotificationManager()
         self.email_sender = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION","USER")
         self.email_recipient = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION","RECIPIENTLISTINFO")
+        self.email_config_enable = self.config_handler.getConfigParam("VALVE_MANAGER", "EMAIL_VALVE_CONFIG").upper()
 
         self.weather_mgr_handler = WeatherManager()
 
@@ -224,7 +225,10 @@ class ValveManager():
             emailstr = emailstr + logtxt +"\n"
         #os._exit(-1)
         try:
-            self.notif_mgr_handler.send_email(self.email_sender, self.email_recipient,emailstr,emailsub)
+            if self.email_config_enable == "TRUE":
+                self.notif_mgr_handler.send_email(self.email_sender, self.email_recipient,emailstr,emailsub)
+            else:
+                log.info("Send Valve Config by Email turned off!")
         except Exception:
             traceback.print_exc()
             errtxt = self.email_sender + " " + self.email_recipient + " " +emailstr + " " + emailsub

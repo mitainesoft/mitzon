@@ -71,12 +71,34 @@
         apt-get upgrade
         init 6
 
+    ** InstallPython 3.9.15
+    wget ...
+    make install
+
+    ln -s /usr/local/bin/python3.9 python3
+    ln -s /usr/local/bin/python3.9 python3.9
+    # ls -la | grep python3
+        lrwxrwxrwx  1 root root         23 Oct 31 10:04 pdb3.7 -> ../lib/python3.7/pdb.py
+        lrwxrwxrwx  1 root root         31 Mar 26  2019 py3versions -> ../share/python3/py3versions.py
+        lrwxrwxrwx  1 root root         24 Nov 27 17:58 python -> /usr/local/bin/python3.9
+        lrwxrwxrwx  1 root root         24 Dec  3 10:21 python3 -> /usr/local/bin/python3.9
+        -rwxr-xr-x  2 root root    4275580 Oct 31 10:04 python3.7
+        -rwxr-xr-x  2 root root    4275580 Oct 31 10:04 python3.7m
+        lrwxrwxrwx  1 root root         10 Mar 26  2019 python3m -> python3.7m
+
 
     ** install cherrypy for python3 **
       
-        pip3 install cherrypy --upgrade
+        pip3 install cherrypy
+        #   Downloading https://www.piwheels.org/simple/cherrypy/CherryPy-18.8.0-py2.py3-none-any.whl (348 kB)
+
         # Errors related to cheroot !
-        pip3 install cheroot
+        # May not be needed with 
+        #   Collecting cheroot>=8.2.1
+        #   Downloading https://www.piwheels.org/simple/cheroot/cheroot-9.0.0-py2.py3-none-any.whl (100 kB)
+
+        # Installed auotmatically
+        # pip3 install cheroot 
 
     ** install nanpy for raspberry pi arduino
         # https://pypi.python.org/pypi/nanpy
@@ -90,10 +112,15 @@
         Step 1 � Installing Git with APT
         Before you install Git, make sure that your package lists are updated by executing the following command:
 
+        # probably already there!
         sudo apt-get update
         Install Git with apt-get in one command:
 
-        apt-get install git-core
+        try:
+            git
+        #if not there, install:
+            # apt-get install git-core
+        
 
 
    ** Install apache2 2021 rasp pi 3 **
@@ -1031,6 +1058,8 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
     su - root
     # Enable apache2 ssl module
     a2enmod ssl
+    systemctl restart apache2
+
 
     cd /etc/apache2/sites-available
     vi 000-default.conf
@@ -1082,7 +1111,7 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
             SSLCertificateKeyFile /opt/mitainesoft/security/mitainesoftsvr.key.pem
     </VirtualHost>
 
-
+    systemctl restart apache2
 
 ** Install certificates in cherrypy web server **
 
@@ -1140,8 +1169,10 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
     vi mitainesoft_iptables
         #!/bin/sh
         iptables-restore  </etc/iptables-mitzon.rule
+    
 
     #Check if it works !
+    chmod 755 mitainesoft_iptables
     init 6
     
     #relogin
