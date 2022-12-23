@@ -40,7 +40,6 @@ class NotificationManager(metaclass=SingletonMeta):
         self.g_add_alert_time_by_type = {}  #Key is Alert type, data is time()
         self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL=float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL"))
 
-
         try:
             f = open(self.alertfilename)
             self.alertFileListJSON = json.load(f)
@@ -260,3 +259,20 @@ class NotificationManager(metaclass=SingletonMeta):
                 log.debug("Skip notif message, no high sev !")
         log.debug("addNotif Send %d email notifications... (alertfiltertrigger:%s)" % (nbrnotif,GarageUtil.getTrueFalseStr(self,alertfiltertrigger)))
         return
+
+    def emailConfig(self):
+
+        try:
+            # Email conf
+            self.email_sender = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION", "USER")
+            self.email_recipient = self.config_handler.getConfigParam("EMAIL_ACCOUNT_INFORMATION",
+                                                       "ADMIN_EMAIL")
+            email_config_enable = self.config_handler.getConfigParam("NOTIFICATION_COMMON",
+                                                           "EMAIL_CONFIG_ON_RESTART").upper()
+            if email_config_enable.upper() == "TRUE":
+                log.info("Sending config by email to " + self.email_recipient)
+                self.send_email(self.email_sender, self.email_recipient, self.config_handler.emailstr, "Configuration")
+            else:
+                log.info("Skipping sending config by email")
+        except Exception:
+            traceback.print_exc()

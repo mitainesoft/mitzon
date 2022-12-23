@@ -3,6 +3,7 @@ import logging
 from MitzonBackend.Constants import *
 import configparser
 from MitzonBackend.SingletonMeta import SingletonMeta
+#from MitzonBackend.NotificationManager import NotificationManager
 import traceback
 import sys
 import os
@@ -24,7 +25,7 @@ class ConfigManager(metaclass=SingletonMeta):
         self.GARAGE_NAME = [] # ["GARAGE_0", "GARAGE_1", "GARAGE_2", "GARAGE_3"]
         self.NBR_VALVE=0 #Calculated value
         self.VALVE_NAME = [] # ["VALVE_0", "VALVE_1", "VALVE_2", "VALVE_3"]
-
+        self.emailstr = "***** Config Summary *****\n"
 
     def setConfigFileName(self,filename):
         log.debug("Set config file name...")
@@ -66,8 +67,17 @@ class ConfigManager(metaclass=SingletonMeta):
                     else:
                         log.debug("config file, not Valve: " + keySections + "...Skipping")
 
+                self.emailstr = self.emailstr + "\n* " + keySections + "*\n"
                 for key in self.config[keySections]:
-                    log.info(keySections + "/" + key + " = " + self.config[keySections][key])
+                    #email_line = keySections + "" + key + " = " + self.config[keySections][key]
+                    email_line = ""
+                    if "PASSWORD" not in key.upper():
+                        email_line = "{1} = {2}\n".format(keySections, key, self.config[keySections][key])
+                    else:
+                        email_line = "{0} -> {1} = **********\n".format(keySections, key)
+                    log.info(email_line)
+                    self.emailstr = self.emailstr + email_line
+
             self.validateParamsUsed()
         except KeyError:
             log.info("Something went wrong while reading the config, Suspect is wrong file name or param")
@@ -177,6 +187,7 @@ class ConfigManager(metaclass=SingletonMeta):
                   param=cfg[1]
                   logstr="Check %s %s" % (section,param)
                   self.getConfigParam(section,param)
+
                   log.debug(logstr)
 
             #Check some config rules
