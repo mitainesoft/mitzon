@@ -33,8 +33,8 @@ class GarageManager():
         self.g_add_alert_time_by_type = {}  #Key is Alert type, data is time()
         self.error_message_count = 0
 
-
-
+        # self.open_white_light_duration OPEN_WHITE_LIGHT_DURATION
+        self.open_white_light_duration = float(self.config_handler.getConfigParam("GARAGE_MANAGER", "OPEN_WHITE_LIGHT_DURATION"))
 
     def monitor(self):
         self.dev_manager_handler = DeviceManager()
@@ -207,10 +207,10 @@ class GarageManager():
             if (gd.g_status.find(G_CLOSED)>=0):
                 if (gd.g_close_time != None): #Is there an open time stamp ?
                     # Manage specific case for light when GarageManager was restarted, door lock but door not opened !
-                    close_white_light_delay=120
-                    opentimelightingstop = gd.g_close_time + close_white_light_delay
-                    #Change light status during the close_white_light_delay period and a little more!
-                    if time.time() <= (gd.g_close_time + (close_white_light_delay+float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
+                    # self.open_white_light_duration=self.open_white_light_duration
+                    opentimelightingstop = gd.g_close_time + self.open_white_light_duration
+                    #Change light status during the self.open_white_light_duration period and a little more!
+                    if time.time() <= (gd.g_close_time + (self.open_white_light_duration+float(self.config_handler.getConfigParam("GARAGE_COMMON","GarageDoorAssumedClosedTime"))) ):
                         log.debug("%s Turn off all lights!" % gd.g_name)
                         gd.stopLightFlash('WHITE')
                         if time.time() > opentimelightingstop:
