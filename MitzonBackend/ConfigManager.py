@@ -105,6 +105,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['GARAGE_MANAGER', 'garage_manager_loop_timeout'],
             ['GARAGE_MANAGER', 'sensor_defect_assessment_time'],
             ['GARAGE_MANAGER', 'garage_name_for_test'],
+            ['GARAGE_MANAGER', 'OPEN_WHITE_LIGHT_DURATION'],
             ['THREAD_CONTROL', 'resp_timeout'],
             ['GARAGE_COMMON', 'garageopentriggerwarningelapsedtime'],
             ['GARAGE_COMMON', 'garageopentriggerclosedoorelapsedtime'],
