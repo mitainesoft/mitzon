@@ -36,7 +36,7 @@ class NotificationManager(metaclass=SingletonMeta):
         self.notifQueue = Queue()
         self.notif_enabled = self.config_handler.getConfigParam("NOTIFICATION_COMMON", "NotificationEnabled")
         self.default_language = self.config_handler.getConfigParam("NOTIFICATION_COMMON", "DEFAULT_LANGUAGE")
-
+        self.email_subject_sub_string = self.config_handler.getConfigParam("NOTIFICATION_COMMON", "EMAIL_SUBJECT_SUB_STRING")
         self.g_add_alert_time_by_type = {}  #Key is Alert type, data is time()
         self.TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL=float(self.config_handler.getConfigParam("NOTIFICATION_MANAGER", "TIME_BETWEEN_DUPLICATE_NOTIFICATION_EMAIL"))
 
@@ -148,9 +148,9 @@ class NotificationManager(metaclass=SingletonMeta):
             # mmmsg = MIMEMultipart()
             mmmsg = MIMEText(msg, 'plain')
             if subject == None:
-                mmmsg['Subject'] = "Alerte Garage et Gazon %s" % (datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
+                mmmsg['Subject'] = "Alerte %s %s" % (self.email_subject_sub_string, datetime.datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S"))
             else:
-                mmmsg['Subject'] = "Alerte Garage et Gazon %s " % (subject)
+                mmmsg['Subject'] = "Alerte %s %s " % (self.email_subject_sub_string,subject)
             mmmsg['From'] = ("%s <%s>" % (user_name, sender))
             mmmsg['To'] = COMMASPACE.join(mmrecipients)
 

@@ -141,6 +141,7 @@ class ConfigManager(metaclass=SingletonMeta):
             ['ALERT', 'AlertTimeToLiveMax'],
             ['NOTIFICATION_COMMON', 'notificationenabled'],
             ['NOTIFICATION_COMMON', 'default_language'],
+            ['NOTIFICATION_COMMON', 'EMAIL_SUBJECT_SUB_STRING'],
             ['EMAIL_ACCOUNT_INFORMATION', 'smtp_server'],
             ['EMAIL_ACCOUNT_INFORMATION', 'user'],
             ['EMAIL_ACCOUNT_INFORMATION', 'email_sender_name'],

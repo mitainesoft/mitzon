@@ -222,6 +222,12 @@ NotificationEnabled = False
 # EMAIL_CONFIG_ON_RESTART
 EMAIL_CONFIG_ON_RESTART=True
 
+#Email Subject sub-string
+# EMAIL_SUBJECT_SUB_STRING
+# EMAIL_SUBJECT_SUB_STRING=Gazon
+EMAIL_SUBJECT_SUB_STRING=Garage
+
+
 ########################
 # DEFAULT_LANGUAGE=
 #   Fr = Francais
