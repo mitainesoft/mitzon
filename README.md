@@ -131,10 +131,17 @@
    
 
     ** Create mitainesoft user **
-         adduser mitainesoft
-        #Answers to questions and passwd not important
-        # Keep in mind that this user will have access to the USB port!
-        # You can change later with  'sudo passwd mitainesoft'
+        adduser mitainesoft
+
+            #Answers to questions and passwd not important
+            # Keep in mind that this user will have access to the USB port!
+            # You can change later with  'sudo passwd mitainesoft'
+    
+    # bash behavior for copy/paste fromn terminal (putty)
+    cd ~
+    echo "set enable-bracketed-paste 0" >.inputrc
+    # restart terminal
+
 
     ** Add mitainesoft to dialout group
          vi /etc/group
@@ -159,10 +166,26 @@
     ** Setup package dir **
 
     su - root
+    # bash behavior for copy/paste fromn terminal (putty)
+    cd ~
+    echo "set enable-bracketed-paste 0" >.inputrc
+    # restart terminal
+
+
     mkdir -p /opt/mitainesoft/security
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
     cd /opt/mitainesoft/
     #Add 3 pem files. see how to generate
+
+    su - mitainesoft
+    # bash behavior for copy/paste fromn terminal (putty)
+    cd ~
+    echo "set enable-bracketed-paste 0" >.inputrc
+    # restart terminal
+    exit
+
+    #repeat for user 'pi' other other users
+
     
 2.  Install or Upgrade mitzon packages
 
@@ -186,14 +209,45 @@
     #chown -R mitainesoft:mitainesoft /opt/mitainesoft
 
 
-    ** Edit config **
+    ** Edit Garage or Gazon config **
     su - mitainesoft
     cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/config
-    cp mitzon_backend.template mitzon_backend.config
-    # cp ../../mitzon/config/mitzon_backend.config .
-    cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]
 
-    #3 steps below may not be required
+    2 choices for Config:
+        1) use default config
+
+            cp mitzon_backend.template mitzon_backend.config
+            # fix mitzon_backend.config !
+
+            # Gazon oly
+            # Customize valves_config.json
+       
+        2) Copy old config Gazon & Garage
+            cd /opt/mitainesoft/[MITAINESOFT_MITZON_REVISION]/config
+            mkdir orig
+            cp * orig
+        
+            2a) Common config
+
+                #  Note: ../../mitzon points to old version at this point, not [MITAINESOFT_MITZON_REVISION] !
+                cp ../../mitzon/config/mitzon_backend.config .
+    
+                diff mitzon_backend.config mitzon_backend.template | tee /tmp/diff_config_[MITAINESOFT_MITZON_REVISION]_orig.txt
+                less /tmp/diff_config_[MITAINESOFT_MITZON_REVISION]_orig.txt
+    
+                #  Add new config params if any
+
+            
+            2b) Gazon [MITAINESOFT_MITZON_REVISION] Only
+
+                # Copy watering calendar 
+                cp ../../mitzon/config/valves_config.json .
+
+                diff valves_config.json orig/valves_config.json | tee /tmp/diff_valves_config_json_[MITAINESOFT_MITZON_REVISION]_orig.txt
+                less /tmp/diff_valves_config_json_[MITAINESOFT_MITZON_REVISION]_orig.txt
+
+
+    #3 steps below may not be required if user = mitainesoft
     su - root
     cd /opt/mitainesoft
     chown -R mitainesoft:mitainesoft /opt/mitainesoft
@@ -1407,12 +1461,32 @@ a) Raspberry Temperature Overheat !
 
 
   ** .bashrc **
-    Add to .bashrc:
+    1) Add to .bash_aliases:
+    # .bash_aliases
+    alias ll='ls -l'
+    alias la='ls -A'
+    alias l='ls -CF'
     alias llog='less /opt/mitainesoft/mitzon/log/mitzon.log'
-    alias log='cd /opt/mitainesoft/mitzon/log'
+    alias log='cd /opt/mitainesoft/mitzon/log;pwd'
+    
+    # Dev test pi
+    # alias cfg='cd  ~/mitzon/config;pwd'
+    
+    #production pi
     alias cfg='cd  /opt/mitainesoft/mitzon/config'
-    alias mit='cd  /opt/mitainesoft/mitzon/'
+    
+    
+    alias mit='cd  /opt/mitainesoft/mitzon/;pwd'
     alias h='history'
+    alias k='kill -9 `pgrep -f mitzonURLCmdProcessor.py`'
+
+
+2) Add to .bashrc  if not there!
+
+    . ~/.bash_aliases
+
+
+
 
 
 Installing Node.js
