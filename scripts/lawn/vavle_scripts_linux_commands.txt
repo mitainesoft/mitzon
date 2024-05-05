@@ -1,0 +1,53 @@
+ for x in 5 3 2 1 0 8 4 6 ; do 
+ 
+# line 7 defect!
+while true ; do 
+    for x in 0 8 9 2 1 6 5 4 3  ; do 
+        date
+        echo ---- $x -----; 
+        curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/$x; 
+        echo open $x; 
+        sleep 40; 
+        echo close $x; 
+        curl -k -d ''  https://192.168.1.92:8050/Valve/close/$x; 
+        echo ----; 
+        date; 
+        sleep 10; 
+        echo; date; 
+        echo; 
+        echo; 
+    done
+done
+
+
+1# line 7 defect!
+for x in 0 1 2 3 4 5 6 8 9 ; do 
+    echo close $x; 
+    curl -k -d ''  https://192.168.1.92:8050/Valve/close/$x; 
+    echo ----; 
+    date; 
+    sleep 1; 
+
+done
+
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/0 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/2 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/3 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/4 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/5 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/6 
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/8
+curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/9
+
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/0
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/1
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/2
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/3
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/4
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/5
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/6
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/8
+curl -k -d ''  https://192.168.1.92:8050/Valve/close/9
+
+
