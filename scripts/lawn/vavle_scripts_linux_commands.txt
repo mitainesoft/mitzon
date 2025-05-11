@@ -2,17 +2,19 @@
  
 # line 7 defect!
 while true ; do 
-    for x in 0 8 9 2 1 6 5 4 3  ; do 
+    date;
+    for x in 6 5 4 3 0 8 9 2 1  ; do 
         date
         echo ---- $x -----; 
         curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/$x; 
         echo open $x; 
-        sleep 40; 
+        sleep 35; 
         echo close $x; 
         curl -k -d ''  https://192.168.1.92:8050/Valve/close/$x; 
         echo ----; 
-        date; 
-        sleep 10; 
+        date;
+        echo "Attends 120s se recharge"
+        sleep 120;
         echo; date; 
         echo; 
         echo; 
@@ -20,15 +22,17 @@ while true ; do
 done
 
 
-1# line 7 defect!
+# line 7 defect!
 for x in 0 1 2 3 4 5 6 8 9 ; do 
     echo close $x; 
     curl -k -d ''  https://192.168.1.92:8050/Valve/close/$x; 
     echo ----; 
     date; 
     sleep 1; 
-
 done
+
+
+
 
 curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/0 
 curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1 

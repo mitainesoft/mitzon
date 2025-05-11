@@ -327,6 +327,17 @@
         #    'server.ssl_private_key': '/opt/mitainesoft/security/mitainesoftsvr.key.pem',
 
 
+    # 3B Create a mitzon service
+        
+        ???
+    
+    # 3B2 Disable 
+          systemctl
+          systemctl  | grep -i mit
+          systemctl  disable mitzon.service
+  
+  
+  
 3.  Test
 Outputs in main mitzon Backend console
 
