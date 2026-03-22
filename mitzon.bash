@@ -21,5 +21,5 @@ export PYTHONUNBUFFERED=1
 export PYTHONPATH=/opt/mitainesoft/mitzon/MitzonBackend:/opt/mitainesoft/mitzon:/opt/mitainesoft/mitzon/MitzonFrontend
 export PYTHONIOENCODING=UTF-8
 
-nohup /usr/bin/python3 -u $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py&
+nohup /usr/local/bin/python3 -u $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py&
 
