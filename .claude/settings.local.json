@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh mitainesoft@192.168.6.83 \"echo ''=== Python version ==='' && /usr/local/bin/python3 --version && echo ''=== debugpy installed? ==='' && /usr/local/bin/python3 -m debugpy --version 2>&1 && echo ''=== mitzon-4.0.13dev exists? ==='' && ls -la /opt/mitainesoft/mitzon-4.0.13dev/ && echo ''=== mitzon.bash in dev dir ==='' && cat /opt/mitainesoft/mitzon-4.0.13dev/mitzon.bash\")",
+      "Bash(ssh mitainesoft@192.168.6.83 \"ls -la /opt/mitainesoft/mitzon-4.0.13dev/ && echo ''=== mitzon.bash ==='' && cat /opt/mitainesoft/mitzon-4.0.13dev/mitzon.bash\")",
+      "Bash(ssh mitainesoft@192.168.6.83 \"echo ''=== system python ==='' && which python3 && python3 --version 2>&1; echo ''=== libffi ==='' && dpkg -l libffi-dev 2>&1 | tail -3; echo ''=== pip3 path ==='' && /usr/local/bin/pip3 --version 2>&1; echo ''=== debugpy location ==='' && find /home/mitainesoft/.local -name ''debugpy'' -maxdepth 4 2>/dev/null | head -5\")",
+      "Bash(ssh mitainesoft@192.168.6.83 \"cat /opt/mitainesoft/mitzon-4.0.13dev/mitzon.bash\")",
+      "Bash(scp c:/git/mitzon/mitzon.bash mitainesoft@192.168.6.83:/opt/mitainesoft/mitzon-4.0.13dev/mitzon.bash)",
+      "Bash(git -C c:/git/mitzon show HEAD:mitzon.bash)",
+      "Bash(git -C c:/git/mitzon checkout mitzon.bash)",
+      "Bash(ssh mitainesoft@192.168.6.83 \"mv /opt/mitainesoft/mitzon-4.0.13dev/mitzon.bash /opt/mitainesoft/mitzon-4.0.13dev/mitzon.bash.bak\")",
+      "Bash(scp c:/git/mitzon/mitzon_dev.bash mitainesoft@192.168.6.83:/opt/mitainesoft/mitzon-4.0.13dev/mitzon_dev.bash)",
+      "Bash(ssh mitainesoft@192.168.6.83 \"chmod +x /opt/mitainesoft/mitzon-4.0.13dev/mitzon_dev.bash && ls -la /opt/mitainesoft/mitzon-4.0.13dev/mitzon*.bash\")"
+    ]
+  }
+}

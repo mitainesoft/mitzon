@@ -1,3 +1,15 @@
+import sys
+
+# Debugpy is not available on this system due to missing ctypes module
+# Comment out debugpy code for now - application will run without debugger
+# import debugpy
+# debugpy.listen(("0.0.0.0", 5678))
+# print("Debugger listening on 0.0.0.0:5678. Waiting for client to attach...", file=sys.stderr)
+# debugpy.wait_for_client()
+
+print("Starting Mitzon application (debugger disabled due to system limitations)", file=sys.stderr)
+# Test sync - this comment added at $(date)
+
 import logging
 import logging.handlers
 import logging.config
