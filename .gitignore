@@ -4,3 +4,6 @@
 mitzon.code-workspace
 MitzonFrontend/dist
 venv
+dist
+mitzon.egg-info
+
