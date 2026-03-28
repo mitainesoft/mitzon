@@ -1,505 +1,427 @@
 <!DOCTYPE html>
-<html>
-
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#f1f5f9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mitzon Garage</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;color:#1e293b}
+body{
+  display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;
+  background:#f1f5f9;
+}
 
-    <title>Mitaine Mitzon</title>
-    <link rel="stylesheet" href="css/main/coffee/flaticon.css">
+/* ── Header ───────────────────────────────────────────── */
+header{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 20px 12px;text-align:center}
+header h1{font-size:1.3rem;font-weight:800;letter-spacing:.5px;color:#0f172a}
+header p{font-size:.62rem;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
 
-    <!--<link rel="stylesheet" type="text/css" href="css/110884-mechanicons/font/flaticon.css">-->
-    <link rel="stylesheet" type="text/css" href="css/F110884-mechanicons/font/F110884.css">
+/* ── Nav ──────────────────────────────────────────────── */
+nav{display:flex;background:#fff;border-bottom:1px solid #e2e8f0}
+nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 0 9px;text-decoration:none;color:#94a3b8;
+  font-size:.58rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;transition:color .2s}
+nav a svg{width:20px;height:20px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke:currentColor}
+nav a.active{color:#2563eb}
+nav a:active{background:#f8fafc}
 
+/* ── Main ─────────────────────────────────────────────── */
+main{flex:1;padding:20px 16px 28px;display:flex;flex-direction:column;gap:16px;
+  max-width:500px;width:100%;margin:0 auto}
 
-    <link rel="stylesheet" href="css/main/coffee/coffeegrinder.min.css">
-    <link rel="stylesheet" href="css/main/coffee/wireframe-theme.min.css">
-    <link rel="stylesheet" href="css/main/coffee/main.css">
+/* ── Section label ────────────────────────────────────── */
+.lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+  color:#94a3b8;margin-bottom:6px}
 
+/* ── Door grid ────────────────────────────────────────── */
+.door-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
 
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.js"></script>
+/* ── Door card ────────────────────────────────────────── */
+.door-card{
+  all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:14px 8px 12px;border-radius:16px;cursor:pointer;
+  text-align:center;min-height:120px;width:100%;
+  transition:transform .12s,box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;user-select:none;
+  border:2px solid #94a3b8;
+  background:#e2e8f0;color:#64748b;
+}
+.door-card:active{transform:scale(.96)}
 
+/* Status colours — card becomes the colour */
+.door-card.closed{background:#16a34a;color:#fff;border-color:#15803d;box-shadow:0 4px 14px rgba(22,163,74,.35)}
+.door-card.open  {background:#dc2626;color:#fff;border-color:#b91c1c;box-shadow:0 4px 14px rgba(220,38,38,.35)}
+.door-card.locked{background:#2563eb;color:#fff;border-color:#1d4ed8;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.door-card.error {background:#ea580c;color:#fff;border-color:#c2410c;box-shadow:0 4px 14px rgba(234,88,12,.3)}
+.door-card.unknown{background:#e2e8f0;color:#64748b;border-color:#94a3b8;box-shadow:none}
+
+/* icon show/hide by state */
+.door-card .ico{display:none}
+.door-card svg.ico{width:29px;height:29px;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke:currentColor}
+.door-card.closed  .ico-closed {display:block}
+.door-card.open    .ico-open   {display:block}
+.door-card.locked  .ico-locked {display:block}
+.door-card.error   .ico-unknown{display:block}
+.door-card.unknown .ico-unknown{display:block}
+
+/* open = pulse to grab attention */
+.door-card.open .ico-open{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.door-name  {font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.85}
+.door-status{font-size:1.05rem;font-weight:800;letter-spacing:.5px}
+.door-time  {font-size:.72rem;opacity:.8}
+
+/* ── Control row ──────────────────────────────────────── */
+.ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ctrl{
+  all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;padding:18px 12px;border-radius:16px;cursor:pointer;text-align:center;
+  background:#fff;border:1.5px solid #e2e8f0;color:#64748b;
+  transition:transform .12s,background .2s,border-color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ctrl:active{transform:scale(.96)}
+.ctrl svg{width:26px;height:26px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke:currentColor}
+.ctrl span{font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+.ctrl.locked {background:#fefce8;border-color:#eab308;color:#854d0e}
+.ctrl.desync {background:#fff7ed;border-color:#fdba74;color:#ea580c}
+.ctrl.alert1{background:#fef2f2;border-color:#fca5a5;color:#dc2626}
+.ctrl.alert2{background:#fffbeb;border-color:#fcd34d;color:#d97706}
+.ctrl.alert3{background:#fefce8;border-color:#fde047;color:#ca8a04}
+
+/* ── Status bar ───────────────────────────────────────── */
+.statusbar{display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:.7rem;color:#94a3b8}
+.spinner{width:9px;height:9px;border:2px solid #e2e8f0;border-top-color:#94a3b8;
+  border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+
+/* ── Footer ───────────────────────────────────────────── */
+footer{padding:12px;text-align:center;font-size:.62rem;color:#cbd5e1;
+  border-top:1px solid #e2e8f0}
+
+/* ── Alert sheet ──────────────────────────────────────── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);
+  z-index:100;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:#fff;border-radius:24px 24px 0 0;padding:24px 20px 36px;
+  width:100%;max-width:500px;max-height:78vh;overflow-y:auto;
+  box-shadow:0 -8px 40px rgba(0,0,0,.15)}
+.sheet-handle{width:36px;height:4px;background:#e2e8f0;border-radius:2px;margin:0 auto 20px}
+.sheet h2{font-size:1rem;font-weight:800;margin-bottom:16px;color:#0f172a}
+.alert-card{padding:14px 16px;border-radius:14px;margin-bottom:10px;border-left:4px solid;font-size:.82rem}
+.alert-card.sev1{background:#fef2f2;border-color:#ef4444}
+.alert-card.sev2{background:#fffbeb;border-color:#f59e0b}
+.alert-card.sev3{background:#fefce8;border-color:#eab308}
+.alert-card .a-id  {font-weight:800;font-size:.75rem;color:#475569;margin-bottom:4px}
+.alert-card .a-text{line-height:1.5;color:#334155}
+.alert-card .a-fix {margin-top:6px;font-size:.73rem;color:#64748b;font-style:italic}
+.alert-card .a-time{margin-top:4px;font-size:.65rem;color:#94a3b8}
+.sheet-actions{display:flex;gap:10px;margin-top:20px}
+.sheet-btn{flex:1;all:unset;padding:13px;border-radius:12px;text-align:center;
+  font-size:.82rem;font-weight:700;cursor:pointer;border:1.5px solid #e2e8f0;
+  color:#475569;background:#f8fafc;-webkit-tap-highlight-color:transparent}
+.sheet-btn:active{background:#e2e8f0}
+.sheet-btn.danger{border-color:#fca5a5;color:#dc2626;background:#fef2f2}
+</style>
 </head>
-
 <body>
 
-<div data-role="page" id="foo" class="row NavPicture">
-
-    <div data-role="header">
-
-        <div class="coffee-span-12 coffee-670-span-12">
-            <h1 class="MainTitle">Mitaine Mitzon</h1>
-            <h3>Anti-Mule Systeme</h3>
-        </div>
-        <div data-role="navbar">
-            <ul>
-                <li><a class="flaticon-font glyphs-icon glyph flaticon-house-3 ui-btn-active" href="index.html"></a>
-                </li>
-                <li><a class="flaticon-font glyphs-icon glyph flaticon-tap" href="sprinklers.html"></a></li>
-                <li><a class="flaticon-font glyphs-icon glyph flaticon-cctv"
-                       href="http://ville.montreal.qc.ca/circulation/pierrefonds-roxboro/rue-antoine-faucon-et-boulevard-saint-charles"></a>
-                </li>
-                <li><a class="flaticon-font glyphs-icon glyph flaticon-info" href="about.html"></a></li>
-            </ul>
-
-        </div>
-
-    </div><!-- /header -->
-
-
-    <!--<div role="coffee" class="ui-content coffee-span-12 call-out">-->
-    <div role="main" class="coffee-span-12 call-out">
-        <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
-
-        <!--Font size is in a.link-button-->
-        <a id="garagecmd0" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage" href="#"
-           onclick="proceed('trigger','0');"<br></br></a>
-
-        <a id="garagecmd1" class="unknownstatusdoorbutton link-button nav-button F110884-car-inside-a-garage"  href="#"
-           onclick="proceed('trigger','1');"<br></br></a>
-
-        <br></br>
-        <a id="garagelock" class="link-button nav-button F110884-car-and-padlock" href="#"
-        onclick="doorLock();"><br></br></a>
-
-        <br></br>
-        <!--<h1 class="MainTitle3">Alertes</h1>-->
-        <a id="alertclear" class="link-button nav-button flaticon-garbage" href="#" onclick="proceed('clear','0');"></a>
-        <a id="alertlist" class="link-button nav-button F110884-car-front-in-magnifier-glass" href="#"
-           onclick="displayAlert();"></a>
-
-
-    </div><!-- /content -->
-
-
-    <div data-role="footer">
-
-        <div class="coffee-span-8">
-
-            <div class="coffee-span-12">
-                <a href="https://www.facebook.com/jeanluc.cyr" target="_blank" class="social-image socialicon">
-                    <img class="facebook-icon" src="../images/socialicons/webicon-facebook.png" alt="Social Icon"></a>
-
-                <!--               <a href="https://www.facebook.com/jeanluc.cyr" target="_blank" class="social-image socialicon">
-                                   <img class="instagram-icon" src="../socialicons/webicon-instagram.png" alt="Social Icon"></a>-->
-
-                <a href="https://twitter.com/lmcjecy" target="_blank" class="social-image socialicon">
-                    <img class="twitter-icon" src="../images/socialicons/webicon-twitter.png" alt="Social Icon"></a>
-
-                <!--                <a href="#" target="_blank" class="social-image socialicon">
-                                    <img class="googleplus-icon" src="../socialicons/webicon-googleplus.png" alt="Social Icon"></a>-->
-
-                <a href="https://www.linkedin.com/in/jlfcyr/" target="_blank" class="social-image socialicon">
-                    <img class="linkedin-icon" src="../images/socialicons/webicon-linkedin.png" alt="Social Icon"></a>
-            </div>
-        </div>
-
-
-        <div class="coffee-span-12">
-            <!--<p class="paragraph Footer">Montreal<br> +1 514 594 3818 mitainesoft@gmail.com</p>-->
-            <p class="paragraph Footer"><a title="Mitainesoft" href="http://www.github.com/mitainesoft/" class="p-link">Mitainesoft
-                2017 [MITAINESOFT_GARAGE_REVISION]"
-                <br>
-                <img class="social-image" src="../images/MitaineSoft.jpg" alt="MitaineSoft Logo">
-                </br>
-            </a>
-            </p>
-        </div>
-    </div><!-- /footer -->
-
-    <script>
-        var _NBR_DOOR = 2;
-        var door_time_status = [];
-        for (count = 0; count < _NBR_DOOR; count++) {
-            door_time_status[count] = "xxxx";
-        }
-        // do s staus on start
-        doorStatus();
-        var intervalEvent = setInterval(doorStatus, 60000);
-        window.onload = function () {
-            doorStatus();
-            intervalEvent = setInterval(doorStatus, 30000);
-        }
-
-
-        $(window).on("blur focus", function (e) {
-            var prevType = $(this).data("prevType");
-
-            if (prevType != e.type) {   //  reduce double fire issues
-                switch (e.type) {
-                    case "blur":
-                        clearInterval(intervalEvent);
-                        break;
-                    case "focus":
-                        intervalEvent = setInterval(doorStatus, 3000);
-                        break;
-                }
-            }
-
-            $(this).data("prevType", e.type);
-        })
-
-        function proceed(subcmd, id) {
-
-            var garagecmdlabel = "garagecmd" + id;
-            var prevstatus = "UNKNOWN";
-            var status = "UNKNOWN";
-            var alertlistArray = null;
-
-            switch (true) {
-                case /^clear/.test(subcmd):
-                    clearAlerts();
-                    break;
-                case /^trigger/.test(subcmd):
-                    /* Check current button status to make sure status of
-                     door was correct in the UI especially if operations are
-                     done remote!
-                     */
-                    <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
-                    if ($('#garagecmd' + id).hasClass('closeddoorbutton')) {
-                        prevstatus = "CLOSED";
-                        subcmd = "open";
-                        intervalEvent = setInterval(doorStatus, 3000);
-                        console.log("Command is now 'open'!");
-                    } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
-                        prevstatus = "OPEN";
-                        subcmd = "close";
-                        intervalEvent = setInterval(doorStatus, 3000);
-                        console.log("Command is now 'close'!");
-                    } else {
-                        console.log("proceed::Door will not be trigger denied ! ");
-                        alert("Door will not be triggered denied ! ");
-                        return;
-                    }
-                    //Check real door status
-                    doorStatus();
-                    var status = "UNKNOWN";
-                    if ($('#garagecmd' + id).hasClass('closeddoorbutton')) {
-                        status = "CLOSED";
-                    } else if ($('#garagecmd' + id).hasClass('opendoorbutton')) {
-                        status = "OPEN";
-                    } else {
-                        console.log("proceed::Door will not be triggered due to current status UNKNOWN, LOCK or ERROR!");
-                        alert("Door will not be triggered due to current status LOCK, UNKNOWN or ERROR!");
-                        return;
-                    }
-
-                    if (status !== prevstatus) {
-                        console.log("proceed::Door will not be triggered due to UI display not refreshed!  Try again ! ");
-                        alert("Door will not be triggered due to UI display not refreshed!  Try again ! ");
-
-                        return;
-                    } else {
-
-                    }
-                    break;
-                default:
-                    console.log("proceed::Invalid command:" + subcmd)
-                    break;
-
-            } //switch
-
-            var cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/' + subcmd + '/' + id
-            console.log(cmd);
-            var posting = $.post(cmd, function (data) {
-                parseResponse(data);
-            })
-
-        }
-
-        function doorLock() {
-            $('#garagelock').removeClass('errordoorbutton');
-            if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
-                $('#garagelock').removeClass('lockstatusdoorbutton');
-            } else {
-                $('#garagelock').addClass('lockstatusdoorbutton');
-            }
-
-            for (count = 0; count < _NBR_DOOR; count++) {
-                // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
-                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) && !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
-                    console.log("Lock button Desync garagecmd" + count + " ! so resync!");
-                } else {
-                    console.log("Lock button In Sync garagecmd" + count + " !  ")
-                    cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/lock/' + count
-                    console.log(cmd);
-
-                    garageid = "garagestatus" + count;
-                    posting = $.post(cmd, function (data) {
-                        parseResponse(data, status)
-                    }, null, "text")
-                }
-            }
-
-
-        }
-
-        function doorStatus() {
-            var parseResponseArray = null
-            for (count = 0; count < _NBR_DOOR; count++) {
-                cmd = 'https://' + window.location.hostname + ':8050/GarageDoor/status/' + count
-                console.log(cmd);
-                garageid = "garagestatus" + count;
-                posting = $.post(cmd, function (data) {
-                    parseResponse(data, status)
-                    return parseResponseArray;
-                }, null, "text")
-
-                // Only check statu son last door
-                if (count == (_NBR_DOOR - 1)) {
-                    updateLockButton();
-                }
-            }
-
-
-        }
-
-        function parseResponse(data) {
-            if (data == null) {
-                console.log("parseResponse: No data!")
-                return;
-            }
-            console.log("-- parseResponse: got data! -------------------------------------------------------\n");
-            var deviceid = 0;
-            tmpstr = data.toString();
-
-            // JSON return
-            var parseResponseObject = JSON.parse(data)
-            var parseResponseArray = $.map(parseResponseObject, function (value, index) {
-                return [value];
-            });
-
-            console.log("data: '" + tmpstr + "'\n");
-            if (parseResponseArray == null) {
-                console.log("Unable to parse json response:" + tmpstr);
-                return null;
-            }
-
-            var arows = parseResponseArray.length;
-            var acol = parseResponseArray[0].length;
-//            console.log("array nbr JSON prop rows:" + arows);
-//            console.log("array nbr JSON column [0] :" + acol);
-            var logstr = ""
-            /*  array arows:2
-             array acol:5
-             0> 0:1519577933131493.5  1:[DeviceManager]  2:GARAGE_1  3:CLOSED    4:  \
-             1> 0:1519577933131923.8  1:[AlertManager]  2:           3:          4:Alertlist=None  \
-             */
-            for (var i = 0; i < parseResponseArray.length; i++) {
-                for (var j = 0; j < parseResponseArray[i].length; j++) {
-                    if (parseResponseArray[i][j] != null) tmpj = parseResponseArray[i][j];
-                    else tmpj = "NuLL"
-                    logstr += j + ":" + tmpj + "  ";
-                }
-                console.log(i + "> " + logstr + "\\");
-                logstr = ""
-
-                var garagecmdlabel = "";
-                if (/\[DeviceManager\]/.test(parseResponseArray[i][1])) {
-                    var showtimets=1;
-                    if (parseResponseArray[i][4] != null || parseResponseArray[i][4] != "") {
-                        var garageTimeStatusObject = JSON.parse(parseResponseArray[i][4]);
-                        var garageTimeStatusObject2 = JSON.parse(garageTimeStatusObject);
-                        //> obj={"OPEN": "---", "CLOSED": "10h11", "ERROR": "-----"} / Open=--- / Closed=10h11
-//                        console.log(garagecmdlabel + "> obj=" + garageTimeStatusObject + " / Open=" + garageTimeStatusObject2.OPEN + " / Closed=" + garageTimeStatusObject2.CLOSED);
-                    } else {
-//                        console.log("No time status to parse!")
-                        showtimets=0;
-                    }
-
-                    switch (true) {
-                        case /GARAGE/.test(parseResponseArray[i][2]):
-                            <!--opendoorbutton errordoorbutton unknownstatusdoorbutton closeddoorbutton -->
-                            var deviceArray = parseResponseArray[i][2].split('_');
-                            if (deviceArray == null || deviceArray.length !== 2) {
-                                console.log("parseResponse::Invalid Device format returned by backend server:" + parseResponseArray[i][1]);
-                                return null;
-                            }
-                            deviceid = deviceArray[1];
-                            //garagestatus1
-                            garagecmdlabel = "garagecmd" + deviceArray[1];
-                            clearClassGarage(garagecmdlabel);
-                            console.log("parseResponse::garagecmdlabel=" + garagecmdlabel);
-                            switch (true) {
-                                case /CLOSED/.test(parseResponseArray[i][3]):
-                                    $('#' + garagecmdlabel).addClass('closeddoorbutton');
-                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = " "+garageTimeStatusObject2.CLOSED;
-                                    break;
-                                case /OPEN/.test(parseResponseArray[i][3]):
-                                    $('#' + garagecmdlabel).addClass('opendoorbutton');
-                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = "\n" + garageTimeStatusObject2.OPEN;
-//                                     document.getElementById('allo0').innerHTML = "ALLO!"
-                                    break;
-                                case /ERROR/.test(parseResponseArray[i][3]):
-                                    $('#' + garagecmdlabel).addClass('errordoorbutton');
-//                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = "\n" + garageTimeStatusObject2.CLOSED;
-                                    break;
-                                case /UNKNOWN/.test(parseResponseArray[i][3]):
-                                    $('#' + garagecmdlabel).addClass('unknownstatusdoorbutton');
-                                    if (showtimets) document.getElementById(garagecmdlabel).innerHTML = "\n" + garageTimeStatusObject2.CLOSED;
-                                    break;
-                                default:
-                                    $('#' + garagecmdlabel).addClass('programerrorbutton');
-                                    console.log("parseResponse Unknown status:" + parseResponseArray[i][3]);
-                                    break;
-                            } // sw Garage Status
-
-                            if (/LOCK/.test(parseResponseArray[i][3])) {
-                                $('#' + garagecmdlabel).addClass('lockstatusdoorbutton');
-                                if (showtimets) document.getElementById('garagelock').innerHTML = garageTimeStatusObject2.LOCK;
-                                $('#garagelock').addClass('lockstatusdoorbutton');
-                            } else {
-                                if ($('#garagelock').hasClass('lockstatusdoorbutton')) {
-                                    $('#garagelock').removeClass('lockstatusdoorbutton');
-                                }
-                            }
-
-
-                            break;
-                        default:
-                            console.log("parseResponse::Unknown device command:" + tmpstr);
-                            break;
-                    } // sw GARAGE
-                } //if DeviceManager
-
-                if (/\[AlertManager\]/.test(parseResponseArray[i][1])) {
-                    console.log("AlertManager properties parsing starts...")
-
-                    if (parseResponseArray[i][4] == null) {
-                        console.log("Alert list is null. (" + tmpstr + ")");
-                    }
-
-                    alertListFieldArray = parseResponseArray[i][4].split('=');
-                    if (alertListFieldArray == null || alertListFieldArray.length <= 1) {
-                        console.log("alertListFieldArray=" + alertListFieldArray);
-                        continue;
-                    }
-
-                    alertlistArray = alertListFieldArray[1].split(';');
-                    if (alertlistArray.length <= 0) {
-                        alertlistArray[0] = parseResponseArray[i][4];
-                    }
-
-                    if (/^None/.test(alertlistArray[0])) {
-                        console.log("No Alerts!");
-                        clearAlerts();
-                        alertlistArray = null;
-                        //link-button nav-button flaticon-garbage
-                    } else {
-                        var maxsev = "3"
-                        for (var i = 0; i < alertlistArray.length; i++) {
-                            var alertparseArray = alertlistArray[i].match(/Alert id\:(.*)\s+dev\:(.*)\s+sev\:(\d)(.*)text\:(.*)workaround\:(.*)time\:(.*)/);
-
-                            var sevtxt = alertparseArray[3];
-                            console.error(i + ":" + alertlistArray[i] + " (" + sevtxt + ")\n");
-                            if (sevtxt < maxsev) maxsev = sevtxt;
-                        }
-                        //Enable alert buttons
-                        colorAlertButton(maxsev);
-                    }
-                } // AlertManager
-
-            } // for i
-
-
-            return;
-        }
-
-
-        function updateLockButton() {
-            var logstr = ""
-            console.log("Parse door status. Check lock button label.");
-            var lockcount = 0;
-
-            for (count = 0; count < _NBR_DOOR; count++) {
-                // JavaScript does not have a logical XOR operator. It has a bitwise XOR operator
-                if (($('#garagelock').hasClass('lockstatusdoorbutton') || $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false) && !($('#garagelock').hasClass('lockstatusdoorbutton') && $('#garagecmd' + count).hasClass('lockstatusdoorbutton') == false)) {
-                    console.log("updateLockButton garagecmd. Increase lockcount " + count + ".");
-                    lockcount++;
-                    // debugger;
-                } else {
-
-                }
-            }
-
-            if ((lockcount % _NBR_DOOR != 0)) {
-                $('#garagelock').addClass('errordoorbutton');
-                console.log("ERROR: Lock button desync !");
-            }
-
-        }
-
-        function clearClassGarage(labelid) {
-            $('#' + labelid).removeClass('opendoorbutton');
-            $('#' + labelid).removeClass('errordoorbutton');
-            $('#' + labelid).removeClass('closeddoorbutton');
-            $('#' + labelid).removeClass('unknownstatusdoorbutton');
-            $('#' + labelid).removeClass('lockstatusdoorbutton');
-        }
-
-        function clearAlerts() {
-            $('#alertlist').removeClass('errordoorbutton');
-            $('#alertlist').removeClass('alertcriticalbutton');
-            $('#alertlist').removeClass('alertmajorbutton');
-            $('#alertlist').removeClass('alertminorbutton');
-
-            $('#alertclear').removeClass('link-butto');
-            $('#alertclear').removeClass('nav-button');
-            $('#alertclear').removeClass('flaticon-garbage');
-            $('#alertclear').removeClass('alertcriticalbutton');
-            $('#alertclear').removeClass('alertmajorbutton');
-            $('#alertclear').removeClass('alertminorbutton');
-        }
-
-        function colorAlertButton(sev) {
-
-            switch (true) {
-                case /^1/.test(sev):
-                    $('#alertlist').addClass('alertcriticalbutton');
-                    $('#alertclear').addClass('alertcriticalbutton');
-                    break;
-                case /^2/.test(sev):
-                    $('#alertlist').addClass('alertmajorbutton');
-                    $('#alertclear').addClass('alertmajorbutton');
-                    break;
-                case /^3/.test(sev):
-                    $('#alertlist').addClass('alertminorbutton');
-                    $('#alertclear').addClass('alertminorbutton');
-                    break;
-                default:
-                    console.log("colorAlertButton def:" + sev);
-                    $('#alertlist').addClass('unknownstatusdoorbutton');
-                    $('#alertclear').addClass('unknownstatusdoorbutton');
-                    break;
-
-            }
-            $('#alertclear').addClass('link-butto');
-            $('#alertclear').addClass('nav-button');
-            $('#alertclear').addClass('flaticon-garbage');
-        }
-
-        function displayAlert() {
-            /*   7:Alert id:GCD01 dev:GARAGE_0 sev:1 cat:GARAGE_LOCK text:Fermeture automatique déactivé workaround:Verifiez la porte et les logs!
-             time:20170624-092526 ;Alert id:HW002 dev:GARAGE_0 sev:1 cat:HARDWARE text:Command sent but nothing happened! workaround:Check
-             the door ! time:20170624-092508 ;Alert id:GS001 dev:GARAGE_0_sensor_1 sev:1 cat:SENSOR text:problème avec un senseur sur la porte
-             workaround:La fermeture est peut-être bloquée par de la neige ou un des senseurs ne fonctionne plus! time:20170624-092526
-             */
-            if (alertlistArray == null) {
-                console.log("displayAlert is null !");
-                alert("OK !");
-            } else {
-                alerttxt = "";
-                for (var i = 0; i < alertlistArray.length; i++) {
-                    var alertparseArray = alertlistArray[i].match(/Alert id\:(.*)\s+dev\:(.*)\s+sev\:(\d)(.*)text\:(.*)workaround\:(.*)time\:(.*)/);
-                    alerttxt = alerttxt + alertparseArray[1] + ":" + alertparseArray[2] + " " + alertparseArray[5] + ". " + alertparseArray[6] + "\n";
-                }
-                alert(alerttxt);
-            }
-        }
-    </script>
-</div><!-- /page -->
+<header>
+  <h1>MITZON</h1>
+  <p>Anti-Mule System</p>
+</header>
+
+<nav>
+  <a href="index2.html" class="active">
+    <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V13h6v8"/></svg>
+    Garage
+  </a>
+  <a href="sprinklers.html">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.5 9 4 13 4 16a8 8 0 0 0 16 0c0-3-2.5-7-8-14z"/></svg>
+    Sprinklers
+  </a>
+  <a href="about.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r=".5" fill="currentColor"/></svg>
+    About
+  </a>
+</nav>
+
+<main>
+  <div>
+    <p class="lbl">Garage Doors</p>
+    <div class="door-grid">
+
+      <!-- Door 1 -->
+      <button class="door-card unknown" id="door0" onclick="triggerDoor(0)">
+        <svg class="ico ico-closed" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <rect x="6" y="13" width="12" height="8" rx=".5"/>
+          <line x1="6" y1="17" x2="18" y2="17"/>
+          <circle cx="15" cy="17" r=".7" fill="currentColor" stroke="none"/>
+        </svg>
+        <svg class="ico ico-open" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <path d="M8 21v-5a4 4 0 0 1 8 0v5"/>
+        </svg>
+        <svg class="ico ico-locked" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <rect x="8" y="14" width="8" height="6" rx="1"/>
+          <path d="M10 14v-2a2 2 0 0 1 4 0v2"/>
+        </svg>
+        <svg class="ico ico-unknown" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <path d="M12 18v-.5"/><path d="M12 15a1.5 1.5 0 0 1 1.5-1.5A1.5 1.5 0 0 1 15 15c0 1-1.5 1.5-1.5 2.5"/>
+        </svg>
+        <span class="door-name">Door 1</span>
+        <span class="door-status" id="door0-status">—</span>
+        <span class="door-time" id="door0-time"></span>
+      </button>
+
+      <!-- Door 2 -->
+      <button class="door-card unknown" id="door1" onclick="triggerDoor(1)">
+        <svg class="ico ico-closed" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <rect x="6" y="13" width="12" height="8" rx=".5"/>
+          <line x1="6" y1="17" x2="18" y2="17"/>
+          <circle cx="15" cy="17" r=".7" fill="currentColor" stroke="none"/>
+        </svg>
+        <svg class="ico ico-open" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <path d="M8 21v-5a4 4 0 0 1 8 0v5"/>
+        </svg>
+        <svg class="ico ico-locked" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <rect x="8" y="14" width="8" height="6" rx="1"/>
+          <path d="M10 14v-2a2 2 0 0 1 4 0v2"/>
+        </svg>
+        <svg class="ico ico-unknown" viewBox="0 0 24 24">
+          <path d="M2 10L12 3l10 7v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10z"/>
+          <path d="M12 18v-.5"/><path d="M12 15a1.5 1.5 0 0 1 1.5-1.5A1.5 1.5 0 0 1 15 15c0 1-1.5 1.5-1.5 2.5"/>
+        </svg>
+        <span class="door-name">Door 2</span>
+        <span class="door-status" id="door1-status">—</span>
+        <span class="door-time" id="door1-time"></span>
+      </button>
+
+    </div>
+  </div>
+
+  <div>
+    <p class="lbl">Controls</p>
+    <div class="ctrl-row">
+      <button class="ctrl" id="lock-btn" onclick="toggleLock()">
+        <svg id="lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+        </svg>
+        <span id="lock-lbl">Lock</span>
+      </button>
+      <button class="ctrl" id="alert-btn" onclick="showAlerts()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span id="alert-lbl">Alerts</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="spinner hidden" id="spinner"></div>
+    <span id="status-txt">Connecting…</span>
+  </div>
+
+  <div style="text-align:center">
+    <img src="images/auto/2016-subaru-impreza-5-door-12.jpg" alt="Subaru" style="width:240px;height:auto;opacity:.75;border-radius:8px">
+  </div>
+
+</main>
+
+<footer>Mitainesoft — Mitzon</footer>
+
+<!-- Alert sheet -->
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h2>Active Alerts</h2>
+    <div id="sheet-body"></div>
+    <div class="sheet-actions">
+      <button class="sheet-btn danger" onclick="clearAlerts()">Clear All</button>
+      <button class="sheet-btn" onclick="closeSheet()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const NBR = 2;
+const API = `https://${location.hostname}:8050`;
+const SLOW = 30000, FAST = 3000;
+let alertData = null, pollTimer = null;
+let lockStates = Array(NBR).fill(null); // null=unknown, true=locked, false=unlocked
+
+const STATUS_TEXT = {closed:'CLOSED',open:'OPEN',locked:'LOCKED',error:'ERROR',unknown:'—'};
+
+function busy(on){document.getElementById('spinner').classList.toggle('hidden',!on)}
+function setStatusTxt(m){document.getElementById('status-txt').textContent=m}
+
+function setDoor(id, state, timeStr) {
+  const card = document.getElementById(`door${id}`);
+  card.className = `door-card ${state}`;
+  document.getElementById(`door${id}-status`).textContent = STATUS_TEXT[state]||state;
+  document.getElementById(`door${id}-time`).textContent   = timeStr||'';
+}
+
+function updateLockBtn() {
+  const known   = lockStates.filter(s => s !== null);
+  const allLock = known.length > 0 && known.every(s => s === true);
+  const allOpen = known.length > 0 && known.every(s => s === false);
+  const desync  = known.length > 0 && !allLock && !allOpen;
+
+  const btn = document.getElementById('lock-btn');
+  const lbl = document.getElementById('lock-lbl');
+  const svg = document.getElementById('lock-svg');
+
+  if (desync) {
+    btn.className = 'ctrl desync';
+    lbl.textContent = 'Resync';
+    // Warning icon
+    svg.innerHTML = `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`;
+  } else if (allLock) {
+    btn.className = 'ctrl locked';
+    lbl.textContent = 'Unlock';
+    // Closed padlock
+    svg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>`;
+  } else {
+    btn.className = 'ctrl';
+    lbl.textContent = 'Lock';
+    // Open padlock
+    svg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>`;
+  }
+}
+
+function setAlertBtn(maxSev) {
+  const cls = maxSev===1?'alert1':maxSev===2?'alert2':'alert3';
+  document.getElementById('alert-btn').className = `ctrl ${cls}`;
+  document.getElementById('alert-lbl').textContent =
+    alertData ? `${alertData.length} Alert${alertData.length>1?'s':''}` : 'Alerts';
+}
+function clearAlertBtn() {
+  document.getElementById('alert-btn').className='ctrl';
+  document.getElementById('alert-lbl').textContent='Alerts';
+}
+
+function parse(raw) {
+  let obj; try{obj=JSON.parse(raw)}catch(e){console.error(e);return}
+  for(const row of Object.values(obj)){
+    if(/\[DeviceManager\]/.test(row[1])){
+      const dev=String(row[2]||''),sts=String(row[3]||''),tj=String(row[4]||'');
+      if(!/^GARAGE/.test(dev))continue;
+      const id=parseInt(dev.split('_')[1],10);
+      let timeStr='';
+      try{const t1=JSON.parse(tj),t2=JSON.parse(t1);
+        if(/OPEN/.test(sts))timeStr=`Open since ${t2.OPEN}`;
+        else if(/CLOSED/.test(sts))timeStr=`Closed since ${t2.CLOSED}`;}catch(_){}
+      const locked=/LOCK/.test(sts);
+      lockStates[id]=locked;  // track per-door
+      let state='unknown';
+      if(locked)state='locked';
+      else if(/CLOSED/.test(sts))state='closed';
+      else if(/OPEN/.test(sts))state='open';
+      else if(/ERROR/.test(sts))state='error';
+      setDoor(id,state,timeStr);
+    }
+    if(/\[AlertManager\]/.test(row[1])){
+      const field=String(row[4]||''),eq=field.indexOf('=');
+      if(eq<0)continue;
+      const body=field.slice(eq+1);
+      if(/^None/.test(body)){alertData=null;clearAlertBtn();continue;}
+      const RE=/Alert id\:(.*?)\s+dev\:(.*?)\s+sev\:(\d)(.*?)text\:(.*?)workaround\:(.*?)time\:(.*)/;
+      alertData=body.split(';').map(a=>{const m=a.match(RE);
+        return m?{id:m[1].trim(),dev:m[2].trim(),sev:+m[3],
+                  text:m[5].trim(),workaround:m[6].trim(),time:m[7].trim()}:null;
+      }).filter(Boolean);
+      if(alertData.length)setAlertBtn(Math.min(...alertData.map(a=>a.sev)));
+    }
+  }
+  updateLockBtn();
+}
+
+async function apiPost(url){
+  const r=await fetch(url,{method:'POST',credentials:'omit',mode:'cors',body:''});
+  if(!r.ok)throw new Error(`HTTP ${r.status}`);
+  return r.text();
+}
+
+async function poll(){
+  busy(true);
+  try{for(let i=0;i<NBR;i++)parse(await apiPost(`${API}/GarageDoor/status/${i}`));
+    setStatusTxt(`Updated ${new Date().toLocaleTimeString()}`);}
+  catch(e){setStatusTxt(`Error — ${e.message}`);}
+  busy(false);
+}
+function startPoll(ms=SLOW){stopPoll();poll();pollTimer=setInterval(poll,ms)}
+function stopPoll(){if(pollTimer){clearInterval(pollTimer);pollTimer=null}}
+
+async function triggerDoor(id){
+  const card=document.getElementById(`door${id}`);
+  const ok=card.classList.contains('closed')||card.classList.contains('open');
+  if(!ok){alert(`Door ${id+1} status must be CLOSED or OPEN to trigger.`);return}
+  const cmd=card.classList.contains('closed')?'open':'close';
+  busy(true);setStatusTxt(`Sending ${cmd.toUpperCase()}…`);
+  try{parse(await apiPost(`${API}/GarageDoor/${cmd}/${id}`));
+    startPoll(FAST);setTimeout(()=>startPoll(SLOW),30000);}
+  catch(e){setStatusTxt(`Error — ${e.message}`);}
+  busy(false);
+}
+
+async function toggleLock(){
+  const allLock = lockStates.filter(s=>s!==null).every(s=>s===true);
+  const desync  = lockStates.filter(s=>s!==null).some(s=>s===true)
+               && lockStates.filter(s=>s!==null).some(s=>s===false);
+
+  busy(true);
+  setStatusTxt(desync ? 'Resyncing — locking all doors…' : allLock ? 'Unlocking…' : 'Locking…');
+  try{
+    for(let i=0;i<NBR;i++){
+      // On desync: only toggle doors that are currently UNLOCKED to bring them all to locked
+      if(desync && lockStates[i]===true) continue;
+      parse(await apiPost(`${API}/GarageDoor/lock/${i}`));
+    }
+    setStatusTxt(`Updated ${new Date().toLocaleTimeString()}`);
+  }catch(e){setStatusTxt(`Error — ${e.message}`);}
+  busy(false);
+}
+
+function showAlerts(){
+  document.getElementById('sheet-body').innerHTML=(!alertData||!alertData.length)
+    ?`<p style="color:#94a3b8;text-align:center;padding:20px 0">No active alerts ✓</p>`
+    :alertData.map(a=>`<div class="alert-card sev${a.sev}">
+        <div class="a-id">${a.id} — ${a.dev}</div>
+        <div class="a-text">${a.text}</div>
+        <div class="a-fix">→ ${a.workaround}</div>
+        <div class="a-time">${a.time}</div></div>`).join('');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSheet(){document.getElementById('overlay').classList.remove('open')}
+function clearAlerts(){alertData=null;clearAlertBtn();closeSheet()}
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSheet()});
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)stopPoll();
+  else{startPoll(FAST);setTimeout(()=>{if(!document.hidden)startPoll(SLOW)},30000)}
+});
+
+startPoll(SLOW);
+</script>
 </body>
-
 </html>
