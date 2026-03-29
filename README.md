@@ -11,7 +11,20 @@
 
 
 '''
-1. INSTALLATION INSTRUCTIONS [MITAINESOFT_MITZON_REVISION]
+1. PREREQUISITES
+
+    ** DNS Configuration **
+    Add DNS entries for each device in your router's admin interface (DNS / Local DNS / Hostnames).
+    This allows all curl commands and the application to resolve hostnames on your local network.
+
+    Example:
+        garage -> 192.168.1.100  (Raspberry Pi running the garage door controller)
+        valve  -> 192.168.1.101  (Raspberry Pi running the valve controller)
+
+    Replace the IP addresses with your devices' actual IP addresses.
+
+
+2. INSTALLATION INSTRUCTIONS [MITAINESOFT_MITZON_REVISION]
 
     ** MITAINESOFT_MITZON_REVISION **
 
@@ -351,47 +364,47 @@ Outputs in main mitzon Backend console
 
 
     a) Test Status
-    curl -X POST -d '' https://garage:8050/GarageDoor/status/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/status/0
 
     b) Test Open Close
-    curl -X POST -d '' https://garage:8050/GarageDoor/open/0
-    curl -X POST -d '' https://garage:8050/GarageDoor/close/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/open/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/close/0
 
     c) Test lock/Unlock
-    curl -X POST -d '' https://garage:8050/GarageDoor/lock/0
-    curl -X POST -d '' https://garage:8050/GarageDoor/close/0
-    curl -X POST -d '' https://garage:8050/GarageDoor/open/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/lock/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/close/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/open/0
 
 
 
     f) Test Status
-    curl -X POST -d '' http://garage:8050/GarageDoor/status/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/status/0
 
     g) Test Open Close
-    curl -X POST -d '' http://garage:8050/GarageDoor/open/0
-    curl -X POST -d '' http://garage:8050/GarageDoor/close/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/open/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/close/0
 
     h) Test lock/Unlock
-    curl -X POST -d '' http://garage:8050/GarageDoor/lock/0
-    curl -X POST -d '' http://garage:8050/GarageDoor/close/0
-    curl -X POST -d '' http://garage:8050/GarageDoor/open/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/lock/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/close/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/open/0
 
-    curl -X POST -d '' http://garage:8050/GarageDoor/lock/0
-    curl -X POST -d '' http://garage:8050/GarageDoor/close/0
-    curl -X POST -d '' http://garage:8050/GarageDoor/open/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/lock/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/close/0
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/open/0
 
 
     d)Test Relay
-    curl -X POST -d '' http://garage:8050/GarageDoor/testRelay/2
+    curl -k -X POST -d '' https://garage:8050/GarageDoor/testRelay/2
 
    e) Valve test 2021
-      curl -k -d ''  https://192.168.1.92:8050/Valve/open/0
-      curl -k -d ''  https://192.168.1.92:8050/Valve/close/0
-      curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/0
+      curl -k -d ''  https://192.168.1.101:8050/Valve/open/0
+      curl -k -d ''  https://192.168.1.101:8050/Valve/close/0
+      curl -k -d ''  https://192.168.1.101:8050/Valve/manualopen/0
 
       kill -9 `pgrep -f mitzonURLCmdProcessor`
 
-curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
+curl -k -d ''  https://192.168.1.101:8050/Valve/manualopen/1
 
 4.  Enable Security on Raspberry PI Raspbian
 
