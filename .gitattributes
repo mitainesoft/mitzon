@@ -1,1 +1,3 @@
 build_info.txt merge=do_not_merge
+*.bash text eol=lf
+*.sh   text eol=lf
