@@ -192,8 +192,9 @@
     su - mitainesoft
 
     # Upload [MITAINESOFT_MITZON_REVISION] package to /opt/mitainesoft as user mitainesoft
-    #   cp /git/mitzon/dist/[MITAINESOFT_MITZON_REVISION] .
-    #   scp /git/mitzon/dist/*[MITAINESOFT_MITZON_REVISION]* mitainesoft@192.168.1.xxx:/opt/mitainesoft
+    #   
+    #   cp /git/mitzon/dist/[MITAINESOFT_MITZON_REVISION] /opt/mitainesoft
+    #   scp /git/mitzon/dist/*[MITAINESOFT_MITZON_REVISION]* mitainesoft@garage:/opt/mitainesoft
 
     cd /opt/mitainesoft/
     tar -zxvf  [MITAINESOFT_MITZON_REVISION].tar.gz
@@ -302,7 +303,10 @@
         su - mitainesoft
         cd /opt/mitainesoft/
         rm mitzon
+        rm mitzon_dev
         ln -s [MITAINESOFT_MITZON_REVISION] mitzon
+        ln -s [MITAINESOFT_MITZON_REVISION] mitzon_dev
+        
 
         ** Restart mitzon **
         #Check status and stop
@@ -342,43 +346,43 @@
 Outputs in main mitzon Backend console
 
 
- curl --cacert /opt/mitainesoft/security/mitainesoftsvr.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
+ curl --cacert /opt/mitainesoft/security/mitainesoftsvr.pem  -X POST -d '' https://garage:8050/GarageDoor/status/0
 
 
 
     a) Test Status
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
+    curl -X POST -d '' https://garage:8050/GarageDoor/status/0
 
     b) Test Open Close
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' https://garage:8050/GarageDoor/open/0
+    curl -X POST -d '' https://garage:8050/GarageDoor/close/0
 
     c) Test lock/Unlock
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/lock/0
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/close/0
-    curl -X POST -d '' https://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' https://garage:8050/GarageDoor/lock/0
+    curl -X POST -d '' https://garage:8050/GarageDoor/close/0
+    curl -X POST -d '' https://garage:8050/GarageDoor/open/0
 
 
 
     f) Test Status
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/status/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/status/0
 
     g) Test Open Close
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/open/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/close/0
 
     h) Test lock/Unlock
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/lock/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/close/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/open/0
 
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/lock/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/close/0
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/open/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/lock/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/close/0
+    curl -X POST -d '' http://garage:8050/GarageDoor/open/0
 
 
     d)Test Relay
-    curl -X POST -d '' http://192.168.1.83:8050/GarageDoor/testRelay/2
+    curl -X POST -d '' http://garage:8050/GarageDoor/testRelay/2
 
    e) Valve test 2021
       curl -k -d ''  https://192.168.1.92:8050/Valve/open/0
@@ -952,7 +956,7 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 
     root@nomiberry:~/ca# cat index.txt
         V       270729194601Z           928E8DAB06690548        unknown /C=CA/ST=Quebec/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
-        V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        V       270729200748Z           928E8DAB06690549        unknown /C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=garage/emailAddress=mitainesoft@gmail.com
 
 
 
@@ -1044,19 +1048,19 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 
 ** test **
     #/root/ca/ is root only
-    sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://192.168.1.83:8050/GarageDoor/status/0
+    sudo curl --cacert /root/ca/certs/ca.CA.pem  -X POST -d '' https://garage:8050/GarageDoor/status/0
 
 
     *** Test for Verify return code: 0 (ok) ***
-    openssl s_client -connect 192.168.1.83:443
+    openssl s_client -connect garage:443
         CONNECTED(00000003)
         depth=1 C = CA, ST = Quebec, O = mitainesoft.net, OU = Mitaine, CN = MitainesoftCA, emailAddress = mitainesoft@gmail.com
         verify return:1
-        depth=0 C = CA, ST = Quebec, L = ILE-BIZ, O = mitainesoft.net, OU = Mitaine, CN = 192.168.1.83, emailAddress = mitainesoft@gmail.com
+        depth=0 C = CA, ST = Quebec, L = ILE-BIZ, O = mitainesoft.net, OU = Mitaine, CN = garage, emailAddress = mitainesoft@gmail.com
         verify return:1
         ---
         Certificate chain
-         0 s:/C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+         0 s:/C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=garage/emailAddress=mitainesoft@gmail.com
            i:/C=CA/ST=Quebec/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         ---
         Server certificate
@@ -1066,7 +1070,7 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
         ...
         8HjlRnurxh3rfAPUD/u/O5q6KGo=
         -----END CERTIFICATE-----
-        subject=/C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=192.168.1.83/emailAddress=mitainesoft@gmail.com
+        subject=/C=CA/ST=Quebec/L=ILE-BIZ/O=mitainesoft.net/OU=Mitaine/CN=garage/emailAddress=mitainesoft@gmail.com
         issuer=/C=CA/ST=Quebec/O=mitainesoft.net/OU=Mitaine/CN=MitainesoftCA/emailAddress=mitainesoft@gmail.com
         ---
         No client certificate CA names sent
@@ -1136,7 +1140,7 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
             ServerAdmin admin@example.com
 
             # Redirect Requests to SSL
-            Redirect permanent / https://192.168.1.83
+            Redirect permanent / https://garage
 
             ErrorLog ${APACHE_LOG_DIR}/example.com.error.log
             CustomLog ${APACHE_LOG_DIR}/example.com.access.log combined
