@@ -1292,6 +1292,7 @@ curl -k -d ''  https://192.168.1.92:8050/Valve/manualopen/1
 '''
 
     #Merge code from development PC!
+    # Merge on github
     su - [git user]
     cd /git/mitzon
     git status
