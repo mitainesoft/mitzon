@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MITAINEMITZONHOME=/opt/mitainesoft/mitzon-4.0.13dev
+MITAINEMITZONHOME=/opt/mitainesoft/mitzon_dev
 
 MITAINE_MITZON_PROC=`ps -ef | grep $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py | grep -v vi  | grep -v grep | awk '{print $2}'`
 
@@ -22,4 +22,4 @@ export PYTHONUNBUFFERED=1
 export PYTHONPATH=$MITAINEMITZONHOME/MitzonBackend:$MITAINEMITZONHOME:$MITAINEMITZONHOME/MitzonFrontend
 export PYTHONIOENCODING=UTF-8
 
-nohup /usr/bin/python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py&
+nohup /usr/local/bin/python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client $MITAINEMITZONHOME/MitzonBackend/mitzonURLCmdProcessor.py&
