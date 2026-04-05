@@ -1,38 +1,38 @@
 [nas]
-host        = 10.0.0.1
+host        = 192.168.1.100
 port        = 21
-user        =
-password    =
-remote_base = /
+user        = nasuser
+password    = naspassword
+remote_base = /cameras
 
 [relay]
-buffer_dir      = /mnt/oreocamhd1/ftpbuffer
+buffer_dir      = /mnt/camhd1/ftpbuffer
 transferred_dir =
 # Leave transferred_dir empty to delete from buffer after NAS upload (recommended with tmpfs buffer).
-# Set to a path (e.g. /mnt/oreocamhd1/nas_transferred) to keep a local archive copy instead.
-retry_dir       = /mnt/oreocamhd1/retry
+# Set to a path (e.g. /mnt/camhd1/nas_transferred) to keep a local archive copy instead.
+retry_dir       = /mnt/camhd1/retry
 # retry_dir: disk-backed directory for files that failed NAS upload (survives reboots).
 # Leave empty to disable (files stay in buffer/tmpfs and are lost on reboot if NAS is down).
 retry_interval  = 30
 max_connections = 10
-hostname        = oreocamftp.lan
-passive_ip      = 10.0.0.2
+hostname        = camftp.lan
+passive_ip      = 192.168.1.50
 log_file        = /var/log/ftprelay/ftprelay.log
 log_max_bytes   = 10485760
 log_backup_count= 5
 
 [camera]
-user     =
-password =
+user     = camuser
+password = campassword
 
 [camera_map]
-OREOCAM_00 = Entree
-OREOCAM_01 = Driveway
-OREOCAM_02 = Driveway_entree
-OREOCAM_03 = Avant
-OREOCAM_04 = Sonnette
-OREOCAM_05 = Garage
-OREOCAM_06 = Cours_Bateau
-OREOCAM_07 = Cours_Electricite
-OREOCAM_08 = 482_SS_MEDIA
-OREOCAM_09 = 482_SS_Bureau
+MYREOLINK_00 = Falcon
+MYREOLINK_01 = Cobalt
+MYREOLINK_02 = Cobalt_West
+MYREOLINK_03 = Ember
+MYREOLINK_04 = Relay
+MYREOLINK_05 = Hangar
+MYREOLINK_06 = Marina
+MYREOLINK_07 = GridNorth
+MYREOLINK_08 = Unit_A_Media
+MYREOLINK_09 = Unit_A_Office
