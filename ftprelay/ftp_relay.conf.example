@@ -7,7 +7,13 @@ remote_base = /
 
 [relay]
 buffer_dir      = /mnt/oreocamhd1/ftpbuffer
-transferred_dir = /mnt/oreocamhd1/nas_transferred
+transferred_dir =
+# Leave transferred_dir empty to delete from buffer after NAS upload (recommended with tmpfs buffer).
+# Set to a path (e.g. /mnt/oreocamhd1/nas_transferred) to keep a local archive copy instead.
+retry_dir       = /mnt/oreocamhd1/retry
+# retry_dir: disk-backed directory for files that failed NAS upload (survives reboots).
+# Leave empty to disable (files stay in buffer/tmpfs and are lost on reboot if NAS is down).
+retry_interval  = 30
 max_connections = 10
 hostname        = oreocamftp.lan
 passive_ip      = 10.0.0.2

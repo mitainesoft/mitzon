@@ -27,7 +27,8 @@
       "Bash(ssh mitainesoft@oreocamftp.lan \"cat > /home/mitainesoft/ftp_relay.py && sudo systemctl restart ftprelay && sleep 1 && sudo systemctl status ftprelay --no-pager\")",
       "Bash(ssh mitainesoft@oreocamftp.lan:*)",
       "Bash(bash ftprelay/deploy.sh)",
-      "Bash(bash /c/git/mitzon/ftprelay/deploy.sh)"
+      "Bash(bash /c/git/mitzon/ftprelay/deploy.sh)",
+      "Bash(bash deploy.sh)"
     ]
   }
 }
