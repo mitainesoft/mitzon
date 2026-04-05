@@ -6,4 +6,5 @@ MitzonFrontend/dist
 venv
 dist
 mitzon.egg-info
+ftprelay/ftp_relay.conf
 

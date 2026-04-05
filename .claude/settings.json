@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh mitainesoft@oreocamftp.lan \"df -h | grep oreocamhd1 && echo --- && sudo blkid /dev/sda1\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"cat /etc/fstab\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"mkdir -p /mnt/oreocamhd1/ftpbuffer && ls -la /mnt/oreocamhd1/\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo apt update -qq && sudo apt install python3 python3-pip -y 2>&1 | tail -5\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"pip3 install pyftpdlib --break-system-packages 2>&1\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"pip3 install pyftpdlib 2>&1\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"cat > /home/mitainesoft/ftp_relay.py\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"python3 -c ''import py_compile; py_compile.compile\\(\"\"/home/mitainesoft/ftp_relay.py\"\"\\); print\\(\"\"syntax OK\"\"\\)''\")",
+      "Read(//home/mitainesoft/**)",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo tee /etc/systemd/system/ftprelay.service > /dev/null\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo systemctl daemon-reload && sudo systemctl enable ftprelay && sudo systemctl start ftprelay && sleep 2 && sudo systemctl status ftprelay --no-pager\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo iptables -L INPUT -n --line-numbers 2>&1 | head -20\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo ss -tlnp | grep -E '':21|:60''\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo journalctl -u ftprelay -n 20 --no-pager\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo pip3 install pyftpdlib 2>&1\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo systemctl restart ftprelay && sleep 2 && sudo systemctl status ftprelay --no-pager\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo journalctl -u ftprelay -n 10 --no-pager\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo pip3 install ''pyftpdlib==1.5.9'' 2>&1\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"sudo systemctl restart ftprelay && sleep 2 && sudo systemctl status ftprelay --no-pager && sudo journalctl -u ftprelay -n 10 --no-pager\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"hostname -I\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"host oreocamftp.lan 2>&1; getent hosts oreocamftp.lan 2>&1\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"cat /home/mitainesoft/ftp_relay.py\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"cat /etc/systemd/system/ftprelay.service\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan \"cat > /home/mitainesoft/ftp_relay.py && sudo systemctl restart ftprelay && sleep 1 && sudo systemctl status ftprelay --no-pager\")",
+      "Bash(ssh mitainesoft@oreocamftp.lan:*)",
+      "Bash(bash ftprelay/deploy.sh)",
+      "Bash(bash /c/git/mitzon/ftprelay/deploy.sh)"
+    ]
+  }
+}

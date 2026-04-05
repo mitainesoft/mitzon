@@ -1,0 +1,12 @@
+[Unit]
+Description=FTP Relay to NAS (oreocamftp)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/mitainesoft/ftp_relay/ftp_relay.py
+Restart=always
+User=mitainesoft
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target

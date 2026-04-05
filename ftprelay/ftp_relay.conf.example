@@ -1,0 +1,32 @@
+[nas]
+host        = 10.0.0.1
+port        = 21
+user        =
+password    =
+remote_base = /
+
+[relay]
+buffer_dir      = /mnt/oreocamhd1/ftpbuffer
+transferred_dir = /mnt/oreocamhd1/nas_transferred
+max_connections = 10
+hostname        = oreocamftp.lan
+passive_ip      = 10.0.0.2
+log_file        = /var/log/ftprelay/ftprelay.log
+log_max_bytes   = 10485760
+log_backup_count= 5
+
+[camera]
+user     =
+password =
+
+[camera_map]
+OREOCAM_00 = Entree
+OREOCAM_01 = Driveway
+OREOCAM_02 = Driveway_entree
+OREOCAM_03 = Avant
+OREOCAM_04 = Sonnette
+OREOCAM_05 = Garage
+OREOCAM_06 = Cours_Bateau
+OREOCAM_07 = Cours_Electricite
+OREOCAM_08 = 482_SS_MEDIA
+OREOCAM_09 = 482_SS_Bureau
