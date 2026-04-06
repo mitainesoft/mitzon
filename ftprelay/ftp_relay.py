@@ -13,7 +13,7 @@
 # Service: sudo systemctl status ftprelay
 # =============================================================================
 
-REVISION = 14
+REVISION = 16
 
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
@@ -95,25 +95,39 @@ def get_nas():
     global nas_conn
     try:
         nas_conn.voidcmd("NOOP")    # Test if connection is still alive
+        return nas_conn
     except:
-        nas_conn = ftplib.FTP()
-        nas_conn.connect(NAS_HOST, NAS_PORT)
-        nas_conn.login(NAS_USER, NAS_PASS)
+        pass
+    # Close stale connection cleanly before opening a new one so the NAS
+    # doesn't keep counting it against its max-connections limit.
+    try:
+        nas_conn.quit()
+    except:
+        pass
+    nas_conn = ftplib.FTP()
+    nas_conn.connect(NAS_HOST, NAS_PORT)
+    nas_conn.login(NAS_USER, NAS_PASS)
     return nas_conn
 
 def upload_to_nas(local_file, remote_path):
     """Upload local_file to NAS at remote_path. Raises on failure."""
-    ftp = get_nas()
-    dirs = os.path.dirname(remote_path).split("/")
-    for i in range(1, len(dirs) + 1):
-        d = "/".join(dirs[:i])
-        if d:
-            try:
-                ftp.mkd(d)
-            except ftplib.error_perm:
-                pass    # Directory already exists
-    with open(local_file, "rb") as f:
-        ftp.storbinary(f"STOR {remote_path}", f)
+    global nas_conn
+    try:
+        ftp = get_nas()
+        dirs = os.path.dirname(remote_path).split("/")
+        for i in range(1, len(dirs) + 1):
+            d = "/".join(dirs[:i])
+            if d:
+                try:
+                    ftp.mkd(d)
+                except ftplib.error_perm:
+                    pass    # Directory already exists
+        with open(local_file, "rb") as f:
+            ftp.storbinary(f"STOR {remote_path}", f)
+    except Exception:
+        # Mark connection as dead so next call reconnects cleanly.
+        nas_conn = None
+        raise
 
 def delete_after_upload(local_file, rel_path):
     """Remove file from buffer/retry after a confirmed NAS upload."""
@@ -130,6 +144,9 @@ def delete_after_upload(local_file, rel_path):
         else:
             os.remove(local_file)
             log.debug(f"[✓] Deleted from buffer (NAS copy confirmed): {rel_path}")
+    except FileNotFoundError:
+        # Another thread already cleaned up this file (camera re-uploaded same path).
+        log.debug(f"[✓] Buffer file already gone (duplicate upload?): {rel_path}")
     except Exception as e:
         log.error(f"[✗] Post-upload cleanup failed for {rel_path}: {e}")
 
@@ -143,6 +160,9 @@ def move_to_retry(local_file, rel_path):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.move(local_file, dest)
         log.warning(f"[!] Moved to retry queue: {rel_path}")
+    except FileNotFoundError:
+        # File vanished before we could move it (duplicate upload already handled it).
+        log.debug(f"[✓] Buffer file already gone before retry move: {rel_path}")
     except Exception as e:
         log.error(f"[✗] Failed to move {rel_path} to retry dir: {e}")
 
