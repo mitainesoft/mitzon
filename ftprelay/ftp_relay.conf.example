@@ -18,8 +18,8 @@ max_connections = 10
 hostname        = camftp.lan
 passive_ip      = 192.168.1.50
 log_file        = /var/log/ftprelay/ftprelay.log
-log_max_bytes   = 10485760
-log_backup_count= 5
+log_max_bytes   = 5368709120
+log_backup_count= 6
 
 [camera]
 user     = camuser
