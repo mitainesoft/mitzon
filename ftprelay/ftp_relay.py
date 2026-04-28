@@ -13,7 +13,7 @@
 # Service: sudo systemctl status ftprelay
 # =============================================================================
 
-REVISION = 23
+REVISION = 24
 
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
@@ -210,7 +210,7 @@ def queue_monitor():
         time.sleep(60)
         buffer_count, retry_count = count_queued_files()
         total = buffer_count + retry_count
-        log.info(f"[Q] Queue status: buffer={buffer_count}, retry={retry_count}, total={total}")
+        log.info(f"[Q] Queued: {buffer_count} in buffer (awaiting upload), {retry_count} in retry (failed/pending), {total} total")
 
 def retry_loop():
     """Background thread: re-attempt NAS uploads for files in retry_dir."""
