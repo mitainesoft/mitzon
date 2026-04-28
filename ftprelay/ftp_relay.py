@@ -13,7 +13,7 @@
 # Service: sudo systemctl status ftprelay
 # =============================================================================
 
-REVISION = 24
+REVISION = 25
 
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer

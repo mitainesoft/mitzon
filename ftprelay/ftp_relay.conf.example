@@ -14,6 +14,7 @@ retry_dir       = /mnt/camhd1/retry
 # retry_dir: disk-backed directory for files that failed NAS upload (survives reboots).
 # Leave empty to disable (files stay in buffer/tmpfs and are lost on reboot if NAS is down).
 retry_interval  = 30
+max_retries     = 5
 max_connections = 10
 hostname        = camftp.lan
 passive_ip      = 192.168.1.50
