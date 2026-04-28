@@ -13,7 +13,7 @@
 # Service: sudo systemctl status ftprelay
 # =============================================================================
 
-REVISION = 17
+REVISION = 23
 
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
@@ -24,6 +24,7 @@ import logging
 import logging.handlers
 import re
 import shutil
+import socket
 import threading
 import time
 import os
@@ -32,16 +33,21 @@ _cfg = configparser.ConfigParser()
 _cfg.read(os.path.join(os.path.dirname(__file__), "ftp_relay.conf"))
 
 NAS_HOST        = _cfg["nas"]["host"]
+if NAS_HOST and "." not in NAS_HOST:
+    NAS_HOST += ".lan"
 NAS_PORT        = _cfg["nas"].getint("port")
 NAS_USER        = _cfg["nas"]["user"]
 NAS_PASS        = _cfg["nas"]["password"]
 BUFFER_DIR      = _cfg["relay"]["buffer_dir"]
 MAX_CONNECTIONS = _cfg["relay"].getint("max_connections")
 RELAY_HOSTNAME  = _cfg["relay"]["hostname"]
+if RELAY_HOSTNAME and "." not in RELAY_HOSTNAME:
+    RELAY_HOSTNAME += ".lan"
 PASSIVE_IP      = _cfg["relay"]["passive_ip"]
 TRANSFERRED_DIR = _cfg["relay"]["transferred_dir"]
 RETRY_DIR       = _cfg["relay"].get("retry_dir", "")
 RETRY_INTERVAL  = _cfg["relay"].getint("retry_interval", 30)
+MAX_RETRIES     = _cfg["relay"].getint("max_retries", 5)
 NAS_REMOTE_BASE = _cfg["nas"]["remote_base"]
 LOG_FILE        = _cfg["relay"]["log_file"]
 LOG_MAX_BYTES   = _cfg["relay"].getint("log_max_bytes")
@@ -87,9 +93,20 @@ def remove_empty_parents(path, stop_at):
         except OSError:
             break   # Not empty or already gone
 
+
+def format_nas_error(exc):
+    """Enhance timeout-related NAS errors with a clearer firewall hint."""
+    msg = str(exc)
+    if isinstance(exc, (socket.timeout, TimeoutError)) or "Errno 110" in msg or "timed out" in msg.lower():
+        return f"{msg} (possible firewall issue: allow outbound access to {NAS_HOST}:{NAS_PORT})"
+    return msg
+
 # Shared NAS connection lock (single outbound connection)
 nas_lock = threading.Lock()
 nas_conn = None
+
+# Per-file retry attempt counter (rel_path → count); lives only in memory
+_retry_counts = {}
 
 def get_nas():
     global nas_conn
@@ -124,10 +141,10 @@ def upload_to_nas(local_file, remote_path):
                     pass    # Directory already exists
         with open(local_file, "rb") as f:
             ftp.storbinary(f"STOR {remote_path}", f)
-    except Exception:
+    except Exception as e:
         # Mark connection as dead so next call reconnects cleanly.
         nas_conn = None
-        raise
+        raise type(e)(format_nas_error(e)).with_traceback(e.__traceback__)
 
 def delete_after_upload(local_file, rel_path):
     """Remove file from buffer/retry after a confirmed NAS upload."""
@@ -166,6 +183,35 @@ def move_to_retry(local_file, rel_path):
     except Exception as e:
         log.error(f"[✗] Failed to move {rel_path} to retry dir: {e}")
 
+def count_queued_files():
+    """Count total files in buffer and retry queues."""
+    buffer_count = 0
+    retry_count = 0
+
+    try:
+        for root, _, files in os.walk(BUFFER_DIR):
+            buffer_count += len(files)
+    except Exception as e:
+        log.debug(f"Error counting buffer files: {e}")
+
+    if RETRY_DIR:
+        try:
+            for root, _, files in os.walk(RETRY_DIR):
+                retry_count += len(files)
+        except Exception as e:
+            log.debug(f"Error counting retry files: {e}")
+
+    return buffer_count, retry_count
+
+def queue_monitor():
+    """Background thread: log queue sizes every minute."""
+    log.info("[*] Queue monitor started")
+    while True:
+        time.sleep(60)
+        buffer_count, retry_count = count_queued_files()
+        total = buffer_count + retry_count
+        log.info(f"[Q] Queue status: buffer={buffer_count}, retry={retry_count}, total={total}")
+
 def retry_loop():
     """Background thread: re-attempt NAS uploads for files in retry_dir."""
     if not RETRY_DIR:
@@ -179,18 +225,31 @@ def retry_loop():
                 pending.append(os.path.join(root, fname))
         if not pending:
             continue
-        log.info(f"[↺] Retrying {len(pending)} queued file(s)")
+        log.info(f"[↺] Retry queue: {len(pending)} file(s) pending")
         for fpath in pending:
             rel_path    = os.path.relpath(fpath, RETRY_DIR)
             remote_path = make_remote_path(rel_path)
+            _retry_counts[rel_path] = _retry_counts.get(rel_path, 0) + 1
+            retry_num   = _retry_counts[rel_path]
+            if retry_num > MAX_RETRIES:
+                log.error(f"[✗] Giving up on {rel_path} after {MAX_RETRIES} retr{'y' if MAX_RETRIES == 1 else 'ies'} — removing from queue")
+                _retry_counts.pop(rel_path, None)
+                try:
+                    os.remove(fpath)
+                    remove_empty_parents(fpath, RETRY_DIR)
+                except Exception as e:
+                    log.error(f"[✗] Could not remove abandoned file {rel_path}: {e}")
+                continue
+            log.info(f"[↺] Retry {retry_num}/{MAX_RETRIES} for {rel_path}")
             with nas_lock:
                 try:
                     upload_to_nas(fpath, remote_path)
-                    log.info(f"[✓] Retry succeeded — uploaded to NAS: {remote_path}")
+                    log.info(f"[✓] Retry {retry_num}/{MAX_RETRIES} succeeded — uploaded to NAS: {remote_path}")
+                    _retry_counts.pop(rel_path, None)
                     delete_after_upload(fpath, rel_path)
                     remove_empty_parents(fpath, RETRY_DIR)
                 except Exception as e:
-                    log.warning(f"[!] Retry failed for {rel_path}: {e}")
+                    log.warning(f"[!] Retry {retry_num}/{MAX_RETRIES} failed for {rel_path}: {e}")
 
 class RelayHandler(FTPHandler):
 
@@ -212,7 +271,8 @@ class RelayHandler(FTPHandler):
                     upload_to_nas(file, remote_path)
                     log.info(f"[✓] Uploaded to NAS: {remote_path}")
                 except Exception as e:
-                    log.error(f"[✗] NAS upload failed for {rel_path}: {e}")
+                    _retry_counts[rel_path] = 0
+                    log.error(f"[✗] NAS upload failed (attempt 1) for {rel_path}: {e}")
                     move_to_retry(file, rel_path)
                     return
 
@@ -228,6 +288,8 @@ def main():
     if RETRY_DIR:
         os.makedirs(RETRY_DIR, exist_ok=True)
         threading.Thread(target=retry_loop, daemon=True).start()
+
+    threading.Thread(target=queue_monitor, daemon=True).start()
 
     authorizer = DummyAuthorizer()
     authorizer.add_user(CAM_USER, CAM_PASS, BUFFER_DIR, perm="elradfmwMT")
