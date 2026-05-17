@@ -28,7 +28,10 @@
       "Bash(ssh mitainesoft@oreocamftp.lan:*)",
       "Bash(bash ftprelay/deploy.sh)",
       "Bash(bash /c/git/mitzon/ftprelay/deploy.sh)",
-      "Bash(bash deploy.sh)"
+      "Bash(bash deploy.sh)",
+      "Bash(ssh mitainesoft@192.168.5.124 \"cat /opt/mitainesoft/ftp_relay/ftp_relay.conf\")",
+      "Bash(ssh mitainesoft@192.168.5.124 \"find /mnt/oreocamhd1/ftpbuffer -type f | head -60 && echo '---' && find /mnt/oreocamhd1/ftpbuffer -type f | wc -l\")",
+      "Bash(ssh mitainesoft@192.168.5.124 \"ls /mnt/oreocamhd1/retry/ 2>/dev/null && find /mnt/oreocamhd1/retry -type f 2>/dev/null | wc -l; echo '---'; ls /var/log/ftprelay/\")"
     ]
   }
 }

@@ -16,6 +16,10 @@ retry_dir       = /mnt/camhd1/retry
 retry_interval  = 30
 max_retries     = 5
 max_connections = 10
+max_upload_workers = 1
+# max_upload_workers: number of parallel NAS uploads (1-4 recommended; tune based on NAS and network capacity).
+stats_interval  = 300
+# stats_interval: seconds between performance stat logs (300 = 5 min, 3600 = 1 hour)
 hostname        = camftp.lan
 passive_ip      = 192.168.1.50
 log_file        = /var/log/ftprelay/ftprelay.log

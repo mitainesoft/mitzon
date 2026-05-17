@@ -7,6 +7,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RELAY="$SCRIPT_DIR/ftp_relay.py"
 WATCHDOG="$SCRIPT_DIR/watchdog.sh"
 HOST="mitainesoft@oreocamftp.lan"
+
+# Parse --ip <address> to override hostname
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --ip)
+      HOST="mitainesoft@$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      exit 1
+      ;;
+  esac
+done
 REMOTE="/opt/mitainesoft/ftp_relay/ftp_relay.py"
 REMOTE_WATCHDOG="/opt/mitainesoft/ftp_relay/watchdog.sh"
 
@@ -32,5 +46,7 @@ ssh "$HOST" "( crontab -l 2>/dev/null | grep -qF '$REMOTE_WATCHDOG' ) || \
     ( crontab -l 2>/dev/null; echo '$CRON_LINE' ) | crontab -"
 echo "Watchdog cron job installed."
 
-# Restart
-ssh "$HOST" "sudo systemctl restart ftprelay && sleep 1 && sudo systemctl status ftprelay --no-pager"
+# Restart — backgrounded so systemd cgroup teardown doesn't kill the SSH session
+ssh "$HOST" "sudo systemctl restart ftprelay &>/dev/null &"
+sleep 3
+ssh "$HOST" "sudo systemctl status ftprelay --no-pager"
