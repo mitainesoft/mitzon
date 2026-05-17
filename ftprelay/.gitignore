@@ -1,0 +1,18 @@
+# Production config with real credentials — never commit to git
+ftp_relay.conf
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.env
+*.log
